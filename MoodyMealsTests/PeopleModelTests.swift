@@ -241,8 +241,8 @@ final class PeopleModelTests: XCTestCase {
     @MainActor
     func test_currentBreakfastReference_persists() throws {
         // Groundwork for BF-1: the daily default is a reference on the member.
-        // (DM-6 — graceful degradation when the referenced meal is deleted —
-        // is deliberately NOT tested yet: the delete rule is unpinned, see F14.)
+        // (DM-6 graceful degradation is pinned by
+        // test_DM6_deletedBreakfastDefault_degradesToNil — D-37.)
         let container = try makeContainer()
         let context = container.mainContext
 

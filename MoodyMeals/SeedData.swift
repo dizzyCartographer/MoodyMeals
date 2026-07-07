@@ -7,7 +7,6 @@ import SwiftData
 /// Deliberately NOT seeded (canon):
 /// - MemberMealScores — cold-start rule (PT-1/Step 4f): day one has zero
 ///   Liking/Fit data; onboarding's swipe pass creates it, not the seed.
-/// - StapleItems (Elsie's lifeline, D-6) — model lands at M0-5 (BLOCKED D-34).
 /// - No "sheet-pan" tags anywhere (D-4: that framing stresses Ria).
 enum SeedData {
 
@@ -34,7 +33,7 @@ enum SeedData {
         let elsie = FamilyMember(
             name: "Elsie", isAdult: false,
             softGoals: [.proteinVegStarch], // D-35: full-plate nudge stays;
-            notes: "meat-averse; staples lifeline lands at M0-5 (D-6)"
+            notes: "meat-averse; sandwich basics + garbanzo beans always stocked (D-6)"
         )
         let chad = FamilyMember(
             name: "Chad", isAdult: false,
@@ -222,6 +221,23 @@ enum SeedData {
         context.insert(ThemeAnchor(weekday: 4, slot: .dinner,
                                    themeTag: "breakfast-for-dinner",
                                    isActive: false))
+
+        // ── Elsie's lifeline (D-6): ALWAYS on hand, under the guarantee ──
+        let sandwichBread = Ingredient(name: "sandwich bread", perishability: .pantry,
+                                       isGlutenFreeVerified: false) // D-30: normal purchase
+        let garbanzos = Ingredient(name: "garbanzo beans", perishability: .pantry,
+                                   isGlutenFreeVerified: true)
+        context.insert(sandwichBread)
+        context.insert(garbanzos)
+        context.insert(StapleItem(name: "sandwich bread", minOnHand: "1 loaf",
+                                  ingredient: sandwichBread, forMember: elsie))
+        context.insert(StapleItem(name: "garbanzo beans", minOnHand: "2 cans",
+                                  ingredient: garbanzos, forMember: elsie))
+
+        // ── Snacks (SN-1's example; cadence stays nil until inferred, SN-5) ──
+        let cojack = Snack(name: "Cojack sticks")
+        context.insert(cojack)
+        cojack.favoriteOf = [chad, elsie]
 
         try context.save()
     }

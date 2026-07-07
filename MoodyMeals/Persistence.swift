@@ -29,7 +29,16 @@ enum AppSchema {
         Meal.self,
         PlanEntry.self,
         ThemeAnchor.self,
-        // Staged: Snack completes at M0-5
+        // Shopping / inventory / household (M0-5)
         Snack.self,
+        ShoppingRun.self,
+        ShoppingItem.self,
+        PurchaseRecord.self,
+        InventoryItem.self,
+        WasteEvent.self,
+        CheckIn.self,
+        WeeklyReflection.self,
+        StapleItem.self,
+        FridgeSpec.self,
     ]
 }

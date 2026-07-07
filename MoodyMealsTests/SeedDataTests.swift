@@ -106,6 +106,27 @@ final class SeedDataTests: XCTestCase {
     }
 
     @MainActor
+    func test_seedElsiesLifeline_andSnack_D6() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        try SeedData.loadIfNeeded(into: context)
+
+        let fresh = ModelContext(container)
+        let staples = try fresh.fetch(FetchDescriptor<StapleItem>())
+        XCTAssertEqual(staples.count, 2)
+        XCTAssertEqual(Set(staples.map(\.name)), ["sandwich bread", "garbanzo beans"])
+        XCTAssertTrue(staples.allSatisfy { $0.forMember?.name == "Elsie" },
+                      "the lifeline is Elsie's (D-6)")
+        XCTAssertTrue(staples.allSatisfy { $0.ingredient != nil },
+                      "staples link to catalog ingredients for guarantee routing")
+
+        let cojack = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Snack>()).first)
+        XCTAssertEqual(cojack.name, "Cojack sticks")
+        XCTAssertEqual(Set(cojack.favoriteOf.map(\.name)), ["Chad", "Elsie"])
+        XCTAssertNil(cojack.cadenceDays, "no phantom cadence in the seed (SN-5)")
+    }
+
+    @MainActor
     func test_seedIsIdempotent_doubleLoadChangesNothing() throws {
         let container = try makeContainer()
         let context = container.mainContext
@@ -115,6 +136,8 @@ final class SeedDataTests: XCTestCase {
         let memberCount = try fresh1.fetch(FetchDescriptor<FamilyMember>()).count
         let mealCount = try fresh1.fetch(FetchDescriptor<Meal>()).count
         let ingredientCount = try fresh1.fetch(FetchDescriptor<Ingredient>()).count
+        let stapleCount = try fresh1.fetch(FetchDescriptor<StapleItem>()).count
+        let snackCount = try fresh1.fetch(FetchDescriptor<Snack>()).count
 
         try SeedData.loadIfNeeded(into: context) // second load — must be a no-op
 
@@ -122,5 +145,7 @@ final class SeedDataTests: XCTestCase {
         XCTAssertEqual(try fresh2.fetch(FetchDescriptor<FamilyMember>()).count, memberCount)
         XCTAssertEqual(try fresh2.fetch(FetchDescriptor<Meal>()).count, mealCount)
         XCTAssertEqual(try fresh2.fetch(FetchDescriptor<Ingredient>()).count, ingredientCount)
+        XCTAssertEqual(try fresh2.fetch(FetchDescriptor<StapleItem>()).count, stapleCount)
+        XCTAssertEqual(try fresh2.fetch(FetchDescriptor<Snack>()).count, snackCount)
     }
 }

@@ -23,6 +23,11 @@ Format per item:
 → Blocks: nothing today; shapes how often verification prompts appear from M1-3 on
 **Ria:** b) notes are commentary — only listed ingredients count; freeform-ONLY meals stay unverified (2026-07-07 evening) → ANSWERED, canon
 
+**D-39. Can catalog ingredients ever be hard-deleted? (F18/F19 in QUESTIONS.)** Recipes/shopping/inventory/waste/staples all point at the ingredient catalog; deleting a referenced ingredient crashes those reads today, and recipes reference ingredients non-optionally. Also includes retroactive confirm of F18 (I extended your D-37 delete-degrades-gracefully rule to the new M0-5 edges: member staples, purchase history).
+→ Options: a) never hard-delete — retire/merge only, like meals (recommended; matches "nothing retires for good") b) allow deletion, nil out references, recipes get a merge prompt
+→ Blocks: nothing until M0-7's catalog CRUD; F18 confirm is bookkeeping
+**Ria:** _____
+
 ---
 ## Digest — 2026-07-07 (M0-0 consistency read)
 *First real run. Five decisions from an end-to-end read of all docs, ranked by how much they unblock. Full findings archived in QUESTIONS.md (F1–F12); nothing resolved unilaterally.*

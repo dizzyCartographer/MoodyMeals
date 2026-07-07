@@ -57,6 +57,10 @@ final class FamilyMember {
     /// A deleted member's cook-night assignments nil out.
     @Relationship(inverse: \PlanEntry.assignedCook)
     var cookNights: [PlanEntry]
+    /// F18 (D-37 principle): a deleted member's staples degrade to
+    /// household-generic (forMember == nil) instead of trapping.
+    @Relationship(inverse: \StapleItem.forMember)
+    var staples: [StapleItem]
 
     init(
         name: String,
@@ -86,6 +90,7 @@ final class FamilyMember {
         self.coreMemoryMeals = []
         self.attendingEntries = []
         self.cookNights = []
+        self.staples = []
     }
 }
 
