@@ -2,9 +2,9 @@ import Foundation
 import SwiftData
 
 // ── Meal: the atomic plannable unit (build-spec §2) ───────────
-// M0-2 PLACEHOLDER: only the minimum needed so People models compile
-// (`MemberMealScore.meal`, `FamilyMember.currentBreakfast`).
-// Completed to the full spec §2 shape at M0-4 — staging, not deviation.
+// STAGED BUILD-OUT (not deviation): M0-2 seeded the identity fields;
+// M0-3 adds the food-composition fields (needed for HC-6 meal-level
+// safety propagation); the planning knobs land at M0-4.
 
 @Model
 final class Meal {
@@ -13,11 +13,17 @@ final class Meal {
     var updatedAt: Date
 
     var title: String
+    var freeformNotes: String         // "Snack plate dinner", "Chipotle takeout"
+    var recipes: [Recipe]             // zero or more
+    @Relationship(deleteRule: .cascade) var directItems: [RecipeItem] // ingredients not via a recipe
 
-    init(title: String) {
+    init(title: String, freeformNotes: String = "") {
         self.id = UUID()
         self.createdAt = .now
         self.updatedAt = .now
         self.title = title
+        self.freeformNotes = freeformNotes
+        self.recipes = []
+        self.directItems = []
     }
 }

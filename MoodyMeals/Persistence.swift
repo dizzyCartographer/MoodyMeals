@@ -21,7 +21,11 @@ enum AppSchema {
         // People & needs (M0-2)
         FamilyMember.self,
         MemberMealScore.self,
-        // Placeholders completed at M0-4 / M0-5
+        // Food (M0-3)
+        Ingredient.self,
+        Recipe.self,
+        RecipeItem.self,
+        // Staged: Meal completes at M0-4, Snack at M0-5
         Meal.self,
         Snack.self,
     ]
