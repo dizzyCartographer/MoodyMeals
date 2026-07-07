@@ -24,6 +24,19 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M1-3] — Tonight view (M1 COMPLETE) — NEEDS-VISUAL-REVIEW
+- Outcome: **done, review-gated**. Tonight tab: today's dinner card (title, notes, swapped-from-plan marker; needs-refill flag state; "pick dinner" when empty), swap via the same HC-5-guarded picker, per-member safety badges (safe ✓ / not-verified-GF ⚠ / not-today 🌙 / —), and per-person "Safe for X" lists (SF-1). Screenshot: docs/screenshots/m1-3-tonight.png. Suite 69/69.
+- Tests added: 4 in TonightTests — SF-1 (per-member list, not household), SF-2 (per-person badges + hard-constraint-outranks-flag: an unverified meal is never "safe" for a GF-hard member even if flagged), SF-3 (notToday hides while active, restores when lapsed, zero user action), swap-records-status.
+- Notes: `Tonight.isSafe` caps the comfort flag with §1: GF-hard members' safety requires GF verification — the flag alone can never override celiac safety.
+
+### Session summary — 2026-07-07 (day run, continued)
+- **Done today:** M0-0, M0-0b, M0-1…M0-7 (M0 complete), M1-1…M1-3 (M1 complete). Digest cycle ×3: D-32…D-39 (8 answered, D-39 open).
+- **Blocked:** none. **Open for Ria:** D-39 (ingredient deletion policy, non-urgent), Q3 (score resolution, non-blocking), F13 (M3–M8 backlog approval), F15 (updatedAt mechanism, parked).
+- **Needs visual review:** M0-7 (CRUD), M1-1 (week grid), M1-3 (Tonight) — screenshots in docs/screenshots/.
+- **Test suite:** 69/69 passing.
+- **Review-loop catches today:** identity-map round-trips (M0-2), freeform GF bypass + mutation-tested nil-path gap (M0-3), implicit-inverse data corruption (M0-4 blocker), dangling-reference class on M0-5 edges (F18), DateInterval touching-intervals infinite loop (M1-2).
+- **Next up:** M2-1 (meal→items explosion).
+
 ### [M1-2] — EventKit service (Moody calendar)
 - Outcome: **done**. `CalendarStore` protocol seam + thin `EventKitCalendarStore` adapter + `CalendarSyncService`: events land on the dedicated "Moody" calendar only (CAL-1), edits update in place / clears remove — no orphans, incl. the D-37 needs-refill state dropping its stale event (CAL-2), denial leaves the app fully functional with visible explanation copy (CAL-3), and `ShopWindows.suggest` proposes non-overlapping windows around commitments (CAL-4, pure logic). Sync wired into the Plan tab (assign/clear/toolbar sync + denied alert). Suite 65/65.
 - Tests added: 5 in CalendarSyncTests against a `MockCalendarStore` — CAL-1, CAL-2, CAL-2b (refill-flag × event removal), CAL-3, CAL-4.
