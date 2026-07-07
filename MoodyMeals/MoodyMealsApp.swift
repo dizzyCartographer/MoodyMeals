@@ -7,6 +7,6 @@ struct MoodyMealsApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: AppInfo.self)
+        .modelContainer(for: AppSchema.models)
     }
 }

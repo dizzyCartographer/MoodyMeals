@@ -18,5 +18,11 @@ final class AppInfo {
 enum AppSchema {
     static let models: [any PersistentModel.Type] = [
         AppInfo.self,
+        // People & needs (M0-2)
+        FamilyMember.self,
+        MemberMealScore.self,
+        // Placeholders completed at M0-4 / M0-5
+        Meal.self,
+        Snack.self,
     ]
 }

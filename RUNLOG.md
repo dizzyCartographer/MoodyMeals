@@ -24,6 +24,11 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M0-2] — Core models, people
+- Outcome: **done**. `FamilyMember`, `DietaryRequirement`, `FoodNeedGoal`, `MemberMealScore` spec-§2-exact (non-optional `member`/`meal` included; cascade verified working on iOS 26.5). Minimal `Meal`/`Snack` placeholders staged (completed at M0-4/M0-5). Suite 10/10.
+- Tests added: 8 in PeopleModelTests — full-field round-trip, hard/soft needs distinctness (§1 groundwork), MemberMealScore two-axes+safety, SF-1/SF-3 model-level, member-delete cascade, snacks many-to-many, currentBreakfast reference. All fetch through a FRESH ModelContext post-save (decode-from-store proven, not identity-map reads).
+- Notes: (1) Chased a full-suite crash to a test-harness bug: ModelContext does not retain its ModelContainer — helper returning a bare context left the container deallocating; documented in the test file. (2) Ran a 3-reviewer adversarial verification; 10 findings, all applied or parked: F14 (Meal-side delete rules unpinned in spec §2 — dangling-reference crash risk at meal deletion; proposing D-37 at M0-4) and F15 (`updatedAt` touch mechanism — M0-7) in QUESTIONS.md. (3) D-35 canon honored: `proteinVegStarch` is a generic goal case; no member-specific code anywhere.
+
 ### [M0-1] — Xcode project scaffold
 - Outcome: **done**. `xcodebuild test` green: 2/2 passing on iPhone 17 Pro (iOS 26.5). Hand-authored pbxproj (objectVersion 77, file-system-synchronized groups — files added later auto-join targets), shared scheme, app + test targets, SwiftData container with placeholder `AppInfo` model + `AppSchema` registry.
 - Tests added: `SmokeTests.testTargetRuns`, `SmokeTests.testInMemoryContainerRoundTrips` (in-memory SwiftData round-trip).

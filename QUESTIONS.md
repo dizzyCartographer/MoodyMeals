@@ -5,6 +5,10 @@ Claude Code appends; Ria answers inline at morning/evening review. Answered item
 - [Q3] Liking/Fit resolution: −2…+2 enough? *(non-blocking — implemented as Int −2…+2 per spec §2 unless Ria wants finer)*
 - [Q6/D-34] Add `staple` to ItemSource for StapleItem-sourced shopping items? Ria asked for the existing source list (2026-07-07); answered in chat, awaiting confirm.
 
+## M0-2 verification findings (2026-07-07, adversarial review)
+- **[F14] Meal-side delete rules are unpinned in spec §2.** `MemberMealScore.meal` (non-optional) and `FamilyMember.currentBreakfast` have NO inverse declared on Meal — so deleting a Meal leaves dangling references: accessing `score.meal` afterward traps (crash), and DM-5 ("deleting a meal cascades its MemberMealScores") + DM-6 (currentBreakfast degrades to nil) can't hold without one. Propose at M0-4: `@Relationship(deleteRule: .cascade, inverse: \MemberMealScore.meal)` on Meal + nullify semantics for currentBreakfast. Spec §2 deviation → needs Ria's OK (next digest, D-37).
+- **[F15] `updatedAt` has no touch mechanism.** §2 convention gives every model `updatedAt`, but nothing maintains it on mutation. Decide at M0-7 (CRUD): touch at mutation call sites vs. a save-wrapper; add a test that edits advance `updatedAt`. Parked, not blocking.
+
 ## M0-0 consistency-read findings (2026-07-07)
 Full end-to-end read of requirements, build-spec, TEST_CASES, DECISIONS, DESIGN_BRIEF. Contradictions / ambiguities / decision-vs-spec drift below. The genuinely decision-needing ones are also raised in today's Decision Digest (D-32…D-36). **Nothing resolved unilaterally.**
 
