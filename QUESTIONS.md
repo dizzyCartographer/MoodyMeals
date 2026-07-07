@@ -27,5 +27,8 @@ Full end-to-end read of requirements, build-spec, TEST_CASES, DECISIONS, DESIGN_
 - **[F11] requirements.md open questions are stale-but-expected.** Its bottom "Open questions" (recipe naming, NL engine, lunch scope, nutrition source, Chuck sync) are already resolved by build-spec §1 + tests — north-star doc simply not back-annotated. No action needed.
 - **[F12] methodAffinity key type.** `methodAffinity: [String:Int]` uses String keys documented as CookMethod (SwiftData dict constraint). Confirm intent = store `CookMethod.rawValue` strings so M0-2 encodes consistently. Low.
 
+### M0-0b (backlog extension) — awaits approval
+- **[F13] M3–M8 backlog drafted (M0-0b).** Task breakdowns for M3–M8 + a Phase 2 pointer are now in BACKLOG.md, criteria-tagged and traced to TC IDs, AI-prompt tasks marked PROMPT-REVIEW. AC requires your approval in a digest. Two structural asks: **M4 (16 tasks)** and **M5 (15 tasks)** are oversized — recommend splitting M4→M4/M4b and M5→M5/M5b/M5c. Not urgent (doesn't block M0-1); confirm at a review window.
+
 ## Answered (canon)
 - (none yet)

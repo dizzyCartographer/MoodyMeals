@@ -24,6 +24,11 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M0-0b] — Extend backlog (M3–M8)
+- Outcome: **done** (awaits digest approval per AC). Drafted M3–M8 + Phase 2 pointer in BACKLOG.md at M0–M2 granularity; every task traces to TEST_CASES IDs; AI-prompt tasks tagged PROMPT-REVIEW, UI tagged NEEDS-VISUAL-REVIEW.
+- Tests added: none (planning task)
+- Notes: M4 (16 tasks) and M5 (15 tasks) are oversized — recommend split (M4/M4b; M5/M5b/M5c). Parked as F13 for your approval. Toolchain confirmed present: Xcode 26.6, Swift 6.3.3, iOS 26 + iOS 17 simulators — M0-1 scaffold is actionable next.
+
 <!-- Template (keep for reference):
 ## Session summary — [DATE, night/day run]
 - Done / Blocked / Needs visual review / Test suite / Next up
