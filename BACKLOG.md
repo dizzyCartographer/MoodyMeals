@@ -14,7 +14,7 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 
 ## M1 — Plan + see
 - [M1-1] **[DONE 2026-07-07 — NEEDS-VISUAL-REVIEW]** (90m) Manual planning UI — week grid, assign meal to date+slot, lock toggle. **AC:** PlanEntry created/edited; lock persists. → Plan tab, both slots, week nav, HC-5 confirm flow built in; 7 tests; screenshot in docs/screenshots/.
-- [M1-2] (90m) EventKit service — dedicated "Moody" calendar; create/update/delete events from PlanEntries; handle permission denial gracefully. **AC:** TC-CAL-1..4 (integration tests may be simulator-limited; document what's mockable).
+- [M1-2] **[DONE 2026-07-07]** (90m) EventKit service — dedicated "Moody" calendar; create/update/delete events from PlanEntries; handle permission denial gracefully. **AC:** TC-CAL-1..4 (integration tests may be simulator-limited; document what's mockable). → 5 tests vs mock seam; EK adapter thin, manual-verify; sync wired into Plan tab.
 - [M1-3] (60m) Tonight view — today's dinner, swap button, per-member safe badge. **AC:** TC-SF-1..3. NEEDS-VISUAL-REVIEW.
 
 ## M2 — Shopping core

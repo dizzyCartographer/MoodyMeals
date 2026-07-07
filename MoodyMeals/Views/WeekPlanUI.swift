@@ -6,10 +6,12 @@ import SwiftData
 
 struct WeekPlanView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(CalendarSyncService.self) private var calendarSync
     @Query(sort: \PlanEntry.date) private var allEntries: [PlanEntry]
     @Query private var members: [FamilyMember]
     @State private var weekAnchor: Date = .now
     @State private var picking: PickTarget?
+    @State private var showingSyncExplanation = false
 
     private struct PickTarget: Identifiable {
         let day: Date
@@ -29,6 +31,22 @@ struct WeekPlanView: View {
             }
             .navigationTitle("Week Plan")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    // CAL-1/CAL-3: sync to the Moody calendar; denial shows
+                    // a clear explanation, never a silent failure.
+                    Button("Sync to Calendar",
+                           systemImage: calendarSync.isAvailable
+                               ? "calendar.badge.checkmark" : "calendar.badge.exclamationmark") {
+                        Task {
+                            await calendarSync.requestAccessIfNeeded()
+                            if calendarSync.isAvailable {
+                                calendarSync.syncAll(in: modelContext)
+                            } else {
+                                showingSyncExplanation = true
+                            }
+                        }
+                    }
+                }
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Button("Previous week", systemImage: "chevron.left") {
                         weekAnchor = Calendar.current.date(
@@ -40,6 +58,11 @@ struct WeekPlanView: View {
                             byAdding: .weekOfYear, value: 1, to: weekAnchor) ?? weekAnchor
                     }
                 }
+            }
+            .alert("Calendar sync is off", isPresented: $showingSyncExplanation) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(calendarSync.unavailableReason ?? "")
             }
             .sheet(item: $picking) { target in
                 NavigationStack {
@@ -78,6 +101,7 @@ struct WeekPlanView: View {
         .swipeActions(edge: .trailing) {
             if let entry {
                 Button("Clear", role: .destructive) {
+                    calendarSync.remove(entry, in: modelContext) // CAL-2: no orphans
                     try? WeekPlan.clear(entry: entry, in: modelContext)
                 }
                 Button(entry.meal == nil ? "Assign" : "Swap") {
@@ -91,6 +115,7 @@ struct WeekPlanView: View {
 struct MealPickerView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(CalendarSyncService.self) private var calendarSync
     let day: Date
     let slot: SlotKind
     let attendees: [FamilyMember]
@@ -153,8 +178,10 @@ struct MealPickerView: View {
     }
 
     private func assign(_ meal: Meal) {
-        try? WeekPlan.assign(meal, on: day, slot: slot,
-                             attendees: attendees, in: modelContext)
+        if let entry = try? WeekPlan.assign(meal, on: day, slot: slot,
+                                            attendees: attendees, in: modelContext) {
+            calendarSync.sync(entry, in: modelContext) // CAL-1/CAL-2: event follows the plan
+        }
         dismiss()
     }
 }

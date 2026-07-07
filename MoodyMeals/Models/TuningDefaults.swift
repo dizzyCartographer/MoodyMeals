@@ -11,4 +11,9 @@ enum TuningDefaults {
     static let anchorVarietyPeriodWeeks = 3
     /// §8 `cooldownDefaultDays` — "sick of this" rest length (D-2: min 42, max 180).
     static let cooldownDefaultDays = 42
+    /// NEW at M1-2 (not in §8 — noted in RUNLOG): calendar-event timing for
+    /// synced plan entries. Migrate into TuningConfig at M4-1.
+    static let dinnerEventHour = 18
+    static let breakfastEventHour = 7
+    static let planEventDurationMinutes = 60
 }
