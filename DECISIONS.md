@@ -6,6 +6,24 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-07 evening (3 open items, ranked by unblock value)
+
+**D-34. Add `staple` as a shopping-item source? ⏫ (re-raised from morning — now the only thing blocking M0-5)**
+→ Sources today: {meal, snackCadence, breakfastStaple, manual}; Elsie's always-stocked lifeline items need their own tag so "why is this on my list" and PT-7 dedup work. → Options: a) yes, add `staple` (recommended) b) reuse `manual` (loses provenance)
+→ Blocks: M0-5 (shopping/inventory models) → which blocks all of M2
+**Ria:** _____
+
+**D-37. Delete rules — one decision pins five relationship edges (F14+F17 in QUESTIONS).** When a meal or family member is deleted, today's spec-exact models leave dangling references that CRASH on access (verified). Proposal: scores cascade with their meal (DM-5); `currentBreakfast` nils gracefully (DM-6); plan entries get flagged + re-filled rather than silently deleted (CD-1/HC-8 spirit); attendee/cook references nil out (D-5 subset semantics). Also: retroactive OK for F17 (an explicit inverse field I had to add to stop core-memory writes corrupting breakfast defaults — real data-corruption bug, fixed + regression-tested).
+→ Options: a) approve the bundle as proposed (recommended) b) tweak (say which edge) c) discuss first
+→ Blocks: DM-5/DM-6 tests; meal/member deletion anywhere in the UI (M0-7+)
+**Ria:** _____
+
+**D-38. Freeform text and GF safety — how cautious? (F16/F16b in QUESTIONS.)** Currently: a meal whose composition is unknown (freeform-only, like "Chipotle takeout") or partly unknown (notes + listed items) reads as NOT verified for Caddie until confirmed once. Safest, but it means casual notes ("kids like extra cheese") make a fully-verified meal ask for one confirmation.
+→ Options: a) keep maximal caution (current) b) notes are commentary — only listed ingredients count (one-line flip; freeform-ONLY meals stay unverified) (recommended: b if you use notes casually, a if notes often carry real food)
+→ Blocks: nothing today; shapes how often verification prompts appear from M1-3 on
+**Ria:** _____
+
+---
 ## Digest — 2026-07-07 (M0-0 consistency read)
 *First real run. Five decisions from an end-to-end read of all docs, ranked by how much they unblock. Full findings archived in QUESTIONS.md (F1–F12); nothing resolved unilaterally.*
 

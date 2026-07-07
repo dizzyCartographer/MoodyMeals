@@ -24,6 +24,11 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M0-6] — Seed data (done ahead of blocked M0-5)
+- Outcome: **done**. The five members (Caddie GF-hard; Ria hemeIron+antiInflammatory, grill+2/oven−2; Elsie proteinVegStarch per D-35; Chad highCalorie, 1.5×/+0.5 appetite), 24 ingredients (verified / unverified / contained-gluten mix per D-30), 16 meals covering every AC shape (all-timer w/ core memory, Taco-Tuesday tag, leftover chain D-4, breakfast-for-dinner D-1, eating-out D-7, HC-4 unverified-fries case), Wednesday b4d anchor seeded OFF. App shows household on launch. Suite 33/33.
+- Tests added: 4 in SeedDataTests — members+needs, AC meal shapes (incl. GF-safety spot-checks through the seed), canon compliance (zero seeded scores per PT-1 cold-start, no sheet-pan per D-4, anchor off per D-1), idempotent double-load.
+- Notes: Elsie's StapleItems (D-6) can't seed until M0-5 unblocks (D-34) — noted in seed comments. Scores deliberately empty: onboarding's swipe pass is the source of Liking/Fit signal, never the seed.
+
 ### [M0-4] — Core models, meals & planning
 - Outcome: **done**. Full §2 `Meal` (scheduling knobs, leftover chains, multi-slot D-1, method tags D-28, all-timer/core-memory, eating-out D-7), `PlanEntry` (attendees D-5, lock, cook), `ThemeAnchor`, all enums. `TuningDefaults` added as the pre-M4 home for §8 defaults (componentFreshnessDays, anchorVarietyPeriodWeeks, cooldownDefaultDays) — no literals in tests. Suite 29/29.
 - Tests added: 7 in PlanningModelTests — DM-3 (freeform meal valid+plannable), full-shape round-trip (non-default values incl. producer half of D-4), D-1 multi-slot, rotation/cooldown, PlanEntry date/slot/attendees/lock/cook, ThemeAnchor w/ §8 default, F17 independence+shareability regression. Plus one F17 assertion added to M0-2's breakfast test.
