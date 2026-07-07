@@ -11,11 +11,21 @@ enum CookMethod: String, Codable {
          microwave, noCook, smoker
 }
 
-enum SlotKind: String, Codable { case dinner, breakfast }
+enum SlotKind: String, Codable { case dinner, breakfast, lunch /* D-40 */ }
 
 enum FrequencyTarget: String, Codable { case weekly, biweekly, monthly, quarterly, occasionally }
 
 enum RotationState: String, Codable { case active, resting /* cooldown */, retired /* rare */ }
+
+extension SlotKind {
+    var displayName: String {
+        switch self {
+        case .dinner: "Dinner"
+        case .breakfast: "Breakfast"
+        case .lunch: "Lunch"
+        }
+    }
+}
 
 @Model
 final class Meal {
@@ -57,6 +67,9 @@ final class Meal {
     /// DM-6: a deleted meal gracefully nils any member's breakfast default.
     @Relationship(deleteRule: .nullify, inverse: \FamilyMember.currentBreakfast)
     var breakfastDefaultFor: [FamilyMember]
+    /// D-40: lunch gets the same per-person-default treatment as breakfast.
+    @Relationship(deleteRule: .nullify, inverse: \FamilyMember.currentLunch)
+    var lunchDefaultFor: [FamilyMember]
     /// D-37: plan entries survive meal deletion with `meal == nil` — the
     /// needs-refill flag (CD-1/HC-8 spirit); they never silently vanish.
     @Relationship(deleteRule: .nullify, inverse: \PlanEntry.meal)
@@ -110,6 +123,7 @@ final class Meal {
         self.occasionTag = occasionTag
         self.memberScores = []
         self.breakfastDefaultFor = []
+        self.lunchDefaultFor = []
         self.planEntries = []
     }
 }

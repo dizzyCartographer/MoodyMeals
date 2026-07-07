@@ -15,6 +15,7 @@ enum TuningDefaults {
     /// synced plan entries. Migrate into TuningConfig at M4-1.
     static let dinnerEventHour = 18
     static let breakfastEventHour = 7
+    static let lunchEventHour = 12    // D-40
     static let planEventDurationMinutes = 60
     /// SL-4's pantry-staple exclusion list — assumed on hand, skipped by the
     /// shopping explosion unless flagged out. User-editable at M4-1.

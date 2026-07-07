@@ -24,6 +24,10 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [D-40/D-41] — Lunch in scope; snacks stay replenishment
+- Outcome: **applied**. Ria (live): "we eat lunch too... and snacks." D-40: `SlotKind.lunch` everywhere — week-grid row, meal-editor toggle, calendar sync at `lunchEventHour=12`, per-person `currentLunch` default with explicit nullify inverse (D-37 pattern, no implicit-inverse repeat), 2 seed lunch meals. Breakfast-pattern automation (default + burnout swap) lands with M7 as re-scoped. D-41: snacks confirmed stocked-not-scheduled — no change needed. Suite 99/99.
+- Tests added: 3-slot coexistence (D-40), currentLunch persists + degrades independently of breakfast.
+
 ### [M2-3] — Guarantee check v1 ⚠️ (§10)
 - Outcome: **done, review-hardened**. `GuaranteeCheck.check()`: per-tier horizon (furthest next-confirmed run), violations name meal + date + missing items + both ways out (swap / mini-run **on or before** the meal day — always actionable), sorted by date. Inventory beliefs offset at ≥0.7 (GT-4, boundary pinned), never blocking (INV-6). Suite 98/98.
 - Tests added: 16 in GuaranteeCheckTests + 3 in RunRoutingTests + SL-5 today-pin. GT-1..6 plus mutation-killers for: same-day-run coverage, tonight+run-later-today, stale purchases, stale confirmed runs, swapped entries, proposed-runs-count, threshold boundary, past entries, out-of-stock staples, fresh-never-bulk (real pin), freshness floor, no-deadline bulk preference + lead boundary.

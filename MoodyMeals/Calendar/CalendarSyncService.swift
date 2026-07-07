@@ -79,14 +79,16 @@ final class CalendarSyncService {
     }
 
     private func eventData(for entry: PlanEntry, meal: Meal) -> CalendarEventData {
-        let hour = entry.slot == .dinner
-            ? TuningDefaults.dinnerEventHour
-            : TuningDefaults.breakfastEventHour
+        let hour = switch entry.slot {
+        case .dinner: TuningDefaults.dinnerEventHour
+        case .breakfast: TuningDefaults.breakfastEventHour
+        case .lunch: TuningDefaults.lunchEventHour // D-40
+        }
         let start = Calendar.current.date(bySettingHour: hour, minute: 0, second: 0,
                                           of: entry.date) ?? entry.date
         let end = start.addingTimeInterval(
             TimeInterval(TuningDefaults.planEventDurationMinutes * 60))
-        let slotName = entry.slot == .dinner ? "Dinner" : "Breakfast"
+        let slotName = entry.slot.displayName
         return CalendarEventData(title: "\(slotName): \(meal.title)",
                                  start: start, end: end,
                                  notes: meal.freeformNotes.isEmpty ? nil : meal.freeformNotes)

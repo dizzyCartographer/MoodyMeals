@@ -30,6 +30,7 @@ final class FamilyMember {
     var softGoals: [FoodNeedGoal]
     var notes: String                 // "meat-averse; needs protein+veg+starch"
     var currentBreakfast: Meal?       // the set-and-forget daily default
+    var currentLunch: Meal?           // D-40: lunch works the same way
     var appetiteBase: Double          // servings multiplier (Chad ≈ 1.5; others 1.0)
     var appetiteFavoriteBoost: Double // extra when liking == +2 (Chad → up to 2.0). D-5
     /// D-28: CookMethod.rawValue → -2…+2. Ria: grill +2, oven -2.
@@ -82,6 +83,7 @@ final class FamilyMember {
         self.softGoals = softGoals
         self.notes = notes
         self.currentBreakfast = currentBreakfast
+        self.currentLunch = nil
         self.appetiteBase = appetiteBase
         self.appetiteFavoriteBoost = appetiteFavoriteBoost
         self.methodAffinity = methodAffinity

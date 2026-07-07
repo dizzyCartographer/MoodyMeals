@@ -25,6 +25,7 @@ struct WeekPlanView: View {
                 ForEach(WeekPlan.weekDays(containing: weekAnchor), id: \.self) { day in
                     Section(day.formatted(.dateTime.weekday(.wide).month().day())) {
                         slotRow(day: day, slot: .dinner)
+                        slotRow(day: day, slot: .lunch)     // D-40
                         slotRow(day: day, slot: .breakfast)
                     }
                 }
@@ -79,7 +80,7 @@ struct WeekPlanView: View {
             $0.slot == slot && $0.date == WeekPlan.dayAnchor(for: day)
         }
         HStack {
-            Text(slot == .dinner ? "Dinner" : "Breakfast")
+            Text(slot.displayName)
                 .foregroundStyle(.secondary)
                 .frame(width: 84, alignment: .leading)
             if let entry {
@@ -149,7 +150,7 @@ struct MealPickerView: View {
             }
             .tint(.primary)
         }
-        .navigationTitle(slot == .dinner ? "Pick dinner" : "Pick breakfast")
+        .navigationTitle("Pick \(slot.displayName.lowercased())")
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") { dismiss() }

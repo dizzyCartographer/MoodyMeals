@@ -317,6 +317,38 @@ final class PlanningModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_D40_currentLunch_persistsAndDegradesLikeBreakfast() throws {
+        // D-40: lunch is a per-person default with the same DM-6-style
+        // graceful deletion as breakfast — and independent of it.
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let elsie = FamilyMember(name: "Elsie", isAdult: false)
+        let oatmeal = Meal(title: "Oatmeal", slots: [.breakfast])
+        let sandwiches = Meal(title: "Sandwiches", slots: [.lunch])
+        context.insert(elsie)
+        context.insert(oatmeal)
+        context.insert(sandwiches)
+        elsie.currentBreakfast = oatmeal
+        elsie.currentLunch = sandwiches
+        try context.save()
+
+        let fresh = ModelContext(container)
+        let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<FamilyMember>()).first)
+        XCTAssertEqual(fetched.currentLunch?.title, "Sandwiches")
+        XCTAssertEqual(fetched.currentBreakfast?.title, "Oatmeal",
+                       "lunch and breakfast defaults never interfere")
+
+        context.delete(sandwiches)
+        try context.save()
+        let fresh2 = ModelContext(container)
+        let after = try XCTUnwrap(try fresh2.fetch(FetchDescriptor<FamilyMember>()).first)
+        XCTAssertNil(after.currentLunch, "deleted lunch default degrades to nil")
+        XCTAssertEqual(after.currentBreakfast?.title, "Oatmeal",
+                       "breakfast untouched by the lunch deletion")
+    }
+
+    @MainActor
     func test_D37_deletedMemberDropsFromAttendees_andCookNils() throws {
         let container = try makeContainer()
         let context = container.mainContext

@@ -84,8 +84,8 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M6-7] (90m) Guarantee check v2 (inventory-aware) — subtract beliefs ≥`inventoryConfidenceThreshold`. **AC:** GT-4; re-verify GT-1..3 with inventory.
 - [M6-8] (60m) Waste logging (§18) — WasteEvent via one sentence; reflection surfacing + actions; ⚠️ no guilt copy. **AC:** WST-1..5. PROMPT-REVIEW (WST-5).
 
-## M7 — Breakfast + snacks — [M0-0b draft]
-- [M7-1] (60m) Per-member breakfast default — currentBreakfast resolves; zero daily entries; graceful nil (DM-6). **AC:** BF-1, DM-6. NEEDS-VISUAL-REVIEW.
+## M7 — Breakfast + LUNCH (D-40) + snacks — [M0-0b draft]
+- [M7-1] (60m) Per-member breakfast default — currentBreakfast resolves; zero daily entries; graceful nil (DM-6). **AC:** BF-1, DM-6. NEEDS-VISUAL-REVIEW. *(D-40: currentLunch model landed early; M7-1/2 cover lunch defaults + burnout with the same ACs applied to lunch.)*
 - [M7-2] (60m) Breakfast burnout swap — per-person cooldown, 2–3 alts, new default; rest cycles back. **AC:** BF-2, BF-3, BF-5.
 - [M7-3] (45m) Breakfast staples on cadence — source `breakfastStaple` onto runs. **AC:** BF-4.
 - [M7-4] (60m) Snack cadence inference — from PurchaseRecords; `snackInferenceMinPoints`. **AC:** SN-1, SN-5.

@@ -216,6 +216,15 @@ enum SeedData {
         context.insert(oatmeal)
         oatmeal.directItems = [RecipeItem(ingredient: oats)]
 
+        // 17–18. Lunch candidates (D-40: lunch is in scope, breakfast pattern)
+        let sandwiches = Meal(title: "Sandwiches", effort: .assembly,
+                              slots: [.lunch], methods: [.noCook])
+        context.insert(sandwiches)
+        let leftoverLunch = Meal(title: "Leftovers lunch",
+                                 freeformNotes: "whatever the fridge offers",
+                                 effort: .noCook, slots: [.lunch])
+        context.insert(leftoverLunch)
+
         // ── Anchors ─────────────────────────────────────────────
         // D-1: Wednesday breakfast-for-dinner anchor ships seeded but OFF.
         context.insert(ThemeAnchor(weekday: 4, slot: .dinner,

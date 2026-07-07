@@ -74,6 +74,8 @@ Format per item:
 
 
 ## Answered (canon)
+- **D-40 (2026-07-07): LUNCH IS IN SCOPE — breakfast pattern.** Ria: "we eat lunch too." Overrides build-spec §1's "lunch out of scope." `SlotKind.lunch` added everywhere (grid, editor, calendar sync at a lunch hour); each member gets a per-person `currentLunch` default with burnout-swap, exactly like breakfast (joins M7's default+burnout work). Manual lunch planning works today via the week grid.
+- **D-41 (2026-07-07): Snacks stay STOCKED, NOT SCHEDULED.** The replenishment system (favorites + rebuy rhythms + always-in-stock) is the right model; no snack calendar slot.
 - **D-34 (2026-07-07): `staple` joins ItemSource.** {meal, snackCadence, breakfastStaple, manual, staple} — lifeline items (D-6 StapleItems) carry their own provenance for PT-7 dedup and list explanations.
 - **D-37 (2026-07-07): Delete-rules bundle APPROVED (resolves F14, ratifies F17).** When a MEAL is deleted: its MemberMealScores cascade (DM-5); any member's `currentBreakfast` pointing at it nils gracefully (DM-6); PlanEntries survive with `meal` nil = needs-refill flag (never silently vanish — CD-1/HC-8 spirit; `PlanEntry.meal` becomes optional to express this). When a MEMBER is deleted: they drop out of `attendees` lists and `assignedCook` nils (D-5 subset semantics). F17's explicit inverse (`coreMemoryMeals`) ratified. All expressed as explicit inverses on Meal/FamilyMember — spec §2 deviations authorized by this answer.
 - **D-38 (2026-07-07): Notes are commentary, not composition.** Only listed ingredients drive the GF-verified verdict; a note ("kids like extra cheese") no longer holds a meal unverified. Freeform-ONLY meals (zero known ingredients) still read unverified — F16's fail-safe stands.

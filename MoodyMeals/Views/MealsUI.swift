@@ -90,6 +90,7 @@ struct MealEditView: View {
             }
             Section("Slots") {
                 Toggle("Dinner", isOn: slotBinding(.dinner))
+                Toggle("Lunch", isOn: slotBinding(.lunch)) // D-40
                 Toggle("Breakfast", isOn: slotBinding(.breakfast))
                 Toggle("Needs a calm day", isOn: $meal.requiresCalmDay)
             }

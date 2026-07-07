@@ -63,24 +63,28 @@ final class WeekPlanTests: XCTestCase {
     }
 
     @MainActor
-    func test_breakfastAndDinner_coexistOnOneDay() throws {
+    func test_allThreeSlots_coexistOnOneDay_D40() throws {
         let container = try makeContainer()
         let context = container.mainContext
 
         let ria = FamilyMember(name: "Ria", isAdult: true)
         let oatmeal = Meal(title: "Oatmeal", slots: [.breakfast])
+        let sandwiches = Meal(title: "Sandwiches", slots: [.lunch]) // D-40
         let tacos = Meal(title: "Tacos")
         context.insert(ria)
         context.insert(oatmeal)
+        context.insert(sandwiches)
         context.insert(tacos)
 
         let day = Date.now
         try WeekPlan.assign(oatmeal, on: day, slot: .breakfast, attendees: [ria], in: context)
+        try WeekPlan.assign(sandwiches, on: day, slot: .lunch, attendees: [ria], in: context)
         try WeekPlan.assign(tacos, on: day, slot: .dinner, attendees: [ria], in: context)
 
         let fresh = ModelContext(container)
-        XCTAssertEqual(try fresh.fetch(FetchDescriptor<PlanEntry>()).count, 2,
-                       "slots are independent within a day")
+        let entries = try fresh.fetch(FetchDescriptor<PlanEntry>())
+        XCTAssertEqual(entries.count, 3, "slots are independent within a day (D-40)")
+        XCTAssertEqual(Set(entries.map(\.slot)), [.breakfast, .lunch, .dinner])
     }
 
     @MainActor
