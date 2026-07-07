@@ -24,6 +24,11 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M2-4] — Markdown + Reminders export
+- Outcome: **done**. `ShoppingListBuilder.build`: per-entry explosion merged to one line per ingredient with the STRICTEST need-by (PT-7 spirit), routed via M2-2, grouped by run; unroutable lines land in an at-risk section (never dropped). `markdown()`: checklist format, run headings with dates, ⚠️ at-risk section (SL-6: every uncovered item once, readable). `RemindersExport`: permission-gated behind a `RemindersStore` seam — denied returns a visible reason naming the markdown fallback; authorized adds every item to a per-run Reminders list. Thin `EventKitRemindersStore` adapter + Info.plist usage string (both configs). Suite 102/102.
+- Tests added: 3 in ShoppingListBuilderTests — SL-6 (once/grouped/summed/readable + at-risk), Reminders authorized path (items land on the run's list), denied path (visible, never silent). One test-scenario self-catch: the midweek run legitimately carried cod within its shelf window — scenario corrected, not the code.
+- Notes: Shopping tab UI intentionally deferred to M2-5 so list + at-risk report ship as one reviewed screen.
+
 ### [D-40/D-41] — Lunch in scope; snacks stay replenishment
 - Outcome: **applied**. Ria (live): "we eat lunch too... and snacks." D-40: `SlotKind.lunch` everywhere — week-grid row, meal-editor toggle, calendar sync at `lunchEventHour=12`, per-person `currentLunch` default with explicit nullify inverse (D-37 pattern, no implicit-inverse repeat), 2 seed lunch meals. Breakfast-pattern automation (default + burnout swap) lands with M7 as re-scoped. D-41: snacks confirmed stocked-not-scheduled — no change needed. Suite 99/99.
 - Tests added: 3-slot coexistence (D-40), currentLunch persists + degrades independently of breakfast.

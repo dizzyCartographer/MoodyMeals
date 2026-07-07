@@ -96,3 +96,45 @@ final class EventKitCalendarStore: CalendarStore {
                                  end: event.endDate, notes: event.notes)
     }
 }
+
+// ── M2-4: Reminders adapter (same thin-seam pattern) ─────────
+
+@MainActor
+final class EventKitRemindersStore: RemindersStore {
+    private let store = EKEventStore()
+
+    var authorization: CalendarAuthorization {
+        switch EKEventStore.authorizationStatus(for: .reminder) {
+        case .fullAccess: .authorized
+        case .notDetermined: .notDetermined
+        default: .denied
+        }
+    }
+
+    func requestAccess() async -> Bool {
+        (try? await store.requestFullAccessToReminders()) ?? false
+    }
+
+    func addItem(_ title: String, toList listName: String) throws {
+        guard authorization == .authorized else { throw CalendarStoreError.notAuthorized }
+        let calendar: EKCalendar
+        if let existing = store.calendars(for: .reminder)
+            .first(where: { $0.title == listName }) {
+            calendar = existing
+        } else {
+            let created = EKCalendar(for: .reminder, eventStore: store)
+            created.title = listName
+            guard let source = store.defaultCalendarForNewReminders()?.source
+                    ?? store.sources.first(where: { $0.sourceType == .local }) else {
+                throw CalendarStoreError.calendarUnavailable
+            }
+            created.source = source
+            try store.saveCalendar(created, commit: true)
+            calendar = created
+        }
+        let reminder = EKReminder(eventStore: store)
+        reminder.title = title
+        reminder.calendar = calendar
+        try store.save(reminder, commit: true)
+    }
+}
