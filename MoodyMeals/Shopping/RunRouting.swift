@@ -24,6 +24,12 @@ enum RunRouting {
     /// - `runs`: upcoming runs (proposed/confirmed), any order.
     /// - `preferredTier`: RT-5 — an explicit override beats inference when an
     ///   eligible run of that tier exists; otherwise inference proceeds.
+    ///
+    /// GRANULARITY CONTRACT (review-hardened): all date comparisons happen at
+    /// DAY granularity — a run at 2pm covers that evening's dinner, and a
+    /// run later today covers tonight. Fresh items additionally require the
+    /// run within `freshShortShelfDays` of the meal (a run 17 days early
+    /// "covering" fresh fish is spoilage, not coverage).
     static func route(
         perishability: Perishability,
         neededBy: Date?,
@@ -32,10 +38,21 @@ enum RunRouting {
         now: Date = .now
     ) -> RoutingResult {
         let tiers = eligibleTiers(for: perishability)
+        let today = WeekPlan.dayAnchor(for: now)
+        let needDay = neededBy.map { WeekPlan.dayAnchor(for: $0) }
+        let freshFloor: Date? = needDay.flatMap { day in
+            perishability == .freshShort
+                ? Calendar.current.date(byAdding: .day,
+                                        value: -TuningDefaults.freshShortShelfDays,
+                                        to: day)
+                : nil
+        }
         let inWindow = runs.indices.filter { index in
             let run = runs[index]
-            guard run.plannedDate >= now else { return false }
-            if let neededBy { guard run.plannedDate <= neededBy else { return false } }
+            let runDay = WeekPlan.dayAnchor(for: run.plannedDate)
+            guard runDay >= today else { return false }
+            if let needDay { guard runDay <= needDay else { return false } }
+            if let freshFloor { guard runDay >= freshFloor else { return false } }
             return tiers.contains(run.tier)
         }
         guard !inWindow.isEmpty else { return .violation } // RT-4
@@ -50,7 +67,7 @@ enum RunRouting {
 
         switch perishability {
         case .freshShort:
-            if let neededBy, neededBy > now {
+            if let needDay, needDay > today {
                 // RT-1: the LATEST run before need-by — maximal freshness.
                 let latest = inWindow.max { runs[$0].plannedDate < runs[$1].plannedDate }!
                 return .routed(runIndex: latest)
@@ -67,10 +84,10 @@ enum RunRouting {
         case .pantry, .freezer, .refrigeratedLong:
             // RT-3: far-out shelf-stable prefers bulk.
             let farOut: Bool = {
-                guard let neededBy else { return true } // no deadline = stock-up
+                guard let needDay else { return true } // no deadline = stock-up
                 let lead = Calendar.current.date(
-                    byAdding: .day, value: TuningDefaults.bulkPreferenceLeadDays, to: now)!
-                return neededBy > lead
+                    byAdding: .day, value: TuningDefaults.bulkPreferenceLeadDays, to: today)!
+                return needDay > lead
             }()
             if farOut,
                let bulk = inWindow

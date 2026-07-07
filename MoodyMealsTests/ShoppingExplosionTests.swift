@@ -156,6 +156,7 @@ final class ShoppingExplosionTests: XCTestCase {
             meal.directItems = [RecipeItem(ingredient: beef, amount: 1, unit: "lb")]
             return meal
         }
+        _ = try plan(mealWithBeef("Today — must be included"), daysAhead: 0, ria: ria, in: context)
         _ = try plan(mealWithBeef("Inside A"), daysAhead: 1, ria: ria, in: context)
         _ = try plan(mealWithBeef("Inside B"), daysAhead: 3, ria: ria, in: context)
         _ = try plan(mealWithBeef("NEXT WEEK — must not leak"), daysAhead: 9,
@@ -168,9 +169,9 @@ final class ShoppingExplosionTests: XCTestCase {
         let to = Calendar.current.date(byAdding: .day, value: 7, to: from)!
         let entries = try ShoppingExplosion.entries(from: from, to: to, in: context)
 
-        XCTAssertEqual(entries.count, 2, "exactly the in-range, cookable entries (SL-5)")
+        XCTAssertEqual(entries.count, 3, "exactly the in-range, cookable entries incl. today (SL-5)")
         let lines = ShoppingExplosion.explode(entries)
-        XCTAssertEqual(lines.first?.amounts, [ExplodedAmount(amount: 2, unit: "lb")],
+        XCTAssertEqual(lines.first?.amounts, [ExplodedAmount(amount: 3, unit: "lb")],
                        "adjacent-week meals must not leak into the sum")
     }
 }

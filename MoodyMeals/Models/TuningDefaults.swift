@@ -23,4 +23,16 @@ enum TuningDefaults {
     /// Spec §4 step 4: shelf-stable items prefer the bulk run when needed
     /// more than this many days out ("preferring bulk when >2 weeks out").
     static let bulkPreferenceLeadDays = 14
+    /// §8 `inventoryConfidenceThreshold` — belief level at which inventory
+    /// offsets the shopping list (below it: buy anyway).
+    static let inventoryConfidenceThreshold = 0.7
+    /// §8 `guaranteeLookaheadRuns` — how many confirmed runs ahead the
+    /// guarantee covers. v1 implements exactly 1 (next per tier); the knob
+    /// itself becomes runtime-tunable at M4-1.
+    static let guaranteeLookaheadRuns = 1
+    /// NEW at M2-3 (review finding, noted in RUNLOG): how many days fresh
+    /// (`freshShort`) groceries stay good — bounds both routing (a run too
+    /// far before the meal can't carry its fresh items) and purchase
+    /// coverage (last week's cod never covers this week's).
+    static let freshShortShelfDays = 4
 }

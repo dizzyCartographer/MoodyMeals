@@ -23,13 +23,15 @@ final class RunRoutingTests: XCTestCase {
                                       runs: standardRuns, now: now)
         XCTAssertEqual(result, .routed(runIndex: 2), "latest fresh-capable run (RT-1)")
 
-        // Bulk in-window and earliest: still never chosen for fresh.
-        let bulkHeavy: [(tier: RunTier, plannedDate: Date)] =
-            [(.bulk, days(1)), (.weekly, days(2))]
+        // Bulk in-window and LATEST — the slot fresh routing prefers —
+        // must still never be chosen for fresh (a real pin, review-hardened:
+        // with bulk earliest, "latest wins" masked the tier rule).
+        let bulkLatest: [(tier: RunTier, plannedDate: Date)] =
+            [(.weekly, days(2)), (.bulk, days(4))]
         let result2 = RunRouting.route(perishability: .freshShort,
                                        neededBy: days(5),
-                                       runs: bulkHeavy, now: now)
-        XCTAssertEqual(result2, .routed(runIndex: 1), "fresh NEVER rides bulk (RT-1)")
+                                       runs: bulkLatest, now: now)
+        XCTAssertEqual(result2, .routed(runIndex: 0), "fresh NEVER rides bulk (RT-1)")
     }
 
     func test_RT2_milk_defaultsToMidweek() {
@@ -81,6 +83,52 @@ final class RunRoutingTests: XCTestCase {
                                         runs: noMidweek, now: now)
         XCTAssertEqual(fallback, .routed(runIndex: 0),
                        "an unsatisfiable preference degrades to inference")
+    }
+
+    func test_freshnessFloor_runTooEarlyCannotCarryFresh() {
+        // Review blocker: a run 17 days before the meal is spoilage, not
+        // coverage — outside freshShortShelfDays, fresh is unroutable.
+        let result = RunRouting.route(perishability: .freshShort,
+                                      neededBy: days(19),
+                                      runs: [(.weekly, days(2))], now: now)
+        XCTAssertEqual(result, .violation,
+                       "fresh can only ride runs within its shelf window")
+
+        // Same distance, shelf-stable: perfectly fine.
+        let pantry = RunRouting.route(perishability: .pantry,
+                                      neededBy: days(19),
+                                      runs: [(.weekly, days(2))], now: now)
+        XCTAssertEqual(pantry, .routed(runIndex: 0))
+    }
+
+    func test_sameDayRun_isEligible_dayGranularity() {
+        // A run at 10am covers that evening's dinner — day anchors compare.
+        let mealDay = WeekPlan.dayAnchor(for: days(2))
+        let morningRun = Calendar.current.date(byAdding: .hour, value: 10, to: mealDay)!
+        let result = RunRouting.route(perishability: .freshShort,
+                                      neededBy: mealDay,
+                                      runs: [(.weekly, morningRun)], now: now)
+        XCTAssertEqual(result, .routed(runIndex: 0),
+                       "shop Saturday morning, cook Saturday night")
+    }
+
+    func test_shelfStable_noDeadline_prefersBulk_andLeadBoundary() {
+        // Stock-up items (no deadline) belong on the Costco run.
+        let stockUp = RunRouting.route(perishability: .pantry,
+                                       neededBy: nil,
+                                       runs: standardRuns, now: now)
+        XCTAssertEqual(stockUp, .routed(runIndex: 0), "no deadline = stock-up = bulk")
+
+        // Boundary: needed EXACTLY at the lead threshold is NOT far-out
+        // (strictly greater-than, per §4's "> 2 weeks") → earliest eligible.
+        let atBoundary = RunRouting.route(
+            perishability: .pantry,
+            neededBy: Calendar.current.date(byAdding: .day,
+                                            value: TuningDefaults.bulkPreferenceLeadDays,
+                                            to: WeekPlan.dayAnchor(for: now))!,
+            runs: standardRuns, now: now)
+        XCTAssertEqual(atBoundary, .routed(runIndex: 1),
+                       "at the boundary the earliest run wins, not bulk")
     }
 
     func test_RT6_gfQualifierSurvivesToExportText() {

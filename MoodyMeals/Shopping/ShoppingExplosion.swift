@@ -16,6 +16,23 @@ struct ExplodedLine: Equatable {
     var plusExtra: Bool             // some requirement carried no amount
     /// GF qualifier survives into export text (RT-6 groundwork).
     var isGlutenFreeVerified: Bool?
+    /// Routing identity rides ON the line (review finding: name re-lookup
+    /// let a fresh item inherit a same-named pantry item's class). Merging
+    /// keeps the most restrictive class.
+    var perishability: Perishability = .pantry
+    var preferredRunTier: RunTier? = nil
+}
+
+private extension Perishability {
+    /// Restrictiveness for merge conflicts: fresher wins.
+    var restrictiveness: Int {
+        switch self {
+        case .freshShort: 3
+        case .refrigeratedLong: 2
+        case .freezer: 1
+        case .pantry: 0
+        }
+    }
 }
 
 enum ShoppingExplosion {
@@ -49,6 +66,8 @@ enum ShoppingExplosion {
             var ingredient: Ingredient
             var totals: [String?: Double] = [:]
             var plusExtra = false
+            var perishability: Perishability
+            var preferredRunTier: RunTier?
         }
         var byIngredient: [UUID: Accumulator] = [:]
 
@@ -62,11 +81,22 @@ enum ShoppingExplosion {
                 if pantryExclusions.contains(name), !outOfStock.contains(name) {
                     continue // SL-4: assumed on hand
                 }
-                var acc = byIngredient[key] ?? Accumulator(ingredient: ingredient)
+                var acc = byIngredient[key] ?? Accumulator(
+                    ingredient: ingredient,
+                    perishability: ingredient.perishability,
+                    preferredRunTier: ingredient.preferredRunTier)
                 if let amount = item.amount {
                     acc.totals[item.unit, default: 0] += amount // SL-1: sum per unit
                 } else {
                     acc.plusExtra = true // SL-2: loose intent preserved
+                }
+                // Most restrictive class wins on merge (fresh beats pantry).
+                if ingredient.perishability.restrictiveness
+                    > acc.perishability.restrictiveness {
+                    acc.perishability = ingredient.perishability
+                }
+                if acc.preferredRunTier == nil {
+                    acc.preferredRunTier = ingredient.preferredRunTier
                 }
                 byIngredient[key] = acc
             }
@@ -79,7 +109,9 @@ enum ShoppingExplosion {
                     .map { ExplodedAmount(amount: $0.value, unit: $0.key) }
                     .sorted { ($0.unit ?? "") < ($1.unit ?? "") },
                 plusExtra: acc.plusExtra,
-                isGlutenFreeVerified: acc.ingredient.isGlutenFreeVerified
+                isGlutenFreeVerified: acc.ingredient.isGlutenFreeVerified,
+                perishability: acc.perishability,
+                preferredRunTier: acc.preferredRunTier
             )
         }
         .sorted { $0.ingredientName.lowercased() < $1.ingredientName.lowercased() }
