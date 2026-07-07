@@ -50,6 +50,18 @@ final class Meal {
     // Occasions
     var occasionTag: String?          // "thanksgiving", "caddie-birthday"
 
+    // ── D-37 delete-rule inverses (canon 2026-07-07; deviations authorized) ──
+    /// DM-5: a deleted meal takes its per-member scores with it.
+    @Relationship(deleteRule: .cascade, inverse: \MemberMealScore.meal)
+    var memberScores: [MemberMealScore]
+    /// DM-6: a deleted meal gracefully nils any member's breakfast default.
+    @Relationship(deleteRule: .nullify, inverse: \FamilyMember.currentBreakfast)
+    var breakfastDefaultFor: [FamilyMember]
+    /// D-37: plan entries survive meal deletion with `meal == nil` — the
+    /// needs-refill flag (CD-1/HC-8 spirit); they never silently vanish.
+    @Relationship(deleteRule: .nullify, inverse: \PlanEntry.meal)
+    var planEntries: [PlanEntry]
+
     init(
         title: String,
         freeformNotes: String = "",
@@ -96,5 +108,8 @@ final class Meal {
         self.coreMemoryNote = coreMemoryNote
         self.coreMemoryOwner = coreMemoryOwner
         self.occasionTag = occasionTag
+        self.memberScores = []
+        self.breakfastDefaultFor = []
+        self.planEntries = []
     }
 }

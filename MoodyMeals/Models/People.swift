@@ -50,6 +50,14 @@ final class FamilyMember {
     @Relationship(inverse: \Meal.coreMemoryOwner)
     var coreMemoryMeals: [Meal]
 
+    // ── D-37 delete-rule inverses (canon 2026-07-07) ──
+    /// A deleted member simply drops out of attendee lists (D-5 subset semantics).
+    @Relationship(inverse: \PlanEntry.attendees)
+    var attendingEntries: [PlanEntry]
+    /// A deleted member's cook-night assignments nil out.
+    @Relationship(inverse: \PlanEntry.assignedCook)
+    var cookNights: [PlanEntry]
+
     init(
         name: String,
         isAdult: Bool,
@@ -76,6 +84,8 @@ final class FamilyMember {
         self.mealScores = []
         self.favoriteSnacks = []
         self.coreMemoryMeals = []
+        self.attendingEntries = []
+        self.cookNights = []
     }
 }
 

@@ -13,7 +13,9 @@ final class PlanEntry {
 
     var date: Date                    // day-granularity
     var slot: SlotKind
-    var meal: Meal
+    /// Optional per D-37: nil means the meal was deleted out from under this
+    /// entry — the needs-refill flag. Entries never silently vanish.
+    var meal: Meal?
     var isLocked: Bool                // user pinned; scheduler won't move
     var eventKitID: String?           // synced calendar event
     var status: PlanStatus            // planned / eaten / swapped / skipped

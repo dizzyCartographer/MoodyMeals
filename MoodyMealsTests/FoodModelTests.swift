@@ -212,17 +212,17 @@ final class FoodModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_HC6d_freeformNotesPlusVerifiedItems_staysUnverified() throws {
-        // F16b conservative default (flagged for Ria): notes are an unknown
-        // chunk — "Chipotle takeout" + verified GF chips must NOT read safe
-        // because of the chips.
+    func test_HC6d_D38_notesAreCommentary_listedItemsDriveVerdict() throws {
+        // D-38 (Ria): notes are commentary, not composition — a casual note
+        // must not hold an all-verified meal unverified. (Freeform-ONLY meals
+        // still read unverified — HC6b pins that half.)
         let container = try makeContainer()
         let context = container.mainContext
 
         let chipsGF = Ingredient(name: "GF tortilla chips", perishability: .pantry,
                                  isGlutenFreeVerified: true)
-        let meal = Meal(title: "Takeout night",
-                        freeformNotes: "Chipotle, everyone orders their own")
+        let meal = Meal(title: "Nacho night",
+                        freeformNotes: "kids like extra cheese")
         context.insert(chipsGF)
         context.insert(meal)
         meal.directItems = [RecipeItem(ingredient: chipsGF)]
@@ -230,8 +230,8 @@ final class FoodModelTests: XCTestCase {
 
         let fresh = ModelContext(container)
         let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertFalse(fetched.isGFVerifiedForCeliac,
-                       "one verified side item must not vouch for an unknown chunk")
+        XCTAssertTrue(fetched.isGFVerifiedForCeliac,
+                      "a commentary note must not poison an all-verified meal (D-38)")
     }
 
     @MainActor

@@ -37,12 +37,13 @@ final class PlanningModelTests: XCTestCase {
 
         let fresh = ModelContext(container)
         let entry = try XCTUnwrap(try fresh.fetch(FetchDescriptor<PlanEntry>()).first)
-        XCTAssertEqual(entry.meal.title, "Chipotle takeout")
-        XCTAssertTrue(entry.meal.recipes.isEmpty)
-        XCTAssertTrue(entry.meal.directItems.isEmpty)
-        XCTAssertEqual(entry.meal.freeformNotes, "everyone orders their own")
-        XCTAssertTrue(entry.meal.isEatingOut)
-        XCTAssertEqual(entry.meal.effort, .noCook) // non-default: pins effort wiring
+        let entryMeal = try XCTUnwrap(entry.meal)
+        XCTAssertEqual(entryMeal.title, "Chipotle takeout")
+        XCTAssertTrue(entryMeal.recipes.isEmpty)
+        XCTAssertTrue(entryMeal.directItems.isEmpty)
+        XCTAssertEqual(entryMeal.freeformNotes, "everyone orders their own")
+        XCTAssertTrue(entryMeal.isEatingOut)
+        XCTAssertEqual(entryMeal.effort, .noCook) // non-default: pins effort wiring
         XCTAssertEqual(entry.slot, .dinner)
         XCTAssertEqual(entry.status, .swapped)
     }
@@ -244,8 +245,100 @@ final class PlanningModelTests: XCTestCase {
         XCTAssertTrue(fetched.isActive)
     }
 
-    // NOTE (F14/D-37): DM-5 (deleting a meal cascades its MemberMealScores)
-    // and DM-6 (currentBreakfast degrades to nil) are NOT tested yet — the
-    // meal-side delete rules are unpinned in spec §2 and parked for Ria.
-    // Tests land with whichever rule she picks.
+    // MARK: - D-37 delete rules (canon 2026-07-07)
+
+    @MainActor
+    func test_DM5_deletingMealCascadesScores_sharedDataSurvives() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let chad = FamilyMember(name: "Chad", isAdult: false)
+        let onions = Ingredient(name: "onions", perishability: .refrigeratedLong)
+        let burgers = Meal(title: "Burgers")
+        context.insert(chad)
+        context.insert(onions)
+        context.insert(burgers)
+        burgers.directItems = [RecipeItem(ingredient: onions)]
+        context.insert(MemberMealScore(member: chad, meal: burgers, liking: 2))
+        try context.save()
+
+        context.delete(burgers)
+        try context.save()
+
+        let fresh = ModelContext(container)
+        XCTAssertEqual(try fresh.fetch(FetchDescriptor<MemberMealScore>()).count, 0,
+                       "DM-5: scores die with their meal")
+        XCTAssertEqual(try fresh.fetch(FetchDescriptor<Ingredient>()).count, 1,
+                       "DM-5: shared ingredients never die with a meal")
+        XCTAssertEqual(try fresh.fetch(FetchDescriptor<FamilyMember>()).count, 1)
+    }
+
+    @MainActor
+    func test_DM6_deletedBreakfastDefault_degradesToNil() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let chad = FamilyMember(name: "Chad", isAdult: false)
+        let bagel = Meal(title: "Everything bagel", slots: [.breakfast])
+        context.insert(chad)
+        context.insert(bagel)
+        chad.currentBreakfast = bagel
+        try context.save()
+
+        context.delete(bagel)
+        try context.save()
+
+        let fresh = ModelContext(container)
+        let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<FamilyMember>()).first)
+        XCTAssertNil(fetched.currentBreakfast,
+                     "DM-6: a deleted breakfast default degrades gracefully to nil")
+    }
+
+    @MainActor
+    func test_D37_deletedMealLeavesPlanEntryFlagged_neverVanished() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let ria = FamilyMember(name: "Ria", isAdult: true)
+        let tacos = Meal(title: "Tacos")
+        context.insert(ria)
+        context.insert(tacos)
+        context.insert(PlanEntry(date: .now, slot: .dinner, meal: tacos,
+                                 attendees: [ria]))
+        try context.save()
+
+        context.delete(tacos)
+        try context.save()
+
+        let fresh = ModelContext(container)
+        let entry = try XCTUnwrap(try fresh.fetch(FetchDescriptor<PlanEntry>()).first,
+                                  "the entry must SURVIVE meal deletion")
+        XCTAssertNil(entry.meal, "meal == nil is the needs-refill flag (D-37)")
+    }
+
+    @MainActor
+    func test_D37_deletedMemberDropsFromAttendees_andCookNils() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let ria = FamilyMember(name: "Ria", isAdult: true)
+        let chad = FamilyMember(name: "Chad", isAdult: false)
+        let burgers = Meal(title: "Burgers")
+        context.insert(ria)
+        context.insert(chad)
+        context.insert(burgers)
+        context.insert(PlanEntry(date: .now, slot: .dinner, meal: burgers,
+                                 attendees: [ria, chad], assignedCook: chad))
+        try context.save()
+
+        context.delete(chad)
+        try context.save()
+
+        let fresh = ModelContext(container)
+        let entry = try XCTUnwrap(try fresh.fetch(FetchDescriptor<PlanEntry>()).first)
+        XCTAssertEqual(entry.attendees.map(\.name), ["Ria"],
+                       "a deleted member drops out of attendee lists (D-5/D-37)")
+        XCTAssertNil(entry.assignedCook,
+                     "a deleted member's cook assignment nils (D-37)")
+    }
 }

@@ -206,9 +206,8 @@ final class PeopleModelTests: XCTestCase {
                        "scores must not orphan when their member is deleted")
         XCTAssertEqual(try fresh.fetch(FetchDescriptor<Meal>()).count, 1,
                        "the meal itself must survive (only the join dies)")
-        // NOTE (F14): the reverse direction — deleting a MEAL that has scores —
-        // is unpinned: spec §2 declares no inverse on Meal. Raised in QUESTIONS
-        // for M0-4; a test lands with whichever rule Ria picks.
+        // The reverse direction — deleting a MEAL that has scores — is pinned
+        // by test_DM5_deletingMealCascadesScores_sharedDataSurvives (D-37).
     }
 
     @MainActor

@@ -26,17 +26,14 @@ extension Meal {
     /// HC-6: unverified status propagates to the meal — GF-verified only if
     /// every ingredient across all recipes and direct items is verified.
     ///
-    /// CONSERVATIVE DEFAULTS (F16 + F16b, flagged for Ria, reversible):
+    /// Composition rules (F16 held, F16b resolved by D-38):
     /// - No known ingredients at all (freeform-only, "Chipotle takeout") →
-    ///   NOT verified: unknown composition = unverified composition.
-    /// - Non-empty freeformNotes alongside known items → NOT verified either:
-    ///   the notes are an unknown chunk ("Chipotle takeout" + GF chips must
-    ///   not read safe because of the chips). If Ria rules notes are
-    ///   commentary-not-composition, this is a one-line flip.
+    ///   NOT verified: unknown composition = unverified composition (F16).
+    /// - Notes alongside listed ingredients are COMMENTARY, not composition
+    ///   (D-38): only the listed items drive the verdict.
     /// Fail-safe for celiac; manual override stays possible via HC-5's
     /// confirm flow when scheduling lands.
     var isGFVerifiedForCeliac: Bool {
-        guard freeformNotes.isEmpty else { return false }   // F16b
         let hasKnownComposition = !recipes.isEmpty || !directItems.isEmpty
         guard hasKnownComposition else { return false }     // F16
         return recipes.allSatisfy(\.allIngredientsGFVerified) // covers zero-item recipes

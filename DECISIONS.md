@@ -11,17 +11,17 @@ Format per item:
 **D-34. Add `staple` as a shopping-item source? ⏫ (re-raised from morning — now the only thing blocking M0-5)**
 → Sources today: {meal, snackCadence, breakfastStaple, manual}; Elsie's always-stocked lifeline items need their own tag so "why is this on my list" and PT-7 dedup work. → Options: a) yes, add `staple` (recommended) b) reuse `manual` (loses provenance)
 → Blocks: M0-5 (shopping/inventory models) → which blocks all of M2
-**Ria:** _____
+**Ria:** a) yes, add `staple` (2026-07-07 evening) → ANSWERED, canon
 
 **D-37. Delete rules — one decision pins five relationship edges (F14+F17 in QUESTIONS).** When a meal or family member is deleted, today's spec-exact models leave dangling references that CRASH on access (verified). Proposal: scores cascade with their meal (DM-5); `currentBreakfast` nils gracefully (DM-6); plan entries get flagged + re-filled rather than silently deleted (CD-1/HC-8 spirit); attendee/cook references nil out (D-5 subset semantics). Also: retroactive OK for F17 (an explicit inverse field I had to add to stop core-memory writes corrupting breakfast defaults — real data-corruption bug, fixed + regression-tested).
 → Options: a) approve the bundle as proposed (recommended) b) tweak (say which edge) c) discuss first
 → Blocks: DM-5/DM-6 tests; meal/member deletion anywhere in the UI (M0-7+)
-**Ria:** _____
+**Ria:** a) approve the bundle as proposed, incl. F17 retroactive OK (2026-07-07 evening) → ANSWERED, canon
 
 **D-38. Freeform text and GF safety — how cautious? (F16/F16b in QUESTIONS.)** Currently: a meal whose composition is unknown (freeform-only, like "Chipotle takeout") or partly unknown (notes + listed items) reads as NOT verified for Caddie until confirmed once. Safest, but it means casual notes ("kids like extra cheese") make a fully-verified meal ask for one confirmation.
 → Options: a) keep maximal caution (current) b) notes are commentary — only listed ingredients count (one-line flip; freeform-ONLY meals stay unverified) (recommended: b if you use notes casually, a if notes often carry real food)
 → Blocks: nothing today; shapes how often verification prompts appear from M1-3 on
-**Ria:** _____
+**Ria:** b) notes are commentary — only listed ingredients count; freeform-ONLY meals stay unverified (2026-07-07 evening) → ANSWERED, canon
 
 ---
 ## Digest — 2026-07-07 (M0-0 consistency read)
@@ -69,6 +69,9 @@ Format per item:
 
 
 ## Answered (canon)
+- **D-34 (2026-07-07): `staple` joins ItemSource.** {meal, snackCadence, breakfastStaple, manual, staple} — lifeline items (D-6 StapleItems) carry their own provenance for PT-7 dedup and list explanations.
+- **D-37 (2026-07-07): Delete-rules bundle APPROVED (resolves F14, ratifies F17).** When a MEAL is deleted: its MemberMealScores cascade (DM-5); any member's `currentBreakfast` pointing at it nils gracefully (DM-6); PlanEntries survive with `meal` nil = needs-refill flag (never silently vanish — CD-1/HC-8 spirit; `PlanEntry.meal` becomes optional to express this). When a MEMBER is deleted: they drop out of `attendees` lists and `assignedCook` nils (D-5 subset semantics). F17's explicit inverse (`coreMemoryMeals`) ratified. All expressed as explicit inverses on Meal/FamilyMember — spec §2 deviations authorized by this answer.
+- **D-38 (2026-07-07): Notes are commentary, not composition.** Only listed ingredients drive the GF-verified verdict; a note ("kids like extra cheese") no longer holds a meal unverified. Freeform-ONLY meals (zero known ingredients) still read unverified — F16's fail-safe stands.
 - **D-35 (2026-07-07): NO ONE IS HARDCODED + the full-dinner rule.** Two-part canon: (1) **No family member is ever hardcoded in code** — all member-specific behavior comes from per-member DATA (profiles, goals, staples, appetite fields on FamilyMember). Names appear in seed data only; no named-person constants (build-spec §8's `chadAppetiteBase` label reads as generic per-member `appetiteBase` — already modeled that way). (2) **The scheduler's objective is that ALL FIVE attendees want to eat a full dinner.** Elsie "isn't a cow that just grazes on her own": her staples lifeline (D-6) is an emergency safety net, NEVER her dinner plan — dinners must actually work for her. So her seed keeps `proteinVegStarch` as a soft goal AND the staples floor. Strengthens the fairness floor (Step 4d) and Fit-coverage guardrails: dinner inclusion is the goal, fallbacks are exceptions.
 - **D-36 (2026-07-07): Mixed precision — option (c).** A Precise recipe with amount-less items is VALID: measured items keep amounts ("I might want to know how much chicken and beans I normally use"), seasonings ride along amount-less ("all seasoning by taste"). Never reject, never downgrade the whole recipe. Shopping explosion: sum amounts where present, list plain where not (consistent with SL-2). DM-4's rule is now: allow mixed; no validation gate on missing amounts.
 - **D-32 (2026-07-07): Stale blockers CLEARED.** Ria confirmed Q1/Q2/Q4/Q5 are resolved by existing canon (D-1 multi-slot, D-5 attendance, D-2 cooldown 42d, D-3 escalation/snooze). Moved to QUESTIONS Answered; BACKLOG "Blocked pending Ria" line removed. **M0-4 is unblocked.** Only Q3 (Liking/Fit −2…+2 resolution) remains open — non-blocking, implemented as Int −2…+2 per spec §2 unless she wants finer.
