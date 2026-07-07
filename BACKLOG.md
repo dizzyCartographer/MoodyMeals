@@ -104,5 +104,5 @@ Nutrition (USDA) + auto-Fit tagging; Instacart; fridge-spec container recs; week
 ## Parked for review windows (never autonomous)
 - Any aesthetic iteration; notification copy/tone bank; Claude API prompt tuning.
 
-## Blocked pending Ria (build-spec §7)
-- [Q1] slotKind single vs multi (affects M0-4)  - [Q2] attendance modeling  - [Q3] score resolution  - [Q4] default cooldown  - [Q5] escalation ceiling
+## Blocked pending Ria
+- *(cleared 2026-07-07 per D-32 — Q1/Q2/Q4/Q5 were already canon via D-1/D-5/D-2/D-3; M0-4 unblocked. Only Q3 (score resolution) remains open and it's non-blocking: −2…+2 per spec §2 unless Ria wants finer.)*

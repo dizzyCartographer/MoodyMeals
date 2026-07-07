@@ -12,27 +12,27 @@ Format per item:
 **D-32. Stale blockers — Q1/Q2/Q4/Q5 are already answered by canon (D-1 multi-slot, D-5 attendance, D-2 cooldown, D-3 escalation), and the §2 data model already implements all four. OK to mark them Answered and delete BACKLOG's "Blocked pending Ria" line, unblocking M0-4?**
 → Options: a) yes, clear all four; only Q3 (Liking/Fit −2…+2 resolution) stays open — and it's already implemented b) keep parked until you sign off (recommended: a — the code path is fixed by the model regardless)
 → Blocks: M0-4 (and tidies M0-2/M0-3, which lean on the same canon)
-**Ria:** _____
+**Ria:** yes, clear the stale blockers (2026-07-07) → ANSWERED, moved to canon
 
 **D-33. Leftover-chain data gap — scheduler Step 1d + tests LC-3/LC-5 need a leftover `InventoryItem` carrying a `kind` and a `useBy` date, but §2 `InventoryItem` has neither. How to model it? (Spec deviation → needs your OK; I can't touch build-spec.md.)**
 → Options: a) add `kind: InventoryKind {normal, leftover}` + `useBy: Date?` to InventoryItem b) a separate `LeftoverItem` type c) overload existing `label`/`estimatedQuantity` (fragile) (recommended: a)
 → Blocks: M0-5 (InventoryItem shape), M2 leftover chains (LC-1…5)
-**Ria:** _____
+**Ria:** yes, add kind + useBy — "not sure if I'll use it or not" (2026-07-07) → ANSWERED, moved to canon
 
 **D-34. StapleItem shopping items have no provenance — PT-7/SCH-13 route Elsie's staples onto runs, but `ItemSource = {meal, snackCadence, manual, breakfastStaple}` has no `staple` case. Add one?**
 → Options: a) add `staple` to ItemSource b) reuse `manual` (loses provenance, weakens PT-7 dedup) (recommended: a)
 → Blocks: M0-5 (ItemSource enum), M2-1 dedup (PT-7)
-**Ria:** _____
+**Ria:** asked "what other item sources are we using?" (2026-07-07) — answered in chat: {meal, snackCadence, breakfastStaple, manual}; awaiting her confirm on adding `staple`
 
 **D-35. Elsie's needs — does `FoodNeedGoal.proteinVegStarch` still apply as a soft goal, or did D-6 fully replace it with StapleItems? Seed data (M0-2/M0-6) needs to know.**
 → Options: a) staples only; drop proteinVegStarch from her seed profile (literal reading of D-6 "replaces") b) keep BOTH — staples as the hard lifeline + proteinVegStarch as a soft Fit nudge c) staples only but retain the enum case for future use (recommended: b — belt-and-suspenders, near-zero cost)
 → Blocks: M0-2 / M0-6 seed profile for Elsie
-**Ria:** _____
+**Ria:** "not sure the question" (2026-07-07) — re-explained in plainer language in chat; still open
 
 **D-36. DM-4 rule — a Precise recipe saved with a missing amount on one item: reject, or auto-downgrade to Loose? (TEST_CASES flags DM-4 as a decision-forcing test.)**
 → Options: a) auto-downgrade to Loose + tell the user (matches "never forms-first friction") b) reject with inline validation c) keep Precise, treat that one item as loose (mixed) (recommended: a)
 → Blocks: M0-3 recipe editor/validation + the DM-4 test
-**Ria:** _____
+**Ria:** "not sure the question" (2026-07-07) — re-explained with a concrete example in chat; still open
 
 ---
 ## Digest — 2026-07-06 (self pressure-test)
@@ -51,6 +51,8 @@ Format per item:
 
 
 ## Answered (canon)
+- **D-32 (2026-07-07): Stale blockers CLEARED.** Ria confirmed Q1/Q2/Q4/Q5 are resolved by existing canon (D-1 multi-slot, D-5 attendance, D-2 cooldown 42d, D-3 escalation/snooze). Moved to QUESTIONS Answered; BACKLOG "Blocked pending Ria" line removed. **M0-4 is unblocked.** Only Q3 (Liking/Fit −2…+2 resolution) remains open — non-blocking, implemented as Int −2…+2 per spec §2 unless she wants finer.
+- **D-33 (2026-07-07): Leftover inventory fields APPROVED.** Add `kind: InventoryKind {normal, leftover}` + `useBy: Date?` to `InventoryItem` (spec §2 deviation, Ria-approved). Ria: "not sure if I'll use it or not" — fields land at M0-5 either way; scheduler Step 1d + LC-3/LC-5 need them.
 - **D-29 (2026-07-06): THE HOUSE LAW** — see D-30 correction for actual scope.
 - **D-30 (2026-07-06): Scope correction — it's the FLOUR LINE, not a gluten ban.** Household normally buys/uses packaged gluten items (regular crackers, bread, hot dog buns) — legit shopping items, tagged not-Caddie-safe. The real ban is from-scratch wheat baking / raw wheat-flour work (contamination vector). GF baking via mixes is active and loved (King Arthur GF = house standard) — suggestible everywhere, including joy-cooking and Signature bakes. Emotional weight noted but per Ria: "not that big a deal."
 - **D-31 (2026-07-06): The flour line's dual rationale.** (1) Aerosolization/contamination; (2) never baking something super delicious Caddie isn't allowed to have — home doesn't advertise her exclusion. Extends to a generative rule: app-suggested special/celebratory home cooking is always Caddie-inclusive (HC-10); mundane contained gluten stays fine.
