@@ -16,4 +16,8 @@ enum TuningDefaults {
     static let dinnerEventHour = 18
     static let breakfastEventHour = 7
     static let planEventDurationMinutes = 60
+    /// SL-4's pantry-staple exclusion list — assumed on hand, skipped by the
+    /// shopping explosion unless flagged out. User-editable at M4-1.
+    static let pantryStapleExclusions: Set<String> =
+        ["oil", "salt", "pepper", "butter", "taco seasoning"]
 }

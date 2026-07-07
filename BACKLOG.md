@@ -18,7 +18,7 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M1-3] **[DONE 2026-07-07 — NEEDS-VISUAL-REVIEW]** (60m) Tonight view — today's dinner, swap button, per-member safe badge. **AC:** TC-SF-1..3. → 4 tests; per-member badges incl. GF-hard cap; swap records status. **M1 COMPLETE.**
 
 ## M2 — Shopping core
-- [M2-1] (90m) Meal→items explosion — precise amounts summed, loose items listed without amounts, dedup. **AC:** TC-SL-1..5.
+- [M2-1] **[DONE 2026-07-07]** (90m) Meal→items explosion — precise amounts summed, loose items listed without amounts, dedup. **AC:** TC-SL-1..5. → pure `ShoppingExplosion` service, 5 tests; GF qualifier carried for RT-6.
 - [M2-2] (90m) Run tiers + routing — perishability/neededBy routing per spec §4 step 4. **AC:** TC-RT-1..6.
 - [M2-3] (90m) Guarantee check v1 (no inventory) — coverage between now and next confirmed run; violation → structured result naming at-risk meals. **AC:** TC-GT-1..6.
 - [M2-4] (60m) Markdown + Reminders export of a run's list. **AC:** TC-SL-6; Reminders export behind permission check.

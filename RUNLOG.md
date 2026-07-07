@@ -24,6 +24,11 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M2-1] — Meal→items explosion
+- Outcome: **done**. Pure `ShoppingExplosion`: sums precise amounts per (ingredient, unit) across recipes and direct items (SL-1), merges loose requirements into the same line with a `plusExtra` marker — dedup never loses intent (SL-2), freeform meals contribute nothing unless direct items exist (SL-3), pantry staples skipped unless flagged out (SL-4 — exclusion list lives in TuningDefaults: oil/salt/pepper/butter/taco seasoning, case-insensitive), and range selection covers exactly the cookable entries in [from, to) — skipped entries and adjacent weeks never leak (SL-5). GF qualifier rides on every line for RT-6's export text. Suite 74/74.
+- Tests added: 5 in ShoppingExplosionTests, one per SL case.
+- Notes: `outOfStock` is a parameter — inventory belief supplies it at M2-3/M6; nothing here blocks on inventory (INV-6 spirit).
+
 ### [M1-3] — Tonight view (M1 COMPLETE) — NEEDS-VISUAL-REVIEW
 - Outcome: **done, review-gated**. Tonight tab: today's dinner card (title, notes, swapped-from-plan marker; needs-refill flag state; "pick dinner" when empty), swap via the same HC-5-guarded picker, per-member safety badges (safe ✓ / not-verified-GF ⚠ / not-today 🌙 / —), and per-person "Safe for X" lists (SF-1). Screenshot: docs/screenshots/m1-3-tonight.png. Suite 69/69.
 - Tests added: 4 in TonightTests — SF-1 (per-member list, not household), SF-2 (per-person badges + hard-constraint-outranks-flag: an unverified meal is never "safe" for a GF-hard member even if flagged), SF-3 (notToday hides while active, restores when lapsed, zero user action), swap-records-status.
