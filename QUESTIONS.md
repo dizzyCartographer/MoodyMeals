@@ -4,8 +4,6 @@ Claude Code appends; Ria answers inline at morning/evening review. Answered item
 ## Open
 - [Q3] Liking/Fit resolution: −2…+2 enough? *(non-blocking — implemented as Int −2…+2 per spec §2 unless Ria wants finer)*
 - [Q6/D-34] Add `staple` to ItemSource for StapleItem-sourced shopping items? Ria asked for the existing source list (2026-07-07); answered in chat, awaiting confirm.
-- [Q7/D-35] Elsie seed profile: staples-only, or staples + `proteinVegStarch` soft goal? Re-explained 2026-07-07, awaiting answer.
-- [Q8/D-36] Precise recipe saved with a missing amount: reject, downgrade to Loose, or allow mixed? Re-explained with example 2026-07-07, awaiting answer.
 
 ## M0-0 consistency-read findings (2026-07-07)
 Full end-to-end read of requirements, build-spec, TEST_CASES, DECISIONS, DESIGN_BRIEF. Contradictions / ambiguities / decision-vs-spec drift below. The genuinely decision-needing ones are also raised in today's Decision Digest (D-32…D-36). **Nothing resolved unilaterally.**
@@ -30,6 +28,8 @@ Full end-to-end read of requirements, build-spec, TEST_CASES, DECISIONS, DESIGN_
 - **[F13] M3–M8 backlog drafted (M0-0b).** Task breakdowns for M3–M8 + a Phase 2 pointer are now in BACKLOG.md, criteria-tagged and traced to TC IDs, AI-prompt tasks marked PROMPT-REVIEW. AC requires your approval in a digest. Two structural asks: **M4 (16 tasks)** and **M5 (15 tasks)** are oversized — recommend splitting M4→M4/M4b and M5→M5/M5b/M5c. Not urgent (doesn't block M0-1); confirm at a review window.
 
 ## Answered (canon)
+- **[Q7] (2026-07-07, via D-35):** No one hardcoded; all-5-full-dinner is the scheduler objective. Elsie: `proteinVegStarch` soft goal + staples safety net — staples are never her dinner plan.
+- **[Q8] (2026-07-07, via D-36):** Mixed precision allowed — Precise recipes may carry amount-less items (seasoning by taste); never reject, never downgrade. DM-4 resolved.
 - **[Q1] (2026-07-07, via D-32/D-1):** Multi-slot YES — `slots: [SlotKind]` array + `requiresCalmDay` gate. Breakfast-for-dinner is real; Wednesday anchor seeded off.
 - **[Q2] (2026-07-07, via D-32/D-5):** Attendance modeled in v0.1 — `attendees` on PlanEntry; hard constraints apply to attendees only; Chad appetite multipliers.
 - **[Q4] (2026-07-07, via D-32/D-2):** Cooldown default 42 days (min 42 / max 180), per-meal override in range.

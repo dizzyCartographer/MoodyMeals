@@ -27,6 +27,13 @@ Authority order when documents conflict: `QUESTIONS.md` answers from Ria > `mood
 - Naming from the spec is canonical (Loose/Precise, RunTier, MemberMealScore, etc.).
 - Every scheduler/guarantee behavior must trace to a test case ID from TEST_CASES.md; reference the ID in the test name (e.g. `test_HC1_glutenNeverScheduledForCaddie`).
 
+## Reaching Ria (added 2026-07-07, per Ria)
+Ria walks away during autonomous runs. Send a dispatch push (PushNotification) — one line, lead with what's needed and what it unblocks — when:
+- a new Decision Digest is posted or work is blocked on her answer,
+- a run window ends (with the session summary headline),
+- anything needs her approval (safety, new dependency, spec deviation).
+Never ping for routine progress.
+
 ## Session end — the Decision Digest (required, every run)
 Before a run window closes: commit or stash cleanly, then write TWO things:
 

@@ -27,12 +27,12 @@ Format per item:
 **D-35. Elsie's needs — does `FoodNeedGoal.proteinVegStarch` still apply as a soft goal, or did D-6 fully replace it with StapleItems? Seed data (M0-2/M0-6) needs to know.**
 → Options: a) staples only; drop proteinVegStarch from her seed profile (literal reading of D-6 "replaces") b) keep BOTH — staples as the hard lifeline + proteinVegStarch as a soft Fit nudge c) staples only but retain the enum case for future use (recommended: b — belt-and-suspenders, near-zero cost)
 → Blocks: M0-2 / M0-6 seed profile for Elsie
-**Ria:** "not sure the question" (2026-07-07) — re-explained in plainer language in chat; still open
+**Ria:** "no one should be hard coded.... and the goal should always be that all 5 people want to eat a full dinner... elsie isn't a cow that just grazes on her own." (2026-07-07) → ANSWERED, moved to canon (D-35)
 
 **D-36. DM-4 rule — a Precise recipe saved with a missing amount on one item: reject, or auto-downgrade to Loose? (TEST_CASES flags DM-4 as a decision-forcing test.)**
 → Options: a) auto-downgrade to Loose + tell the user (matches "never forms-first friction") b) reject with inline validation c) keep Precise, treat that one item as loose (mixed) (recommended: a)
 → Blocks: M0-3 recipe editor/validation + the DM-4 test
-**Ria:** "not sure the question" (2026-07-07) — re-explained with a concrete example in chat; still open
+**Ria:** "c. i might want to know how much chicken and beans i normally use and do all seasoning by taste." (2026-07-07) → ANSWERED, moved to canon (D-36)
 
 ---
 ## Digest — 2026-07-06 (self pressure-test)
@@ -51,6 +51,8 @@ Format per item:
 
 
 ## Answered (canon)
+- **D-35 (2026-07-07): NO ONE IS HARDCODED + the full-dinner rule.** Two-part canon: (1) **No family member is ever hardcoded in code** — all member-specific behavior comes from per-member DATA (profiles, goals, staples, appetite fields on FamilyMember). Names appear in seed data only; no named-person constants (build-spec §8's `chadAppetiteBase` label reads as generic per-member `appetiteBase` — already modeled that way). (2) **The scheduler's objective is that ALL FIVE attendees want to eat a full dinner.** Elsie "isn't a cow that just grazes on her own": her staples lifeline (D-6) is an emergency safety net, NEVER her dinner plan — dinners must actually work for her. So her seed keeps `proteinVegStarch` as a soft goal AND the staples floor. Strengthens the fairness floor (Step 4d) and Fit-coverage guardrails: dinner inclusion is the goal, fallbacks are exceptions.
+- **D-36 (2026-07-07): Mixed precision — option (c).** A Precise recipe with amount-less items is VALID: measured items keep amounts ("I might want to know how much chicken and beans I normally use"), seasonings ride along amount-less ("all seasoning by taste"). Never reject, never downgrade the whole recipe. Shopping explosion: sum amounts where present, list plain where not (consistent with SL-2). DM-4's rule is now: allow mixed; no validation gate on missing amounts.
 - **D-32 (2026-07-07): Stale blockers CLEARED.** Ria confirmed Q1/Q2/Q4/Q5 are resolved by existing canon (D-1 multi-slot, D-5 attendance, D-2 cooldown 42d, D-3 escalation/snooze). Moved to QUESTIONS Answered; BACKLOG "Blocked pending Ria" line removed. **M0-4 is unblocked.** Only Q3 (Liking/Fit −2…+2 resolution) remains open — non-blocking, implemented as Int −2…+2 per spec §2 unless she wants finer.
 - **D-33 (2026-07-07): Leftover inventory fields APPROVED.** Add `kind: InventoryKind {normal, leftover}` + `useBy: Date?` to `InventoryItem` (spec §2 deviation, Ria-approved). Ria: "not sure if I'll use it or not" — fields land at M0-5 either way; scheduler Step 1d + LC-3/LC-5 need them.
 - **D-29 (2026-07-06): THE HOUSE LAW** — see D-30 correction for actual scope.
