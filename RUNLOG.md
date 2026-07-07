@@ -24,6 +24,11 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M0-1] — Xcode project scaffold
+- Outcome: **done**. `xcodebuild test` green: 2/2 passing on iPhone 17 Pro (iOS 26.5). Hand-authored pbxproj (objectVersion 77, file-system-synchronized groups — files added later auto-join targets), shared scheme, app + test targets, SwiftData container with placeholder `AppInfo` model + `AppSchema` registry.
+- Tests added: `SmokeTests.testTargetRuns`, `SmokeTests.testInMemoryContainerRoundTrips` (in-memory SwiftData round-trip).
+- Notes: (1) Environment fix needed first — Xcode 26.6 had no iOS platform component; downloaded iOS 26.5 simulator platform (8.5 GB) via `xcodebuild -downloadPlatform iOS`. (2) One pbxproj bug found & fixed: missing `PBXFileReference` product entries → "No test bundle product" on the test action. (3) Benign CoreData stderr noise on first app-host launch (store creation in fresh sim) — not a test failure.
+
 ### [M0-0b] — Extend backlog (M3–M8)
 - Outcome: **done** (awaits digest approval per AC). Drafted M3–M8 + Phase 2 pointer in BACKLOG.md at M0–M2 granularity; every task traces to TEST_CASES IDs; AI-prompt tasks tagged PROMPT-REVIEW, UI tagged NEEDS-VISUAL-REVIEW.
 - Tests added: none (planning task)

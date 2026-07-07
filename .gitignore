@@ -1,0 +1,16 @@
+# Xcode / Swift
+build/
+DerivedData/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+xcuserdata/
+.DS_Store
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Secrets — Claude API keys come from the environment, never the repo
+*.xcconfig.local
+Secrets.plist
+.env
