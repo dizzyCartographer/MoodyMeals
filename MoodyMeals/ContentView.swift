@@ -6,6 +6,7 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
+            Tab("Plan", systemImage: "calendar") { WeekPlanView() }
             Tab("Meals", systemImage: "fork.knife") { MealListView() }
             Tab("Recipes", systemImage: "list.bullet.rectangle") { RecipeListView() }
         }
