@@ -3,17 +3,12 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var members: [FamilyMember]
 
     var body: some View {
-        VStack(spacing: 12) {
-            Text("MoodyMeals")
-                .font(.largeTitle.bold())
-            Text(members.isEmpty ? "Scaffold — M0" :
-                 "Household: \(members.map(\.name).sorted().joined(separator: ", "))")
-                .foregroundStyle(.secondary)
+        TabView {
+            Tab("Meals", systemImage: "fork.knife") { MealListView() }
+            Tab("Recipes", systemImage: "list.bullet.rectangle") { RecipeListView() }
         }
-        .padding()
         .task {
             try? SeedData.loadIfNeeded(into: modelContext)
         }

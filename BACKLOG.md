@@ -10,7 +10,7 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M0-4] **[DONE 2026-07-07]** (90m) Core models, meals & planning — `Meal`, `PlanEntry`, `ThemeAnchor`, enums. **AC:** meal with zero recipes + freeform text is valid (TC-DM-3). → 7 tests; review caught + fixed a SwiftData implicit-inverse data-corruption bug (F17); DM-5/DM-6 tests parked on D-37.
 - [M0-5] **[DONE 2026-07-07]** (60m) Core models, shopping/inventory/etc — `ShoppingRun/Item`, `Snack`, `PurchaseRecord`, `InventoryItem`, `WasteEvent`, `CheckIn`, `WeeklyReflection`, `FridgeSpec` (+`StapleItem`). **AC:** persistence tests for each. → unblocked by D-34; 10 tests; D-33 leftover fields + `staple` source in; Elsie's lifeline staples seeded (D-6).
 - [M0-6] **[DONE 2026-07-07]** (45m) Seed data — the five household members with hard requirements/soft goals per requirements doc; ~15 seed meals incl. GF-verified and unverified items, one all-time favorite, one Taco-Tuesday-tagged meal. **AC:** seed loads idempotently; used by all later tests. → 16 meals, 24 ingredients, Wednesday b4d anchor seeded OFF; done ahead of M0-5 (blocked on D-34).
-- [M0-7] (90m) Basic CRUD screens for meals/recipes (list + edit). **AC:** builds, creates/edits persist. NEEDS-VISUAL-REVIEW.
+- [M0-7] **[DONE 2026-07-07 — NEEDS-VISUAL-REVIEW]** (90m) Basic CRUD screens for meals/recipes (list + edit). **AC:** builds, creates/edits persist. → Meals/Recipes tabs, tri-state GF badges, D-37-safe deletes; screenshot in docs/screenshots/; 3 CRUD tests. **M0 COMPLETE.**
 
 ## M1 — Plan + see
 - [M1-1] (90m) Manual planning UI — week grid, assign meal to date+slot, lock toggle. **AC:** PlanEntry created/edited; lock persists. NEEDS-VISUAL-REVIEW.
