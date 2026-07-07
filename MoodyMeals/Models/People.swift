@@ -43,6 +43,13 @@ final class FamilyMember {
     @Relationship(inverse: \Snack.favoriteOf)
     var favoriteSnacks: [Snack]
 
+    /// F17 (correctness-forced deviation, logged in QUESTIONS): explicit
+    /// inverse for `Meal.coreMemoryOwner`. Without it, SwiftData silently
+    /// paired coreMemoryOwner↔currentBreakfast as inverses (the only mutual
+    /// Meal↔FamilyMember to-one pair), so setting one corrupted the other.
+    @Relationship(inverse: \Meal.coreMemoryOwner)
+    var coreMemoryMeals: [Meal]
+
     init(
         name: String,
         isAdult: Bool,
@@ -68,6 +75,7 @@ final class FamilyMember {
         self.methodAffinity = methodAffinity
         self.mealScores = []
         self.favoriteSnacks = []
+        self.coreMemoryMeals = []
     }
 }
 

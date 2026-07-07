@@ -2,9 +2,20 @@ import Foundation
 import SwiftData
 
 // ── Meal: the atomic plannable unit (build-spec §2) ───────────
-// STAGED BUILD-OUT (not deviation): M0-2 seeded the identity fields;
-// M0-3 adds the food-composition fields (needed for HC-6 meal-level
-// safety propagation); the planning knobs land at M0-4.
+// Completed to full §2 shape at M0-4 (identity fields M0-2, composition M0-3).
+
+enum EffortLevel: Int, Codable { case noCook = 0, assembly, simple, involved }
+
+enum CookMethod: String, Codable {
+    case grill, griddle, stovetop, oven, airFryer, slowCooker, instantPot,
+         microwave, noCook, smoker
+}
+
+enum SlotKind: String, Codable { case dinner, breakfast }
+
+enum FrequencyTarget: String, Codable { case weekly, biweekly, monthly, quarterly, occasionally }
+
+enum RotationState: String, Codable { case active, resting /* cooldown */, retired /* rare */ }
 
 @Model
 final class Meal {
@@ -16,8 +27,49 @@ final class Meal {
     var freeformNotes: String         // "Snack plate dinner", "Chipotle takeout"
     var recipes: [Recipe]             // zero or more
     @Relationship(deleteRule: .cascade) var directItems: [RecipeItem] // ingredients not via a recipe
+    var effort: EffortLevel
+    var themeTags: [String]           // "mexican", "italian", "sheet-pan"
+    var slots: [SlotKind]             // multi-slot (D-1): breakfast-for-dinner is real
+    var requiresCalmDay: Bool         // D-1: only schedulable on peaceful/clean-kitchen days
+    // Scheduling knobs
+    var frequencyTarget: FrequencyTarget?   // nil = no target, scheduler free
+    var rotationState: RotationState
+    var cooldownUntil: Date?          // set by "everybody's sick of this"
+    var lastEatenAt: Date?
+    var lastScheduledAt: Date?
+    // Leftover chains (D-4): intentional overproduction feeding later meals
+    var producesComponents: [String]  // e.g. ["cooked rice"] — cook extra on purpose
+    var requiresComponents: [String]  // e.g. ["cooked rice"] — leftover-DEPENDENT meal
+    var componentFreshnessDays: Int   // consumer must run within N days of producer
+    var moodTags: [String]            // "cozy", "griddle-day", "celebration" (D-8)
+    var methods: [CookMethod]         // D-28: how it's made — grill, stovetop, oven, etc.
+    var isEatingOut: Bool             // D-7: NEVER auto-scheduled; emergency/manual only
+    var isAllTimeFavorite: Bool       // exempt from ALL fatigue mechanics
+    var coreMemoryNote: String?       // "Elsie's first-day-of-school dinner"
+    var coreMemoryOwner: FamilyMember?
+    // Occasions
+    var occasionTag: String?          // "thanksgiving", "caddie-birthday"
 
-    init(title: String, freeformNotes: String = "") {
+    init(
+        title: String,
+        freeformNotes: String = "",
+        effort: EffortLevel = .simple,
+        themeTags: [String] = [],
+        slots: [SlotKind] = [.dinner],
+        requiresCalmDay: Bool = false,
+        frequencyTarget: FrequencyTarget? = nil,
+        rotationState: RotationState = .active,
+        producesComponents: [String] = [],
+        requiresComponents: [String] = [],
+        componentFreshnessDays: Int = TuningDefaults.componentFreshnessDays,
+        moodTags: [String] = [],
+        methods: [CookMethod] = [],
+        isEatingOut: Bool = false,
+        isAllTimeFavorite: Bool = false,
+        coreMemoryNote: String? = nil,
+        coreMemoryOwner: FamilyMember? = nil,
+        occasionTag: String? = nil
+    ) {
         self.id = UUID()
         self.createdAt = .now
         self.updatedAt = .now
@@ -25,5 +77,24 @@ final class Meal {
         self.freeformNotes = freeformNotes
         self.recipes = []
         self.directItems = []
+        self.effort = effort
+        self.themeTags = themeTags
+        self.slots = slots
+        self.requiresCalmDay = requiresCalmDay
+        self.frequencyTarget = frequencyTarget
+        self.rotationState = rotationState
+        self.cooldownUntil = nil
+        self.lastEatenAt = nil
+        self.lastScheduledAt = nil
+        self.producesComponents = producesComponents
+        self.requiresComponents = requiresComponents
+        self.componentFreshnessDays = componentFreshnessDays
+        self.moodTags = moodTags
+        self.methods = methods
+        self.isEatingOut = isEatingOut
+        self.isAllTimeFavorite = isAllTimeFavorite
+        self.coreMemoryNote = coreMemoryNote
+        self.coreMemoryOwner = coreMemoryOwner
+        self.occasionTag = occasionTag
     }
 }

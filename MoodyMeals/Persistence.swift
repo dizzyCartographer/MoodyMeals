@@ -25,8 +25,11 @@ enum AppSchema {
         Ingredient.self,
         Recipe.self,
         RecipeItem.self,
-        // Staged: Meal completes at M0-4, Snack at M0-5
+        // Meals & planning (M0-4)
         Meal.self,
+        PlanEntry.self,
+        ThemeAnchor.self,
+        // Staged: Snack completes at M0-5
         Snack.self,
     ]
 }

@@ -260,5 +260,10 @@ final class PeopleModelTests: XCTestCase {
         )
         XCTAssertEqual(fetched.currentBreakfast?.title,
                        "Everything bagel + cream cheese")
+
+        // F17 regression: a breakfast default must never stamp core-memory
+        // ownership on the meal (false implicit-inverse pairing).
+        let fetchedBagel = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
+        XCTAssertNil(fetchedBagel.coreMemoryOwner)
     }
 }
