@@ -2,7 +2,7 @@
 Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TODO / IN-PROGRESS / DONE / BLOCKED(Q#) / NEEDS-VISUAL-REVIEW`.
 
 ## M0 — Skeleton
-- [M0-0] (90m) Consistency read — read ALL docs end-to-end (requirements, build-spec, TEST_CASES, DECISIONS); log every contradiction, ambiguity, or decision-vs-spec drift to QUESTIONS.md; propose fixes in the first Decision Digest. Do NOT resolve unilaterally. **AC:** a written findings list (even if empty) in RUNLOG before any code.
+- [M0-0] **[DONE 2026-07-07]** (90m) Consistency read — read ALL docs end-to-end (requirements, build-spec, TEST_CASES, DECISIONS); log every contradiction, ambiguity, or decision-vs-spec drift to QUESTIONS.md; propose fixes in the first Decision Digest. Do NOT resolve unilaterally. **AC:** a written findings list (even if empty) in RUNLOG before any code. → findings F1–F12 in QUESTIONS.md; digest D-32…D-36.
 - [M0-0b] (45m) Extend this backlog — draft task breakdowns for M3–M8 at the same criteria-tagged granularity as M0–M2; mark AI-prompt tasks as review-gated. **AC:** backlog covers all milestones; Ria approves in a digest.
 - [M0-1] (60m) Xcode project scaffold — SwiftUI app target, SwiftData container, test target builds and runs an empty test. **AC:** `xcodebuild test` green in simulator.
 - [M0-2] (90m) Core models, people — `FamilyMember`, `DietaryRequirement`, `FoodNeedGoal`, `MemberMealScore` per spec §2. **AC:** round-trip persistence tests; TC §1 model-level invariants compile.

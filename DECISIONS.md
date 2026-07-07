@@ -6,6 +6,35 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-07 (M0-0 consistency read)
+*First real run. Five decisions from an end-to-end read of all docs, ranked by how much they unblock. Full findings archived in QUESTIONS.md (F1–F12); nothing resolved unilaterally.*
+
+**D-32. Stale blockers — Q1/Q2/Q4/Q5 are already answered by canon (D-1 multi-slot, D-5 attendance, D-2 cooldown, D-3 escalation), and the §2 data model already implements all four. OK to mark them Answered and delete BACKLOG's "Blocked pending Ria" line, unblocking M0-4?**
+→ Options: a) yes, clear all four; only Q3 (Liking/Fit −2…+2 resolution) stays open — and it's already implemented b) keep parked until you sign off (recommended: a — the code path is fixed by the model regardless)
+→ Blocks: M0-4 (and tidies M0-2/M0-3, which lean on the same canon)
+**Ria:** _____
+
+**D-33. Leftover-chain data gap — scheduler Step 1d + tests LC-3/LC-5 need a leftover `InventoryItem` carrying a `kind` and a `useBy` date, but §2 `InventoryItem` has neither. How to model it? (Spec deviation → needs your OK; I can't touch build-spec.md.)**
+→ Options: a) add `kind: InventoryKind {normal, leftover}` + `useBy: Date?` to InventoryItem b) a separate `LeftoverItem` type c) overload existing `label`/`estimatedQuantity` (fragile) (recommended: a)
+→ Blocks: M0-5 (InventoryItem shape), M2 leftover chains (LC-1…5)
+**Ria:** _____
+
+**D-34. StapleItem shopping items have no provenance — PT-7/SCH-13 route Elsie's staples onto runs, but `ItemSource = {meal, snackCadence, manual, breakfastStaple}` has no `staple` case. Add one?**
+→ Options: a) add `staple` to ItemSource b) reuse `manual` (loses provenance, weakens PT-7 dedup) (recommended: a)
+→ Blocks: M0-5 (ItemSource enum), M2-1 dedup (PT-7)
+**Ria:** _____
+
+**D-35. Elsie's needs — does `FoodNeedGoal.proteinVegStarch` still apply as a soft goal, or did D-6 fully replace it with StapleItems? Seed data (M0-2/M0-6) needs to know.**
+→ Options: a) staples only; drop proteinVegStarch from her seed profile (literal reading of D-6 "replaces") b) keep BOTH — staples as the hard lifeline + proteinVegStarch as a soft Fit nudge c) staples only but retain the enum case for future use (recommended: b — belt-and-suspenders, near-zero cost)
+→ Blocks: M0-2 / M0-6 seed profile for Elsie
+**Ria:** _____
+
+**D-36. DM-4 rule — a Precise recipe saved with a missing amount on one item: reject, or auto-downgrade to Loose? (TEST_CASES flags DM-4 as a decision-forcing test.)**
+→ Options: a) auto-downgrade to Loose + tell the user (matches "never forms-first friction") b) reject with inline validation c) keep Precise, treat that one item as loose (mixed) (recommended: a)
+→ Blocks: M0-3 recipe editor/validation + the DM-4 test
+**Ria:** _____
+
+---
 ## Digest — 2026-07-06 (self pressure-test)
 **D-17. Fairness floor default: is 1×/week facing a −2 meal the right ceiling per person?**
 → Options: a) 1/week b) 0 — never schedule anyone's −2 c) 2/week (recommended: a; b starves the pool)
