@@ -24,6 +24,11 @@ Newest at top. One block per task; one Session summary per run window.
 - **Cross-check clean:** every TC ID referenced by BACKLOG (HC-6, DM-3, CAL-1..4, SF-1..3, SL-1..6, RT-1..6, GT-1..8) exists in TEST_CASES — no dangling references.
 - Notes: authority resolved as QUESTIONS/DECISIONS-answers > build-spec > requirements. Treating DECISIONS "Answered (canon)" D-1…D-31 as canon (they're baked into the §2 model), which is why the §7/QUESTIONS "open" lists read as drift, not genuine blockers.
 
+### [M2-2] — Run tiers + routing
+- Outcome: **done**. Pure `RunRouting` per spec §4 step 4: fresh never rides bulk and takes the LATEST fresh-capable run before need-by (RT-1), cadence items with no deadline default to the midweek top-up (RT-2), far-out shelf-stable prefers bulk inside `bulkPreferenceLeadDays=14` (new TuningDefaults constant from §4's ">2 weeks", noted; RT-3), unroutable items raise a violation for the guarantee — never a silent drop (RT-4), `preferredRunTier` override beats inference but degrades to inference when unsatisfiable (RT-5), and export text preserves dietary qualifiers + the plus-extra marker (RT-6). Suite 80/80.
+- Tests added: 6 in RunRoutingTests, one per RT case (incl. bulk-in-window-still-never-fresh, and override-fallback edges).
+- Notes: routing consumes the M2-1 `ExplodedLine`s and emits violations in the exact shape M2-3's guarantee check needs.
+
 ### [M2-1] — Meal→items explosion
 - Outcome: **done**. Pure `ShoppingExplosion`: sums precise amounts per (ingredient, unit) across recipes and direct items (SL-1), merges loose requirements into the same line with a `plusExtra` marker — dedup never loses intent (SL-2), freeform meals contribute nothing unless direct items exist (SL-3), pantry staples skipped unless flagged out (SL-4 — exclusion list lives in TuningDefaults: oil/salt/pepper/butter/taco seasoning, case-insensitive), and range selection covers exactly the cookable entries in [from, to) — skipped entries and adjacent weeks never leak (SL-5). GF qualifier rides on every line for RT-6's export text. Suite 74/74.
 - Tests added: 5 in ShoppingExplosionTests, one per SL case.

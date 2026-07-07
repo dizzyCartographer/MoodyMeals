@@ -20,4 +20,7 @@ enum TuningDefaults {
     /// shopping explosion unless flagged out. User-editable at M4-1.
     static let pantryStapleExclusions: Set<String> =
         ["oil", "salt", "pepper", "butter", "taco seasoning"]
+    /// Spec §4 step 4: shelf-stable items prefer the bulk run when needed
+    /// more than this many days out ("preferring bulk when >2 weeks out").
+    static let bulkPreferenceLeadDays = 14
 }
