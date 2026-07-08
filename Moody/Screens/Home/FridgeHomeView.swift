@@ -151,7 +151,7 @@ struct FridgeHomeView: View {
                         .padding(.top, 3)
                     Text(note.more)
                         .font(.nunito(10.5, .black))
-                        .foregroundStyle(Palette.yellow.labelMuted)  // #B3A075
+                        .foregroundStyle(Palette.yellow.labelMuted)  // darkened, see Theme
                         .padding(.top, 5)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -164,9 +164,11 @@ struct FridgeHomeView: View {
     /// The mockup's streak note sits on the pink primary tint (#FDE7F0) while the
     /// shared StickyNote draws `slot.tintAlt`, so this slot carries the mockup's
     /// exact note colors (incl. the muted #C08BA0 subline).
+    // labelMuted darkened from the mockup's #C08BA0 (2.4:1 on the tint) to the
+    // slot label — readability adjudication, 2026-07-08.
     private static let streakNoteSlot = PaletteSlot(
         id: "her-1-streak-note", color: 0xFF7BAC, tint: 0xFDE7F0, tintAlt: 0xFDE7F0,
-        label: 0xB04A72, labelMuted: 0xC08BA0)
+        label: 0xB04A72)
 
     private var streakNote: some View {
         Button { onOpenStreaks?() } label: {

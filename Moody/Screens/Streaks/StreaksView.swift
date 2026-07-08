@@ -142,9 +142,11 @@ private struct StreaksDayTile: View {
         switch plan.kind {
         case .done:
             let slot = Self.fills[plan.day.rawValue % Self.fills.count]
+            // Ink ✓ on every fill (white measured ~2:1 on the mid-tone slots) —
+            // readability adjudication, 2026-07-08.
             Text("✓")
                 .font(.nunito(15, .black))
-                .foregroundStyle(slot.id == Palette.yellow.id ? Theme.ink : .white)
+                .foregroundStyle(Theme.ink)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .inkCard(background: slot.color, radius: 12)
         case .rest:

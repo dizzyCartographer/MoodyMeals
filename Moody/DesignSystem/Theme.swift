@@ -76,8 +76,10 @@ enum Palette {
                                   label: 0xD46A92, labelMuted: 0xB04A72)
     static let green = PaletteSlot(id: "her-2", color: 0x8CC63E, tint: 0xE9F5D3,
                                    label: 0x5F7F28, labelMuted: 0x6B8A2E)
+    // labelMuted deliberately darkened from the mockup's #B3A075 (2.4:1 on the
+    // tint) to the primary label — readability adjudication, 2026-07-08.
     static let yellow = PaletteSlot(id: "her-3", color: 0xFFD34E, tint: 0xFFF4CE, tintAlt: 0xFFF6D8,
-                                    label: 0x8A6D1E, labelMuted: 0xB3A075)
+                                    label: 0x8A6D1E)
     static let blue = PaletteSlot(id: "her-4", color: 0x5BC2E7, tint: 0xE1F1FA,
                                   label: 0x3E7A96)
     static let purple = PaletteSlot(id: "her-5", color: 0x9B7EDE, tint: 0xEFE8FA,
