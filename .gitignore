@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Xcode user state
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# Build products
+build/
+DerivedData/
+
+# Note: Moody.xcodeproj is committed for convenience, but it is GENERATED —
+# project.yml is the source of truth; run `xcodegen generate` after file changes.

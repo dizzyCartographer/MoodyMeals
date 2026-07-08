@@ -1,0 +1,74 @@
+name: Moody
+options:
+  bundleIdPrefix: com.mariayarley
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGN_IDENTITY: ""
+    CODE_SIGNING_REQUIRED: "NO"
+targets:
+  Moody:
+    type: application
+    platform: iOS
+    sources:
+      - path: Moody
+      # Shared Live Activity attributes + UI (CookModeController starts the
+      # activity from the app; ActivityKit matches on CookModeAttributes).
+      - path: MoodyWidgets/CookModeActivity.swift
+    dependencies:
+      - target: MoodyWidgets
+        embed: true
+    info:
+      path: Moody/Info.plist
+      properties:
+        CFBundleDisplayName: Moody
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSSupportsLiveActivities: true
+        CFBundleURLTypes:
+          - CFBundleURLName: com.mariayarley.Moody
+            CFBundleURLSchemes:
+              - moody
+        UIAppFonts:
+          - Baloo2-SemiBold.ttf
+          - Baloo2-Bold.ttf
+          - Baloo2-ExtraBold.ttf
+          - Nunito-Bold.ttf
+          - Nunito-ExtraBold.ttf
+          - Nunito-Black.ttf
+          - Quicksand-SemiBold.ttf
+  MoodyWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    settings:
+      base:
+        # Extension bundle id must be prefixed by the app's bundle id.
+        PRODUCT_BUNDLE_IDENTIFIER: com.mariayarley.Moody.MoodyWidgets
+    sources:
+      - path: MoodyWidgets
+      - path: Moody/DesignSystem/Theme.swift
+      - path: Moody/DesignSystem/Components.swift
+      - path: Moody/Models/Models.swift
+      - path: Moody/Resources/Fonts
+        buildPhase: resources
+    info:
+      path: MoodyWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Moody
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        NSSupportsLiveActivities: true
+        UIAppFonts:
+          - Baloo2-SemiBold.ttf
+          - Baloo2-Bold.ttf
+          - Baloo2-ExtraBold.ttf
+          - Nunito-Bold.ttf
+          - Nunito-ExtraBold.ttf
+          - Nunito-Black.ttf
+          - Quicksand-SemiBold.ttf

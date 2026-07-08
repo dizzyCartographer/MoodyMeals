@@ -1,0 +1,662 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		086B4CD310657D61615F206C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4789DA996D85611488552513 /* Theme.swift */; };
+		08AE43F27773F1AD0C92A585 /* VentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6495537462614C89261BF85D /* VentView.swift */; };
+		0A6454DFC5CB62457CB1926A /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57FC396EF114A79A3EF7500F /* Components.swift */; };
+		0A776A8D984178B9AB7ACCBF /* FridgeHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA89B3D5C14F098F87AB8B35 /* FridgeHomeView.swift */; };
+		1D287A4F367E7B3D28518E75 /* StreaksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB210561D6B69FF5BDFE9F8C /* StreaksView.swift */; };
+		1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3562FB76F8DEE2EB61EF356 /* ShoppingView.swift */; };
+		1E322DAF4F9051B614708D64 /* CookModeActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFA389EC376502813DE0E08 /* CookModeActivity.swift */; };
+		25A42D4F5799EC6E0E4D9D0D /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */; };
+		25AE66FB61BCB05CDCB47A79 /* MoodyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F99FEA93E9725CE972D3110B /* MoodyApp.swift */; };
+		2661E25CE50FD177F70CDB02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3295D9466525ACF22798D98F /* Assets.xcassets */; };
+		289B0873449E9A4F4AF1B36D /* CookModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6689832E63D666A898CB71E1 /* CookModeController.swift */; };
+		3531BF334866E7519FD74306 /* Baloo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */; };
+		4057E995DEE7A7B59EDEDF86 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57FC396EF114A79A3EF7500F /* Components.swift */; };
+		54FA9E8E1EA55C402680D0AE /* MoodyWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6217E4AB988272D64A1C08DB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4789DA996D85611488552513 /* Theme.swift */; };
+		67A491ED8EB1CB17F97EDB6F /* Baloo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */; };
+		68873708DB90B03A77927C58 /* ThreadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D422948E481F1A690FA74B1A /* ThreadView.swift */; };
+		7150FB616BE2FEDC1E1429C0 /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */; };
+		7303B173ACBE0C121ED2F9AF /* MoodyWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */; };
+		7DDEECEFB8402B09766CC80D /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */; };
+		841F0D793679ED8E79C80CE5 /* Baloo2-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */; };
+		996D382C3C0E203D0F7D3372 /* Quicksand-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 645E1EF658A22099828C7F40 /* Quicksand-SemiBold.ttf */; };
+		9BCE9CB14E93532139DAD8E0 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4A33BB197E62150F230D71 /* Models.swift */; };
+		AAF93ECBEB22211EBFBEAD7E /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */; };
+		B424E5A98E462B20AF54BD2F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4A33BB197E62150F230D71 /* Models.swift */; };
+		B83E0785CE496D865FB14324 /* CelebrationOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70038F33D500B570A5BABCE8 /* CelebrationOverlay.swift */; };
+		BC2A611402BA7A4F25C67A90 /* Baloo2-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */; };
+		C9089A3F18FED4489E776A6F /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40215671261B6E98E223BB6F /* Nunito-Bold.ttf */; };
+		D0011C05409ABF6F8004CADD /* CookModeActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFA389EC376502813DE0E08 /* CookModeActivity.swift */; };
+		D240ACFEDD4C57392292F890 /* Quicksand-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 645E1EF658A22099828C7F40 /* Quicksand-SemiBold.ttf */; };
+		D4A2FA5A426A915B60390CD8 /* CelebrationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB11D715C432BD2E7B6EF27 /* CelebrationEngine.swift */; };
+		DE1CAEADE4ECD08DFF78D047 /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */; };
+		DFEF99F897BC6A54E7919BD3 /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */; };
+		E2DBB8023359341639728518 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF0CB8F29EC30D8BE14208C /* OnboardingView.swift */; };
+		E93E2C3C8B0F32ADE29D1B84 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F50D47ACCCB2A984E33BE2 /* AppState.swift */; };
+		EF8C6B506D158E0580F9C910 /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40215671261B6E98E223BB6F /* Nunito-Bold.ttf */; };
+		F3EAF323A9147594D03883FD /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09CBEEE8D1801A22915919BC /* RootView.swift */; };
+		FC2D0A253A6802C3B73E1482 /* WeekPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6099B92D865130A98196AE86 /* WeekPlanView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7D9D1D48BBAD9938D7AD5121 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 227A4CFAEF461CBFC6BAA647 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41909D6ED32C567A24DD6478;
+			remoteInfo = MoodyWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C40E29C1C8500989AF756FC5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				54FA9E8E1EA55C402680D0AE /* MoodyWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		09CBEEE8D1801A22915919BC /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		20BD322121F2A369501AAF53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3295D9466525ACF22798D98F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3FB11D715C432BD2E7B6EF27 /* CelebrationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationEngine.swift; sourceTree = "<group>"; };
+		40215671261B6E98E223BB6F /* Nunito-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Bold.ttf"; sourceTree = "<group>"; };
+		40609321B585B6BBDD3752E9 /* Moody.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Moody.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4789DA996D85611488552513 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		57FC396EF114A79A3EF7500F /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		6099B92D865130A98196AE86 /* WeekPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanView.swift; sourceTree = "<group>"; };
+		645E1EF658A22099828C7F40 /* Quicksand-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Quicksand-SemiBold.ttf"; sourceTree = "<group>"; };
+		6495537462614C89261BF85D /* VentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VentView.swift; sourceTree = "<group>"; };
+		6689832E63D666A898CB71E1 /* CookModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookModeController.swift; sourceTree = "<group>"; };
+		70038F33D500B570A5BABCE8 /* CelebrationOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationOverlay.swift; sourceTree = "<group>"; };
+		716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-ExtraBold.ttf"; sourceTree = "<group>"; };
+		754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-ExtraBold.ttf"; sourceTree = "<group>"; };
+		8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-Bold.ttf"; sourceTree = "<group>"; };
+		9CF0CB8F29EC30D8BE14208C /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		AA89B3D5C14F098F87AB8B35 /* FridgeHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FridgeHomeView.swift; sourceTree = "<group>"; };
+		AB210561D6B69FF5BDFE9F8C /* StreaksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreaksView.swift; sourceTree = "<group>"; };
+		B3562FB76F8DEE2EB61EF356 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
+		B6F50D47ACCCB2A984E33BE2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodyWidgets.swift; sourceTree = "<group>"; };
+		C273742E798E7D3AE4B47690 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CC4A33BB197E62150F230D71 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D422948E481F1A690FA74B1A /* ThreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadView.swift; sourceTree = "<group>"; };
+		DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-SemiBold.ttf"; sourceTree = "<group>"; };
+		E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MoodyWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Black.ttf"; sourceTree = "<group>"; };
+		F99FEA93E9725CE972D3110B /* MoodyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodyApp.swift; sourceTree = "<group>"; };
+		FBFA389EC376502813DE0E08 /* CookModeActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookModeActivity.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00ECCF194C4036EEA4A4F5FD /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				B6F50D47ACCCB2A984E33BE2 /* AppState.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		21CE8BD9755E3DA06AA7EE66 /* Celebrations */ = {
+			isa = PBXGroup;
+			children = (
+				3FB11D715C432BD2E7B6EF27 /* CelebrationEngine.swift */,
+				70038F33D500B570A5BABCE8 /* CelebrationOverlay.swift */,
+			);
+			path = Celebrations;
+			sourceTree = "<group>";
+		};
+		2C8C1B3B10759AD3547F0FD2 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */,
+				716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */,
+				DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */,
+				E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */,
+				40215671261B6E98E223BB6F /* Nunito-Bold.ttf */,
+				754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */,
+				645E1EF658A22099828C7F40 /* Quicksand-SemiBold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		2CFA94E5147DAF1DDD3F6CAE /* WeekPlan */ = {
+			isa = PBXGroup;
+			children = (
+				6099B92D865130A98196AE86 /* WeekPlanView.swift */,
+			);
+			path = WeekPlan;
+			sourceTree = "<group>";
+		};
+		4BDB18FDE17EA86F219A6735 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3295D9466525ACF22798D98F /* Assets.xcassets */,
+				2C8C1B3B10759AD3547F0FD2 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		59EB067207C601A8BB1D201C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				40609321B585B6BBDD3752E9 /* Moody.app */,
+				E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5B3273E1D66DA71D85CA8A55 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6689832E63D666A898CB71E1 /* CookModeController.swift */,
+				F99FEA93E9725CE972D3110B /* MoodyApp.swift */,
+				09CBEEE8D1801A22915919BC /* RootView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		5BD082B819DB7325D5320138 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				AA89B3D5C14F098F87AB8B35 /* FridgeHomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		9EB6FE82F33444EE1A6900E9 /* Moody */ = {
+			isa = PBXGroup;
+			children = (
+				C273742E798E7D3AE4B47690 /* Info.plist */,
+				5B3273E1D66DA71D85CA8A55 /* App */,
+				00ECCF194C4036EEA4A4F5FD /* Data */,
+				E3510F108DEFDB4EB1FAAEAE /* DesignSystem */,
+				AD73BE505595434D571DBA98 /* Models */,
+				4BDB18FDE17EA86F219A6735 /* Resources */,
+				F0AE908054232CECD85C4280 /* Screens */,
+			);
+			path = Moody;
+			sourceTree = "<group>";
+		};
+		A334E783EF36A8A88EC46AE9 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				9CF0CB8F29EC30D8BE14208C /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		AD73BE505595434D571DBA98 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CC4A33BB197E62150F230D71 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B8CB01B98263DD79479708DD = {
+			isa = PBXGroup;
+			children = (
+				9EB6FE82F33444EE1A6900E9 /* Moody */,
+				EAA07A5B642F0FD744E38628 /* MoodyWidgets */,
+				59EB067207C601A8BB1D201C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C102F43CA03B8C711B45414E /* Shopping */ = {
+			isa = PBXGroup;
+			children = (
+				B3562FB76F8DEE2EB61EF356 /* ShoppingView.swift */,
+			);
+			path = Shopping;
+			sourceTree = "<group>";
+		};
+		DD89A41D0679CF5D738750CC /* Thread */ = {
+			isa = PBXGroup;
+			children = (
+				D422948E481F1A690FA74B1A /* ThreadView.swift */,
+			);
+			path = Thread;
+			sourceTree = "<group>";
+		};
+		E2EB273D1CD5A2317E9828A7 /* Streaks */ = {
+			isa = PBXGroup;
+			children = (
+				AB210561D6B69FF5BDFE9F8C /* StreaksView.swift */,
+			);
+			path = Streaks;
+			sourceTree = "<group>";
+		};
+		E3510F108DEFDB4EB1FAAEAE /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				57FC396EF114A79A3EF7500F /* Components.swift */,
+				4789DA996D85611488552513 /* Theme.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		EAA07A5B642F0FD744E38628 /* MoodyWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				FBFA389EC376502813DE0E08 /* CookModeActivity.swift */,
+				20BD322121F2A369501AAF53 /* Info.plist */,
+				B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */,
+			);
+			path = MoodyWidgets;
+			sourceTree = "<group>";
+		};
+		F029E4D14C5D62D0D9844745 /* Vent */ = {
+			isa = PBXGroup;
+			children = (
+				6495537462614C89261BF85D /* VentView.swift */,
+			);
+			path = Vent;
+			sourceTree = "<group>";
+		};
+		F0AE908054232CECD85C4280 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				21CE8BD9755E3DA06AA7EE66 /* Celebrations */,
+				5BD082B819DB7325D5320138 /* Home */,
+				A334E783EF36A8A88EC46AE9 /* Onboarding */,
+				C102F43CA03B8C711B45414E /* Shopping */,
+				E2EB273D1CD5A2317E9828A7 /* Streaks */,
+				DD89A41D0679CF5D738750CC /* Thread */,
+				F029E4D14C5D62D0D9844745 /* Vent */,
+				2CFA94E5147DAF1DDD3F6CAE /* WeekPlan */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		41909D6ED32C567A24DD6478 /* MoodyWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 142CA7D836161046CB041B7F /* Build configuration list for PBXNativeTarget "MoodyWidgets" */;
+			buildPhases = (
+				D9F0A8B9EAE45A032939A116 /* Sources */,
+				7797B756FB8CF8A3CC15B9F3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MoodyWidgets;
+			packageProductDependencies = (
+			);
+			productName = MoodyWidgets;
+			productReference = E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		DFF38109F3DD653E41814345 /* Moody */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C46B2C91542D90B4E6C7972D /* Build configuration list for PBXNativeTarget "Moody" */;
+			buildPhases = (
+				51F6C5B24795E4D1BA446A27 /* Sources */,
+				69B4E15788A2430BA4CEA0BE /* Resources */,
+				C40E29C1C8500989AF756FC5 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				56C89587622840049ED58578 /* PBXTargetDependency */,
+			);
+			name = Moody;
+			packageProductDependencies = (
+			);
+			productName = Moody;
+			productReference = 40609321B585B6BBDD3752E9 /* Moody.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		227A4CFAEF461CBFC6BAA647 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 6E159AAF5A60729C20019AA3 /* Build configuration list for PBXProject "Moody" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = B8CB01B98263DD79479708DD;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 59EB067207C601A8BB1D201C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DFF38109F3DD653E41814345 /* Moody */,
+				41909D6ED32C567A24DD6478 /* MoodyWidgets */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		69B4E15788A2430BA4CEA0BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2661E25CE50FD177F70CDB02 /* Assets.xcassets in Resources */,
+				BC2A611402BA7A4F25C67A90 /* Baloo2-Bold.ttf in Resources */,
+				67A491ED8EB1CB17F97EDB6F /* Baloo2-ExtraBold.ttf in Resources */,
+				7150FB616BE2FEDC1E1429C0 /* Baloo2-SemiBold.ttf in Resources */,
+				DE1CAEADE4ECD08DFF78D047 /* Nunito-Black.ttf in Resources */,
+				EF8C6B506D158E0580F9C910 /* Nunito-Bold.ttf in Resources */,
+				DFEF99F897BC6A54E7919BD3 /* Nunito-ExtraBold.ttf in Resources */,
+				D240ACFEDD4C57392292F890 /* Quicksand-SemiBold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7797B756FB8CF8A3CC15B9F3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				841F0D793679ED8E79C80CE5 /* Baloo2-Bold.ttf in Resources */,
+				3531BF334866E7519FD74306 /* Baloo2-ExtraBold.ttf in Resources */,
+				7DDEECEFB8402B09766CC80D /* Baloo2-SemiBold.ttf in Resources */,
+				AAF93ECBEB22211EBFBEAD7E /* Nunito-Black.ttf in Resources */,
+				C9089A3F18FED4489E776A6F /* Nunito-Bold.ttf in Resources */,
+				25A42D4F5799EC6E0E4D9D0D /* Nunito-ExtraBold.ttf in Resources */,
+				996D382C3C0E203D0F7D3372 /* Quicksand-SemiBold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		51F6C5B24795E4D1BA446A27 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E93E2C3C8B0F32ADE29D1B84 /* AppState.swift in Sources */,
+				D4A2FA5A426A915B60390CD8 /* CelebrationEngine.swift in Sources */,
+				B83E0785CE496D865FB14324 /* CelebrationOverlay.swift in Sources */,
+				0A6454DFC5CB62457CB1926A /* Components.swift in Sources */,
+				D0011C05409ABF6F8004CADD /* CookModeActivity.swift in Sources */,
+				289B0873449E9A4F4AF1B36D /* CookModeController.swift in Sources */,
+				0A776A8D984178B9AB7ACCBF /* FridgeHomeView.swift in Sources */,
+				9BCE9CB14E93532139DAD8E0 /* Models.swift in Sources */,
+				25AE66FB61BCB05CDCB47A79 /* MoodyApp.swift in Sources */,
+				E2DBB8023359341639728518 /* OnboardingView.swift in Sources */,
+				F3EAF323A9147594D03883FD /* RootView.swift in Sources */,
+				1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */,
+				1D287A4F367E7B3D28518E75 /* StreaksView.swift in Sources */,
+				6217E4AB988272D64A1C08DB /* Theme.swift in Sources */,
+				68873708DB90B03A77927C58 /* ThreadView.swift in Sources */,
+				08AE43F27773F1AD0C92A585 /* VentView.swift in Sources */,
+				FC2D0A253A6802C3B73E1482 /* WeekPlanView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9F0A8B9EAE45A032939A116 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4057E995DEE7A7B59EDEDF86 /* Components.swift in Sources */,
+				1E322DAF4F9051B614708D64 /* CookModeActivity.swift in Sources */,
+				B424E5A98E462B20AF54BD2F /* Models.swift in Sources */,
+				7303B173ACBE0C121ED2F9AF /* MoodyWidgets.swift in Sources */,
+				086B4CD310657D61615F206C /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		56C89587622840049ED58578 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41909D6ED32C567A24DD6478 /* MoodyWidgets */;
+			targetProxy = 7D9D1D48BBAD9938D7AD5121 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		6AAC5687F6C95123B2A1E31E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = MoodyWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mariayarley.Moody.MoodyWidgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		980D59BFDD683B23D980C2FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Moody/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mariayarley.Moody;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BCFA81C50E2C6EDF5353A657 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Moody/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mariayarley.Moody;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D6A8E47BB137371F01B77E8A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		EB19CC50878FF8E246C531FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		EB28B360B9CA276A5D3B1AC6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = MoodyWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mariayarley.Moody.MoodyWidgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		142CA7D836161046CB041B7F /* Build configuration list for PBXNativeTarget "MoodyWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6AAC5687F6C95123B2A1E31E /* Debug */,
+				EB28B360B9CA276A5D3B1AC6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6E159AAF5A60729C20019AA3 /* Build configuration list for PBXProject "Moody" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6A8E47BB137371F01B77E8A /* Debug */,
+				EB19CC50878FF8E246C531FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C46B2C91542D90B4E6C7972D /* Build configuration list for PBXNativeTarget "Moody" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BCFA81C50E2C6EDF5353A657 /* Debug */,
+				980D59BFDD683B23D980C2FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 227A4CFAEF461CBFC6BAA647 /* Project object */;
+}
