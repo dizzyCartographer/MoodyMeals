@@ -99,11 +99,12 @@ struct RootView: View {
     /// Screenshot/verification hook: launch with SIMCTL_CHILD_MOODY_SCREEN=<name>
     /// to land directly on a screen. Debug convenience only — no user-facing role.
     private func applyDebugRoute() {
-        // MOODY_DEMO=decide fires the everyday-win celebration on launch so the
-        // confetti overlay can be captured headlessly. Independent of
-        // MOODY_SCREEN — it must work standalone.
+        // MOODY_DEMO=decide performs a real decide-for-me on launch (commit +
+        // celebration) so both the confetti overlay and persistence can be
+        // exercised headlessly. Independent of MOODY_SCREEN — works standalone.
         if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "decide" {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                appState.decideForMe()
                 celebrations.celebrate(.everyday(message: "decided. done."))
             }
         }

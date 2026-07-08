@@ -22,6 +22,13 @@ targets:
     dependencies:
       - target: MoodyWidgets
         embed: true
+    # App Group shared with MoodyWidgets — the snapshot.json contract
+    # (Moody/Data/Persistence.swift). XcodeGen generates the file; app groups
+    # work on simulator without signing, so CODE_SIGNING settings stay as-is.
+    entitlements:
+      path: Moody.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.mariayarley.Moody]
     info:
       path: Moody/Info.plist
       properties:
@@ -55,8 +62,14 @@ targets:
       - path: Moody/DesignSystem/Theme.swift
       - path: Moody/DesignSystem/Components.swift
       - path: Moody/Models/Models.swift
+      # Widgets read the same App Group snapshot the app writes.
+      - path: Moody/Data/Persistence.swift
       - path: Moody/Resources/Fonts
         buildPhase: resources
+    entitlements:
+      path: MoodyWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.mariayarley.Moody]
     info:
       path: MoodyWidgets/Info.plist
       properties:

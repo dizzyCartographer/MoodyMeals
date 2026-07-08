@@ -3,9 +3,23 @@ import SwiftUI
 // Central observable state + demo data matching the mockups (Taco Tuesday,
 // day 2 of the rebuild, PB 23, covered thru Friday). Personas are scripted
 // in v1 — swap MessageBank for a live generator later without touching views.
+//
+// Persistence: demo seeds below are the first-launch state; a saved
+// MoodySnapshot overlays them on init, and every mutation (didSet on the
+// persisted @Published vars — direct view edits included) schedules a
+// debounced save. See Data/Persistence.swift for the snapshot contract.
 
 @MainActor
 final class AppState: ObservableObject {
+
+    init() {
+        // Debug hook: MOODY_RESET=1 wipes the snapshot and launches from seeds.
+        if ProcessInfo.processInfo.environment["MOODY_RESET"] == "1" {
+            resetToDemo()
+        } else if let snapshot = Persistence.load() {
+            apply(snapshot)   // overlay persisted state onto the demo defaults
+        }
+    }
 
     // MARK: Cast
 
@@ -38,15 +52,7 @@ final class AppState: ObservableObject {
 
     // MARK: Plan
 
-    @Published var week: [DayPlan] = [
-        DayPlan(day: .mon, kind: .done, meal: Meal(id: "forage", name: "Fridge forage", effort: 1)),
-        DayPlan(day: .tue, kind: .tonight, meal: Meal(id: "tacos", name: "Build-your-own tacos", effort: 2)),
-        DayPlan(day: .wed, kind: .kidCook, meal: Meal(id: "ramen", name: "Chad's ramen night", effort: 1)),
-        DayPlan(day: .thu, kind: .planned, meal: Meal(id: "gnocchi", name: "Sheet-pan gnocchi", effort: 2)),
-        DayPlan(day: .fri, kind: .planned, meal: Meal(id: "pizza", name: "GF pizza night", effort: 2)),
-        DayPlan(day: .sat, kind: .joyCook, meal: Meal(id: "birria", name: "Birria (joy cook)", effort: 3)),
-        DayPlan(day: .sun, kind: .open, meal: nil),
-    ]
+    @Published var week: [DayPlan] = DemoSeed.week { didSet { scheduleSave() } }
 
     var tonight: DayPlan { week.first { $0.kind == .tonight } ?? week[1] }
     var tonightLabel: String { "TONIGHT · TACO TUESDAY" }
@@ -66,37 +72,15 @@ final class AppState: ObservableObject {
 
     // MARK: Energy / streak / guarantee
 
-    @Published var tank: Tank = .steady
-    @Published var streak = Streak(current: 2, personalBest: 23, freezeTokens: 2, state: .rebuilding)
-    @Published var sassLevel: Double = 6   // 0 mild … 10 full chaos
+    @Published var tank: Tank = DemoSeed.tank { didSet { scheduleSave() } }
+    @Published var streak: Streak = DemoSeed.streak { didSet { scheduleSave() } }
+    @Published var sassLevel: Double = DemoSeed.sassLevel { didSet { scheduleSave() } }   // 0 mild … 10 full chaos
 
     var guaranteeLine: String { "groceries covered thru Friday ✓" }
 
     // MARK: Shopping
 
-    @Published var runs: [ShoppingRun] = [
-        ShoppingRun(id: "topup", title: "Tonight top-up", tier: .tonightTopUp,
-                    items: [ShoppingItem(name: "corn tortillas (GF)", category: "grains"),
-                            ShoppingItem(name: "limes", category: "produce")],
-                    protects: "protects tonight's tacos + Thu gnocchi"),
-        ShoppingRun(id: "weekly", title: "Wednesday weekly", tier: .weekly,
-                    items: (1...12).map { i in
-                        ShoppingItem(name: ["milk", "eggs", "chicken thighs", "rice", "black beans",
-                                            "cheddar", "spinach", "apples", "GF pasta", "salsa",
-                                            "yogurt", "carrots"][i - 1],
-                                     category: ["dairy", "dairy", "meat", "grains", "pantry",
-                                                "dairy", "produce", "produce", "grains", "pantry",
-                                                "dairy", "produce"][i - 1])
-                    },
-                    protects: "covers Wed–Fri dinners + school lunches"),
-        ShoppingRun(id: "costco", title: "Saturday Costco", tier: .bulk,
-                    items: [ShoppingItem(name: "beef chuck (birria)", category: "meat"),
-                            ShoppingItem(name: "GF flour 5lb", category: "pantry"),
-                            ShoppingItem(name: "oat milk case", category: "dairy"),
-                            ShoppingItem(name: "frozen fruit", category: "frozen")],
-                    protects: "bulk + Saturday's joy cook",
-                    atRisk: "Sat's birria depends on the Costco run"),
-    ]
+    @Published var runs: [ShoppingRun] = DemoSeed.runs { didSet { scheduleSave() } }
 
     let alwaysStocked: [ShoppingItem] = [
         ShoppingItem(name: "tortillas", category: "staple"),
@@ -110,20 +94,7 @@ final class AppState: ObservableObject {
 
     // MARK: Thread (scripted demo — voices per README cast section)
 
-    @Published var thread: [ThreadMessage] = [
-        ThreadMessage(author: .persona("hannah"),
-                      text: "fixings in the fridge. you literally just chop.",
-                      kind: .moment, tapbacks: ["♥ 2", "★ Chuck"]),
-        ThreadMessage(author: .persona("cat"),
-                      text: "warm the tortillas in a dry pan, 30 sec a side. game changer, I promise.",
-                      kind: .aside),
-        ThreadMessage(author: .persona("julie"),
-                      text: "day 2 of the rebuild!! task re-initiation costs more dopamine than the task. you paid it. respect."),
-        ThreadMessage(author: .family("chuck"),
-                      text: "I can do pickup if the lime situation is dire"),
-        ThreadMessage(author: .persona("hannah"),
-                      text: "the lime situation is always dire, Chuck. it's called being a household."),
-    ]
+    @Published var thread: [ThreadMessage] = DemoSeed.thread { didSet { scheduleSave() } }
 
     /// Today's noticer for the home sticky (Hannah/Cat alternate slump duty;
     /// Julie owns comebacks). Demo pins Hannah per the chosen mockup.
@@ -161,4 +132,108 @@ final class AppState: ObservableObject {
             commitTonight(fallbackMeal)
         }
     }
+
+    // MARK: Persistence
+
+    private var saveTask: Task<Void, Never>?
+    private var suppressSaves = false   // apply()/resetToDemo() must not re-save
+
+    /// Every mutation lands here via the @Published didSets above — direct
+    /// view edits (week[i].locked, thread.append) included — and coalesces
+    /// into one write ~0.5s after the last change.
+    private func scheduleSave() {
+        guard !suppressSaves else { return }
+        saveTask?.cancel()
+        saveTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            guard let self, !Task.isCancelled else { return }
+            Persistence.save(MoodySnapshot(week: week, streak: streak, tank: tank,
+                                           runs: runs, thread: thread,
+                                           sassLevel: sassLevel, savedAt: Date()))
+        }
+    }
+
+    private func apply(_ snapshot: MoodySnapshot) {
+        suppressSaves = true
+        defer { suppressSaves = false }
+        week = snapshot.week
+        streak = snapshot.streak
+        tank = snapshot.tank
+        runs = snapshot.runs
+        thread = snapshot.thread
+        sassLevel = snapshot.sassLevel
+    }
+
+    /// Deletes the snapshot and restores the demo seeds. Not surfaced in UI;
+    /// invoked by the MOODY_RESET=1 debug hook.
+    func resetToDemo() {
+        saveTask?.cancel()   // a pending save must not resurrect the file
+        Persistence.reset()
+        suppressSaves = true
+        defer { suppressSaves = false }
+        week = DemoSeed.week
+        streak = DemoSeed.streak
+        tank = DemoSeed.tank
+        runs = DemoSeed.runs
+        thread = DemoSeed.thread
+        sassLevel = DemoSeed.sassLevel
+    }
+}
+
+// MARK: - Demo seeds (first-launch state + resetToDemo() restore point)
+
+enum DemoSeed {
+
+    static let week: [DayPlan] = [
+        DayPlan(day: .mon, kind: .done, meal: Meal(id: "forage", name: "Fridge forage", effort: 1)),
+        DayPlan(day: .tue, kind: .tonight, meal: Meal(id: "tacos", name: "Build-your-own tacos", effort: 2)),
+        DayPlan(day: .wed, kind: .kidCook, meal: Meal(id: "ramen", name: "Chad's ramen night", effort: 1)),
+        DayPlan(day: .thu, kind: .planned, meal: Meal(id: "gnocchi", name: "Sheet-pan gnocchi", effort: 2)),
+        DayPlan(day: .fri, kind: .planned, meal: Meal(id: "pizza", name: "GF pizza night", effort: 2)),
+        DayPlan(day: .sat, kind: .joyCook, meal: Meal(id: "birria", name: "Birria (joy cook)", effort: 3)),
+        DayPlan(day: .sun, kind: .open, meal: nil),
+    ]
+
+    static let tank: Tank = .steady
+    static let streak = Streak(current: 2, personalBest: 23, freezeTokens: 2, state: .rebuilding)
+    static let sassLevel: Double = 6
+
+    static let runs: [ShoppingRun] = [
+        ShoppingRun(id: "topup", title: "Tonight top-up", tier: .tonightTopUp,
+                    items: [ShoppingItem(name: "corn tortillas (GF)", category: "grains"),
+                            ShoppingItem(name: "limes", category: "produce")],
+                    protects: "protects tonight's tacos + Thu gnocchi"),
+        ShoppingRun(id: "weekly", title: "Wednesday weekly", tier: .weekly,
+                    items: (1...12).map { i in
+                        ShoppingItem(name: ["milk", "eggs", "chicken thighs", "rice", "black beans",
+                                            "cheddar", "spinach", "apples", "GF pasta", "salsa",
+                                            "yogurt", "carrots"][i - 1],
+                                     category: ["dairy", "dairy", "meat", "grains", "pantry",
+                                                "dairy", "produce", "produce", "grains", "pantry",
+                                                "dairy", "produce"][i - 1])
+                    },
+                    protects: "covers Wed–Fri dinners + school lunches"),
+        ShoppingRun(id: "costco", title: "Saturday Costco", tier: .bulk,
+                    items: [ShoppingItem(name: "beef chuck (birria)", category: "meat"),
+                            ShoppingItem(name: "GF flour 5lb", category: "pantry"),
+                            ShoppingItem(name: "oat milk case", category: "dairy"),
+                            ShoppingItem(name: "frozen fruit", category: "frozen")],
+                    protects: "bulk + Saturday's joy cook",
+                    atRisk: "Sat's birria depends on the Costco run"),
+    ]
+
+    static let thread: [ThreadMessage] = [
+        ThreadMessage(author: .persona("hannah"),
+                      text: "fixings in the fridge. you literally just chop.",
+                      kind: .moment, tapbacks: ["♥ 2", "★ Chuck"]),
+        ThreadMessage(author: .persona("cat"),
+                      text: "warm the tortillas in a dry pan, 30 sec a side. game changer, I promise.",
+                      kind: .aside),
+        ThreadMessage(author: .persona("julie"),
+                      text: "day 2 of the rebuild!! task re-initiation costs more dopamine than the task. you paid it. respect."),
+        ThreadMessage(author: .family("chuck"),
+                      text: "I can do pickup if the lime situation is dire"),
+        ThreadMessage(author: .persona("hannah"),
+                      text: "the lime situation is always dire, Chuck. it's called being a household."),
+    ]
 }

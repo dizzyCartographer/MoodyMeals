@@ -24,8 +24,9 @@ struct MoodyWidgetsBundle: WidgetBundle {
 
 // MARK: - Timeline
 
-/// Static demo entry mirroring `AppState`'s demo data (Taco Tuesday,
-/// groceries covered thru Friday).
+/// Tonight's dinner for the widget face. Live entries map the App Group
+/// snapshot (Data/Persistence.swift); `.demo` mirrors `AppState`'s seeds
+/// (Taco Tuesday, groceries covered thru Friday) for first launch/previews.
 struct TonightEntry: TimelineEntry {
     let date: Date
     var label = "TONIGHT · TACO TUESDAY"
@@ -35,19 +36,46 @@ struct TonightEntry: TimelineEntry {
     var badges: [SafetyBadgeInfo] = Meal(id: "tacos", name: "Build-your-own tacos", effort: 2).badges
     var badgeSummary = "GF ✓ · plain ✓ · ×2 ✓"
     var coveredLine = "covered thru FRI ✓"
+    var tank: Tank = .steady
 
     static let demo = TonightEntry(date: .now)
+
+    /// Maps the persisted snapshot; nil (first launch / no snapshot) →
+    /// caller shows `.demo`. Never throws — Persistence.load() eats corruption.
+    static func live(at date: Date = .now) -> TonightEntry? {
+        guard let snapshot = Persistence.load(),
+              let tonight = snapshot.week.first(where: { $0.kind == .tonight })
+                  ?? snapshot.week.first
+        else { return nil }
+        // Law 3: the widget never shows an empty tonight. Open/undecided
+        // nights fall back like the home door does (AppState.fallbackMeal —
+        // duplicated here because the candidate pool isn't persisted).
+        let meal = tonight.meal ?? Meal(id: "quesadillas", name: "Cupboard quesadillas",
+                                        effort: 1, isFallback: true, keyword: "quesadillas")
+        // "TACO TUESDAY" is demo copy; live labels use the plain weekday.
+        return TonightEntry(date: date,
+                            label: "TONIGHT · \(tonight.day.long.uppercased())",
+                            mealName: meal.name,
+                            badges: meal.badges,
+                            tank: snapshot.tank)
+        // badgeSummary/coveredLine keep their defaults: the three guarantees
+        // are household-level, and snapshot v1 has no grocery-coverage field
+        // (the app hardcodes guaranteeLine too — same constant, same face).
+    }
 }
 
 struct TonightProvider: TimelineProvider {
     func placeholder(in context: Context) -> TonightEntry { .demo }
 
     func getSnapshot(in context: Context, completion: @escaping (TonightEntry) -> Void) {
-        completion(.demo)
+        completion(.live() ?? .demo)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<TonightEntry>) -> Void) {
-        completion(Timeline(entries: [.demo], policy: .never))
+        // ~15 min self-refresh keeps "TONIGHT · <day>" honest across midnight;
+        // the app also force-reloads on every snapshot save.
+        completion(Timeline(entries: [.live() ?? .demo],
+                            policy: .after(Date().addingTimeInterval(15 * 60))))
     }
 }
 
@@ -171,6 +199,8 @@ struct TonightMediumView: View {
 
     // 1.4 : 1 : 1 like the reference grid. 40pt tall so the three Links are
     // real fingertip targets, not 32pt squints — the spacer above pays for it.
+    // Tank pills follow the home tank-check's language: current = yellow,
+    // others = paper (demo tank is .steady, so .demo renders as the mockup).
     private var actionRow: some View {
         GeometryReader { geo in
             let gap: CGFloat = 7
@@ -182,16 +212,20 @@ struct TonightMediumView: View {
                 }
                 .frame(width: unit * 1.4)
                 Link(destination: URL(string: "moody://tank/fumes")!) {
-                    actionPill("fumes", background: Theme.paper)
+                    actionPill("fumes", background: tankPillBackground(.fumes))
                 }
                 .frame(width: unit)
                 Link(destination: URL(string: "moody://tank/steady")!) {
-                    actionPill("steady", background: Palette.yellow.color)
+                    actionPill("steady", background: tankPillBackground(.steady))
                 }
                 .frame(width: unit)
             }
         }
         .frame(height: 40)
+    }
+
+    private func tankPillBackground(_ level: Tank) -> Color {
+        entry.tank == level ? Palette.yellow.color : Theme.paper
     }
 
     private func actionPill(_ title: String, background: Color) -> some View {

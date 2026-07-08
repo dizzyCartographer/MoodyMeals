@@ -45,6 +45,7 @@ SIMCTL_CHILD_MOODY_SCREEN=week xcrun simctl launch <sim> com.mariayarley.Moody  
 # values: home week shopping streaks vent thread onboarding
 SIMCTL_CHILD_MOODY_DEMO=decide …     # fires the confetti celebration on launch
 SIMCTL_CHILD_MOODY_DEMO=cookmode …   # starts the cook-mode Live Activity
+SIMCTL_CHILD_MOODY_RESET=1 …         # deletes the persisted snapshot + restores demo seeds
 ```
 
 Gotcha: `MOODY_SCREEN=onboarding` persistently resets the `hasOnboarded` flag, so the *next* plain launch shows onboarding again. Launch once with any other `MOODY_SCREEN` value to restore it.
@@ -59,12 +60,12 @@ Gotcha: `MOODY_SCREEN=onboarding` persistently resets the `hasOnboarded` flag, s
 
 ## Not built yet (obvious next steps)
 
-- Real persistence (everything resets on relaunch — demo data only)
+- ~~Real persistence~~ core state now persists via an App Group JSON snapshot (`Moody/Data/Persistence.swift`; debounced saves from `AppState`, demo data stays the first-launch seed)
 - Voice entry (mic buttons are affordances, not wired to dictation)
 - Live persona generation via Claude API (structure is ready; needs a key)
 - Onboarding steps 4+: stressor interview, per-member meal swipe-rating
 - Real meal/recipe data + the constraint solver beyond the demo pool
-- Widget ↔ app shared state via App Group (widgets show static demo data)
+- ~~Widget ↔ app shared state~~ widgets now read the App Group snapshot (live tonight-meal + tank; refresh ≤15 min or instantly on app saves)
 
 ## Review status
 

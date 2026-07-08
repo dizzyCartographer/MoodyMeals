@@ -1,6 +1,10 @@
 import SwiftUI
 
 // Domain models — shape follows README §State Management (sketch).
+// Persisted types (Meal, DayPlan, Weekday, Streak, Tank, ShoppingItem,
+// ShoppingRun, ThreadMessage) are Codable for the App Group snapshot
+// (Data/Persistence.swift). PaletteSlot/Persona/HouseholdMember stay
+// non-persisted — static cast/config.
 
 // MARK: - Household
 
@@ -34,7 +38,7 @@ struct Persona: Identifiable {
 
 // MARK: - Meals & plan
 
-struct Meal: Identifiable, Equatable {
+struct Meal: Identifiable, Equatable, Codable {
     let id: String
     var name: String
     var effort: Int            // 1–3, shown as ●○○
@@ -58,7 +62,7 @@ struct SafetyBadgeInfo: Identifiable, Equatable {
     var id: String { text }
 }
 
-enum Weekday: Int, CaseIterable, Identifiable {
+enum Weekday: Int, CaseIterable, Identifiable, Codable {
     case mon, tue, wed, thu, fri, sat, sun
     var id: Int { rawValue }
     var short: String { ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][rawValue] }
@@ -67,7 +71,7 @@ enum Weekday: Int, CaseIterable, Identifiable {
     }
 }
 
-enum DayKind: Equatable {
+enum DayKind: String, Equatable, Codable {
     case done          // cooked, gets ✓
     case tonight       // the anchor — yellow magnet, current
     case kidCook       // e.g. "Wed: CHAD 🍜"
@@ -77,7 +81,7 @@ enum DayKind: Equatable {
     case rest          // planned skip: streak intact, zero shame
 }
 
-struct DayPlan: Identifiable {
+struct DayPlan: Identifiable, Codable {
     var day: Weekday
     var kind: DayKind
     var meal: Meal?
@@ -88,13 +92,13 @@ struct DayPlan: Identifiable {
 
 // MARK: - Streak (law 4: the string "0" must be unreachable)
 
-struct Streak {
+struct Streak: Codable {
     var current: Int
     var personalBest: Int
     var freezeTokens: Int
     var state: StreakState
 
-    enum StreakState { case active, rebuilding, returnPending }
+    enum StreakState: String, Codable { case active, rebuilding, returnPending }
 
     /// Headline number — never zero. Day counts start at 1 ("day 1 of the
     /// rebuild" begins the moment a streak breaks).
@@ -118,14 +122,14 @@ struct Streak {
 
 // MARK: - Shopping
 
-struct ShoppingItem: Identifiable {
-    let id = UUID()
+struct ShoppingItem: Identifiable, Codable {
+    var id = UUID()   // stored var (not `let = …`) so persisted ids survive relaunch
     var name: String
     var category: String
     var low: Bool = false
 }
 
-struct ShoppingRun: Identifiable {
+struct ShoppingRun: Identifiable, Codable {
     let id: String
     var title: String
     var tier: Tier
@@ -133,29 +137,29 @@ struct ShoppingRun: Identifiable {
     var protects: String          // the meals this run keeps safe
     var atRisk: String? = nil
 
-    enum Tier { case tonightTopUp, weekly, bulk }
+    enum Tier: String, Codable { case tonightTopUp, weekly, bulk }
 }
 
 // MARK: - Thread
 
-struct ThreadMessage: Identifiable {
-    let id = UUID()
+struct ThreadMessage: Identifiable, Codable {
+    var id = UUID()   // stored var (not `let = …`) so persisted ids survive relaunch
     var author: Author
     var text: String
     var kind: Kind = .normal
     var tapbacks: [String] = []   // e.g. ["♥ 2", "★ Chuck"]
 
-    enum Author: Equatable {
+    enum Author: Equatable, Codable {
         case persona(String)      // persona id
         case family(String)       // member id
         case ria
     }
-    enum Kind { case normal, moment, aside }
+    enum Kind: String, Codable { case normal, moment, aside }
 }
 
 // MARK: - Energy
 
-enum Tank: String, CaseIterable, Identifiable {
+enum Tank: String, CaseIterable, Identifiable, Codable {
     case fumes = "Fumes", steady = "Steady", full = "Full"
     var id: String { rawValue }
 }
