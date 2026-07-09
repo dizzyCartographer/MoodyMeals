@@ -2,6 +2,10 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [D-42] — Food-rules generalization proposed (2026-07-09, live)
+- Outcome: **proposed, awaiting Ria** (D-42 digest). Ria spotted that dietary needs are enum-hardcoded (`DietaryRequirement`/`FoodNeedGoal`) — a new restriction (Chuck's high cholesterol) can't land without a code change, violating D-35's no-hardcoding spirit at the condition level. Proposed generic per-member FoodRule {never/limit/boost + ingredient tags + frequency knob}; §1 gluten-verification machinery explicitly preserved; task queued as M4-0 BLOCKED(D-42).
+- Tests added: none (proposal only).
+
 ### [D-39/D-17/D-18] — Live answers recorded (2026-07-09, docs only)
 - Outcome: **applied to docs**. Ria (live chat): D-39 ingredients soft-delete/archive only (retire/merge, never hard-delete — F19 closed, F18 confirmed; affordance queued as M2-6); D-17 dislike floor per-tier (−2 ≤ once/14d, −1 ≤ once/7d per person; consecutive ban stands — supersedes single `dislikeFloorPerWeek`, keys land at M4-1); D-18 no auto hold/yield on cook-night × stressor (manual + one-tap swap; PT-9 auto-yield retired, no-fault streak pause stays; M4-16 re-scoped). DECISIONS/QUESTIONS/BACKLOG/TEST_CASES annotated.
 - Tests added: none — no code touched; suite stands at 102/102 from M2-4. Implementations land with M2-6 / M4-1 / M4-10 / M4-16.

@@ -40,6 +40,7 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 
 ## M4 — Scheduler v1 — [M0-0b draft]
 *Note: M4 is large (16 tasks) — candidate to split (M4 core / M4b guardrails+chains). Flagged for Ria.*
+- [M4-0] **[BLOCKED(D-42)]** (90m) Generalize food rules (added 2026-07-09, Ria-proposed) — replace `DietaryRequirement`/`FoodNeedGoal` with per-member `FoodRule` {never/limit/boost, ingredient tags, frequency knob}; `Ingredient.tags` user-extendable; migrate seed (Caddie never{gluten} KEEPS the HC verification tri-state; Chuck limit{redMeat, pork}; Ria boost{iron, fiber, antiInflammatory}; Chad boost{calorieDense}); rule-filterable ingredient views. **AC:** §1 suite behavior-identical and green (HC-1..7, SF-1..3); add-a-rule-at-runtime test (new restriction honored with zero code change). NEEDS-VISUAL-REVIEW (rule/tag UI).
 - [M4-1] (90m) `TuningConfig` singleton + Fine-tuning settings — all §8 keys w/ defaults, plain-language sliders, reset-to-default; tests read config not literals. Adds keys per D-33/D-34/F7/F8 **if approved**. **AC:** every §8 tunable present. NEEDS-VISUAL-REVIEW.
 - [M4-2] (90m) Hard filter (Step 1/1c) — exclude hard-req violations vs attendees, non-active rotation, notToday; GF verified-rule; all-timers exempt. **AC:** HC-1, HC-2, HC-3, SCH-14, ATF-2.
 - [M4-3] (90m) Scoring engine (Step 3) — weighted score(m,d) from TuningConfig weights. **AC:** SCH-1, SCH-2, SCH-3, SCH-4.

@@ -6,6 +6,14 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-09 (live session)
+
+**D-42. Generalize dietary needs into data-driven Food Rules? (Ria-proposed — confirming exact shape before building.)** Today a new restriction is a CODE change: hard needs and soft goals are fixed lists in source (`DietaryRequirement`, `FoodNeedGoal` enums), so Chuck's high cholesterol has nowhere to go without editing the app — the smell Ria spotted. Proposed replacement: one generic per-member **FoodRule** — {name, direction: **never / limit / boost**, matching ingredient tags, frequency knob} — with user-extendable tags on ingredients. Mapping: Caddie = never{gluten} (**verification tri-state KEPT** — unverified still reads unsafe; §1 machinery and HC tests unchanged in behavior); Chuck = limit{red meat, pork} ≤1×/week default (tunable per rule); Ria = boost{iron, fiber, anti-inflammatory}; Chad = boost{calorie-dense}. Scheduler mapping is 1:1 with what's already planned: never→hard filter (M4-2); boost→fit-coverage guardrails (M4-8, generalized from iron-specific); limit→a cap window symmetric to D-17's dislike windows. Ingredient catalog becomes filterable by rule ("which ones might be a problem / should show up more"). Carve-outs: taste dislikes stay in scores (D-17), not rules; Elsie's plate rule + staples lifeline stay as-is (composition-shaped, maps poorly to ingredient tags).
+→ Options: a) yes — replace both enums with FoodRule + ingredient tags; new restrictions become data entry in settings/onboarding, never code (recommended) b) minimal: add a `highCholesterol` enum case now (fast, but every future restriction is a code change again)
+→ Blocks: Chuck's cholesterol accommodation; M4-0 (new task); shapes M4-2/M4-8.
+**Ria:** _____
+
+---
 ## Digest — 2026-07-07 evening (3 open items, ranked by unblock value)
 
 **D-34. Add `staple` as a shopping-item source? ⏫ (re-raised from morning — now the only thing blocking M0-5)**
