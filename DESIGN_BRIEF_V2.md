@@ -7,6 +7,17 @@ Round 1 is built. All seven screens from your kit exist in native SwiftUI, pixel
 
 This brief is the gap list: every surface the product needs that round 1 never designed. It was compiled by sweeping your README's implications, the built app's dangling affordances, and standard iOS hygiene — then deduplicated. Maria will art-direct from build screenshots, so mockups are **art direction, not specs**: one authoritative frame per screen is enough; I extrapolate states from your system.
 
+## ⚠️ CANON ADDENDUM (added 2026-07-09 — read before designing)
+
+A parallel build surfaced 41 user-ratified product decisions (`UNIFICATION_PLAN.md` has the full story). The ones that change mockups:
+
+- **Lunch is in scope (D-40).** The week plan needs a home for breakfast/lunch/dinner slots, not just dinner rows + an AM strip. This reshapes Wave-1 item 6 (day editor) and the week plan itself.
+- **Safety badges are tri-state, per-attendee, derived (D-35, D-38, HC-3/5).** Never hardcode member names in designs as if always-present: a meal can be *verified GF* / *contains gluten* / *unverified — check label*, and badges reflect who's ATTENDING (Caddie away unlocks gluten — design that state). Design the **never-silent GF override confirm** (HC-5): assigning an unverified meal to a celiac attendee needs a deliberate-weight confirm moment — no red (law 4), but real gravity. This is the one place the kit's candy language must carry medical seriousness.
+- **Streaks count ANY dinner (D-13)** — fallback, leftovers, takeout — with a 48h grace window. "DINNERS FROM HOME" copy is wrong; reframe the hero as "dinner happened."
+- **Persona cast rules (D-20…D-26):** 3–5 co-created cast, ≥2 homage-of-real-people + ≥2 fictional; four roles — Noticer, **Never-Left** (never references absence, pure continuity), Hype (celebrates comebacks only after re-engagement, never first), **Kindred** (canonically ADHD, disappears too, returns self-gap-blind). The group thread NEVER discusses her absence. Onboarding's cast co-creation step should reflect the 2+2 suggestion.
+- **No sheet-pan framing anywhere (D-4)** — it stresses the user. **Eating out is nuclear (D-7)** — never suggested, never scheduled; don't design affordances that propose it.
+- **Meal library (Wave-1 item 4) has a working behavioral spec** in the parallel build's plain UI (full CRUD field inventory, loose/precise recipes, tri-state GF badge) — mock the *design*; the fields and flows are already decided.
+
 ## Standing decisions — do not redesign these
 
 - **Cast**: Ria, Chuck, Caddie (celiac), Elsie (safe foods), Chad (×2, Wed cook). Personas: Hannah, Cat, Julie. Use them in all mockups — no placeholder names this round.
