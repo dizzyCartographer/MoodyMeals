@@ -1,14 +1,22 @@
 # macOS
 .DS_Store
 
-# Xcode user state
+# Xcode / Swift
+build/
+DerivedData/
 xcuserdata/
 *.xcuserstate
 *.xcscmblueprint
+*.xcworkspace/xcuserdata/
 
-# Build products
-build/
-DerivedData/
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Secrets — Claude API keys come from the environment, never the repo
+*.xcconfig.local
+Secrets.plist
+.env
 
 # Note: Moody.xcodeproj is committed for convenience, but it is GENERATED —
 # project.yml is the source of truth; run `xcodegen generate` after file changes.

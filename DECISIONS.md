@@ -1,0 +1,115 @@
+# DECISIONS.md — the twice-daily decision digest
+After every overnight/day run, Claude Code posts 3–5 ranked, one-minute-answerable decisions here. Ria answers inline; answers are canon.
+
+Format per item:
+**D-[n]. [one-line question]**  → Options: a) … b) … c) … (recommended: x) → Blocks: [task/behavior]
+**Ria:** _answer here_
+
+---
+## Digest — 2026-07-07 evening (3 open items, ranked by unblock value)
+
+**D-34. Add `staple` as a shopping-item source? ⏫ (re-raised from morning — now the only thing blocking M0-5)**
+→ Sources today: {meal, snackCadence, breakfastStaple, manual}; Elsie's always-stocked lifeline items need their own tag so "why is this on my list" and PT-7 dedup work. → Options: a) yes, add `staple` (recommended) b) reuse `manual` (loses provenance)
+→ Blocks: M0-5 (shopping/inventory models) → which blocks all of M2
+**Ria:** a) yes, add `staple` (2026-07-07 evening) → ANSWERED, canon
+
+**D-37. Delete rules — one decision pins five relationship edges (F14+F17 in QUESTIONS).** When a meal or family member is deleted, today's spec-exact models leave dangling references that CRASH on access (verified). Proposal: scores cascade with their meal (DM-5); `currentBreakfast` nils gracefully (DM-6); plan entries get flagged + re-filled rather than silently deleted (CD-1/HC-8 spirit); attendee/cook references nil out (D-5 subset semantics). Also: retroactive OK for F17 (an explicit inverse field I had to add to stop core-memory writes corrupting breakfast defaults — real data-corruption bug, fixed + regression-tested).
+→ Options: a) approve the bundle as proposed (recommended) b) tweak (say which edge) c) discuss first
+→ Blocks: DM-5/DM-6 tests; meal/member deletion anywhere in the UI (M0-7+)
+**Ria:** a) approve the bundle as proposed, incl. F17 retroactive OK (2026-07-07 evening) → ANSWERED, canon
+
+**D-38. Freeform text and GF safety — how cautious? (F16/F16b in QUESTIONS.)** Currently: a meal whose composition is unknown (freeform-only, like "Chipotle takeout") or partly unknown (notes + listed items) reads as NOT verified for Caddie until confirmed once. Safest, but it means casual notes ("kids like extra cheese") make a fully-verified meal ask for one confirmation.
+→ Options: a) keep maximal caution (current) b) notes are commentary — only listed ingredients count (one-line flip; freeform-ONLY meals stay unverified) (recommended: b if you use notes casually, a if notes often carry real food)
+→ Blocks: nothing today; shapes how often verification prompts appear from M1-3 on
+**Ria:** b) notes are commentary — only listed ingredients count; freeform-ONLY meals stay unverified (2026-07-07 evening) → ANSWERED, canon
+
+**D-39. Can catalog ingredients ever be hard-deleted? (F18/F19 in QUESTIONS.)** Recipes/shopping/inventory/waste/staples all point at the ingredient catalog; deleting a referenced ingredient crashes those reads today, and recipes reference ingredients non-optionally. Also includes retroactive confirm of F18 (I extended your D-37 delete-degrades-gracefully rule to the new M0-5 edges: member staples, purchase history).
+→ Options: a) never hard-delete — retire/merge only, like meals (recommended; matches "nothing retires for good") b) allow deletion, nil out references, recipes get a merge prompt
+→ Blocks: nothing until M0-7's catalog CRUD; F18 confirm is bookkeeping
+**Ria:** _____
+
+---
+## Digest — 2026-07-07 (M0-0 consistency read)
+*First real run. Five decisions from an end-to-end read of all docs, ranked by how much they unblock. Full findings archived in QUESTIONS.md (F1–F12); nothing resolved unilaterally.*
+
+**D-32. Stale blockers — Q1/Q2/Q4/Q5 are already answered by canon (D-1 multi-slot, D-5 attendance, D-2 cooldown, D-3 escalation), and the §2 data model already implements all four. OK to mark them Answered and delete BACKLOG's "Blocked pending Ria" line, unblocking M0-4?**
+→ Options: a) yes, clear all four; only Q3 (Liking/Fit −2…+2 resolution) stays open — and it's already implemented b) keep parked until you sign off (recommended: a — the code path is fixed by the model regardless)
+→ Blocks: M0-4 (and tidies M0-2/M0-3, which lean on the same canon)
+**Ria:** yes, clear the stale blockers (2026-07-07) → ANSWERED, moved to canon
+
+**D-33. Leftover-chain data gap — scheduler Step 1d + tests LC-3/LC-5 need a leftover `InventoryItem` carrying a `kind` and a `useBy` date, but §2 `InventoryItem` has neither. How to model it? (Spec deviation → needs your OK; I can't touch build-spec.md.)**
+→ Options: a) add `kind: InventoryKind {normal, leftover}` + `useBy: Date?` to InventoryItem b) a separate `LeftoverItem` type c) overload existing `label`/`estimatedQuantity` (fragile) (recommended: a)
+→ Blocks: M0-5 (InventoryItem shape), M2 leftover chains (LC-1…5)
+**Ria:** yes, add kind + useBy — "not sure if I'll use it or not" (2026-07-07) → ANSWERED, moved to canon
+
+**D-34. StapleItem shopping items have no provenance — PT-7/SCH-13 route Elsie's staples onto runs, but `ItemSource = {meal, snackCadence, manual, breakfastStaple}` has no `staple` case. Add one?**
+→ Options: a) add `staple` to ItemSource b) reuse `manual` (loses provenance, weakens PT-7 dedup) (recommended: a)
+→ Blocks: M0-5 (ItemSource enum), M2-1 dedup (PT-7)
+**Ria:** asked "what other item sources are we using?" (2026-07-07) — answered in chat: {meal, snackCadence, breakfastStaple, manual}; awaiting her confirm on adding `staple`
+
+**D-35. Elsie's needs — does `FoodNeedGoal.proteinVegStarch` still apply as a soft goal, or did D-6 fully replace it with StapleItems? Seed data (M0-2/M0-6) needs to know.**
+→ Options: a) staples only; drop proteinVegStarch from her seed profile (literal reading of D-6 "replaces") b) keep BOTH — staples as the hard lifeline + proteinVegStarch as a soft Fit nudge c) staples only but retain the enum case for future use (recommended: b — belt-and-suspenders, near-zero cost)
+→ Blocks: M0-2 / M0-6 seed profile for Elsie
+**Ria:** "no one should be hard coded.... and the goal should always be that all 5 people want to eat a full dinner... elsie isn't a cow that just grazes on her own." (2026-07-07) → ANSWERED, moved to canon (D-35)
+
+**D-36. DM-4 rule — a Precise recipe saved with a missing amount on one item: reject, or auto-downgrade to Loose? (TEST_CASES flags DM-4 as a decision-forcing test.)**
+→ Options: a) auto-downgrade to Loose + tell the user (matches "never forms-first friction") b) reject with inline validation c) keep Precise, treat that one item as loose (mixed) (recommended: a)
+→ Blocks: M0-3 recipe editor/validation + the DM-4 test
+**Ria:** "c. i might want to know how much chicken and beans i normally use and do all seasoning by taste." (2026-07-07) → ANSWERED, moved to canon (D-36)
+
+---
+## Digest — 2026-07-06 (self pressure-test)
+**D-17. Fairness floor default: is 1×/week facing a −2 meal the right ceiling per person?**
+→ Options: a) 1/week b) 0 — never schedule anyone's −2 c) 2/week (recommended: a; b starves the pool)
+**Ria:** _____
+
+**D-18. Kid cook-night on a stressor day: hold or yield?**
+→ Options: a) holds at severity ≤2, yields at 3 (current default) b) always holds — kid cooking IS the relief c) always yields (recommended: a)
+**Ria:** _____
+
+## Digest — [awaiting first run]
+*(Seeded from the build spec's open questions so the first morning isn't empty:)*
+
+
+
+
+## Answered (canon)
+- **D-40 (2026-07-07): LUNCH IS IN SCOPE — breakfast pattern.** Ria: "we eat lunch too." Overrides build-spec §1's "lunch out of scope." `SlotKind.lunch` added everywhere (grid, editor, calendar sync at a lunch hour); each member gets a per-person `currentLunch` default with burnout-swap, exactly like breakfast (joins M7's default+burnout work). Manual lunch planning works today via the week grid.
+- **D-41 (2026-07-07): Snacks stay STOCKED, NOT SCHEDULED.** The replenishment system (favorites + rebuy rhythms + always-in-stock) is the right model; no snack calendar slot.
+- **D-34 (2026-07-07): `staple` joins ItemSource.** {meal, snackCadence, breakfastStaple, manual, staple} — lifeline items (D-6 StapleItems) carry their own provenance for PT-7 dedup and list explanations.
+- **D-37 (2026-07-07): Delete-rules bundle APPROVED (resolves F14, ratifies F17).** When a MEAL is deleted: its MemberMealScores cascade (DM-5); any member's `currentBreakfast` pointing at it nils gracefully (DM-6); PlanEntries survive with `meal` nil = needs-refill flag (never silently vanish — CD-1/HC-8 spirit; `PlanEntry.meal` becomes optional to express this). When a MEMBER is deleted: they drop out of `attendees` lists and `assignedCook` nils (D-5 subset semantics). F17's explicit inverse (`coreMemoryMeals`) ratified. All expressed as explicit inverses on Meal/FamilyMember — spec §2 deviations authorized by this answer.
+- **D-38 (2026-07-07): Notes are commentary, not composition.** Only listed ingredients drive the GF-verified verdict; a note ("kids like extra cheese") no longer holds a meal unverified. Freeform-ONLY meals (zero known ingredients) still read unverified — F16's fail-safe stands.
+- **D-35 (2026-07-07): NO ONE IS HARDCODED + the full-dinner rule.** Two-part canon: (1) **No family member is ever hardcoded in code** — all member-specific behavior comes from per-member DATA (profiles, goals, staples, appetite fields on FamilyMember). Names appear in seed data only; no named-person constants (build-spec §8's `chadAppetiteBase` label reads as generic per-member `appetiteBase` — already modeled that way). (2) **The scheduler's objective is that ALL FIVE attendees want to eat a full dinner.** Elsie "isn't a cow that just grazes on her own": her staples lifeline (D-6) is an emergency safety net, NEVER her dinner plan — dinners must actually work for her. So her seed keeps `proteinVegStarch` as a soft goal AND the staples floor. Strengthens the fairness floor (Step 4d) and Fit-coverage guardrails: dinner inclusion is the goal, fallbacks are exceptions.
+- **D-36 (2026-07-07): Mixed precision — option (c).** A Precise recipe with amount-less items is VALID: measured items keep amounts ("I might want to know how much chicken and beans I normally use"), seasonings ride along amount-less ("all seasoning by taste"). Never reject, never downgrade the whole recipe. Shopping explosion: sum amounts where present, list plain where not (consistent with SL-2). DM-4's rule is now: allow mixed; no validation gate on missing amounts.
+- **D-32 (2026-07-07): Stale blockers CLEARED.** Ria confirmed Q1/Q2/Q4/Q5 are resolved by existing canon (D-1 multi-slot, D-5 attendance, D-2 cooldown 42d, D-3 escalation/snooze). Moved to QUESTIONS Answered; BACKLOG "Blocked pending Ria" line removed. **M0-4 is unblocked.** Only Q3 (Liking/Fit −2…+2 resolution) remains open — non-blocking, implemented as Int −2…+2 per spec §2 unless she wants finer.
+- **D-33 (2026-07-07): Leftover inventory fields APPROVED.** Add `kind: InventoryKind {normal, leftover}` + `useBy: Date?` to `InventoryItem` (spec §2 deviation, Ria-approved). Ria: "not sure if I'll use it or not" — fields land at M0-5 either way; scheduler Step 1d + LC-3/LC-5 need them.
+- **D-29 (2026-07-06): THE HOUSE LAW** — see D-30 correction for actual scope.
+- **D-30 (2026-07-06): Scope correction — it's the FLOUR LINE, not a gluten ban.** Household normally buys/uses packaged gluten items (regular crackers, bread, hot dog buns) — legit shopping items, tagged not-Caddie-safe. The real ban is from-scratch wheat baking / raw wheat-flour work (contamination vector). GF baking via mixes is active and loved (King Arthur GF = house standard) — suggestible everywhere, including joy-cooking and Signature bakes. Emotional weight noted but per Ria: "not that big a deal."
+- **D-31 (2026-07-06): The flour line's dual rationale.** (1) Aerosolization/contamination; (2) never baking something super delicious Caddie isn't allowed to have — home doesn't advertise her exclusion. Extends to a generative rule: app-suggested special/celebratory home cooking is always Caddie-inclusive (HC-10); mundane contained gluten stays fine.
+- **D-28 (2026-07-06): Method affinity, weighted HARD.** Meals tagged by CookMethod; each cook carries method love/avoid (−2…+2). "Grill in 102° seven times before the oven" = a law, not a preference: wMethod=1.5, per-assigned-cook, and a loved method is NEVER weather-nannied — the app salutes, it doesn't second-guess. Avoided methods surface only under constraint, with the reason stated.
+- **D-27 (2026-07-06): She LOVES to cook — the app protects the cook, not just the family.** Two mechanics: (1) **Signature meals** — the "five meals the kids will miss" get a frequency floor (memory reps accrue on schedule, not by luck) and pair with kid cook-nights so the recipes transfer, not just the dinners; (2) **Joy-cooking invitations** — calm high-capacity days surface the deep-dive list ("cook for real?") in invitation register; declining is free. The 4:30 ambush is an initiation gap, not a skill gap — low-effort scaffolding exists to protect capacity for the days the cook gets to fly.
+- **D-26 (2026-07-06): The mission sentence + the 2+2 cast rule.** Mission now in README + requirements: "I don't need one meal. I need all the meals, and I need them to be from me" — the casserole gap; the app exists to build capacity, not replace the cook. Onboarding suggests the persona cast include ≥2 real people (emotional anchors — voices she can hear) + ≥2 fictional wish-friends (aspirational delight), keeping the cast grounded in her actual life. Real-person personas are homage (vibe + relationship), never impersonation; stylized avatars by default; suggestion is overridable.
+- **D-25 (2026-07-06): The Vent.** A voice-first place to bitch about why the slump happened — because food is personal and carries mom guilt. Listener register only (warm, brief, no fixing/analysis/toxic positivity); default receiver is a quiet dedicated space, persona reception opt-in. Sensitive-data covenant: vent content never echoed anywhere else, never mined (one consented stressor proposal max), deletable, local-only mode available, and venting can never make the app push harder. Ethos held as warmth: fed is the win; slumps are capacity events, not character verdicts.
+- **D-24 (2026-07-06): The Kindred + group-thread mode.** One persona canonically has ADHD: iykyk humor, chaotic hours, and they DISAPPEAR TOO — returning self-gap-blind ("hyperfocus hole, ANYWAY—"), with a solidarity reveal allowed when Ria returns. Kills the flawless-system/flaky-human asymmetry. Cast interacts in a lurkable group thread (grouped notifications, zero response debt, overheard-content delivery, strict chatter budget). HARD RULE: the group never discusses her absence — slump touches stay 1:1 with the Noticer.
+- **D-23 (2026-07-06): Persona ROLES + re-entry choreography.** One persona is the Noticer (first, warmest, zero-ask touch when a slump starts); another is the Never-Left (gap-blind by hard rule — never references absence, pause, or time passed; pure continuity, so returning carries no shame). The Hype persona still delivers the comeback celebration — but only after re-engagement, never first, never from the Never-Left. Re-entry shame is the real barrier; this deletes it.
+- **D-22 (2026-07-06): Personas have LIVES + the quarter-hour ban.** Each cast member gets ritual beats tied to a fictional routine (chef → AM fresh-catch ideas from the docks; band booster → ~3pm favorite super-quick meal). Ritual windows are stable character anchors with jittered minutes, varied days, never daily. HARD RULE: nothing ever delivers at :00/:15/:30/:45 — organic minutes only (9:17, 3:22; never 10:00, never 4:15). Off-kilter = person; round = app.
+- **D-21 (2026-07-06): Persona CAST + Habituation Horizon.** 3–5 stable, co-created recurring characters (the high-school chef, the neighbor, the church friend, the band-boosters person) — familiarity + rotation, resting and returning like real friends. The named failure mode is now a spec constant: identical patterns go invisible between day 4–21, so no envelope dimension stays constant >3 days and no full pattern repeats within the habituation horizon (default 7, user-tunable 4–21). Vibes cycle back regularly — rest and return, never wallpaper.
+- **D-20 (2026-07-06): Every message is a unique ARTIFACT, not just unique text.** The Presentation Envelope: persona/sender-voice (corpus-informed cast, communication-style notifications with avatars), channel/surface, visual kit (her palette), sound, jittered timing — novelty enforced on the whole tuple. "Sorta scheduled" is fine; sameness is not. Felt like: sister-text → Instagram-ping → church-app notification. Honest limit: no impersonating other apps' chrome; personas deliver the felt variety within iOS rules.
+- **D-19 (2026-07-06): Corpus drives meme/reference targeting.** Gosling was only ever an example — media/show/book loves are HOW the engine knows which references land. Nothing hardcodes any meme; the corpus is the targeting system.
+- **Self pressure-test (2026-07-06) applied:** notification pre-generation architecture (iOS constraint) + offline fallback bank; photo person-detection privacy gate; cold-start reduced-mode scheduler + onboarding swipe-ratings; fairness floor; EventKit drift reconciliation; cross-source shopping dedup; DST/day-boundary rules. Tests PT-1..10.
+- **D-16 (2026-07-06): Corpus expands + stressor profile.** Loves now include favorite colors (feeding the app's own visual styling), books, shows, and shops (place-loves double into preferred-store run planning). "What days stress me most" = a separate DECLARED stressor profile: calendar-matchable day patterns that preemptively adapt scheduling + notifications, outranking inference. Seeded by a conversational onboarding interview; reflection may propose additions, never silently.
+- **D-15 (2026-07-06): The Loves Corpus is the app's unifying layer.** Curate what each person genuinely loves (explicit + conversational + consented-observation) and draw on it in EVERY generative context — notifications, memes, celebrations, rewards, check-ins, slump mode. Fully visible/user-owned, rotated for novelty (loves rest and return too), never weaponized, no injected commerce. Reward menu + meme pack become facets of it. This is what keeps the app genuine, delightful, effective, useful.
+- **D-14 (2026-07-06): Reward Menu — bidirectional rewards.** User-curated dopamenu (tiered small/medium/special, per member). Deployed at initiation ("let's do this" anticipation pairing) AND triumph ("look what I did, bitch!!!" swagger register), with RESTART rewards weighted strongest ("look who's back on the wagon — someone deserves a ThriftBooks order"). Hard rule: only user-authored items ever named — no injected commerce. Sass available via voiceRegister; sass never targets a miss.
+- **D-13 (2026-07-06): STREAKS — yes, ADHD-safe by construction.** Bend-don't-break: grace windows + freeze tokens, pause-never-zero display, comebacks celebrated harder than continuations, generated celebrations. Tracks PROCESS ("dinner happened" counts fallbacks; "shopped per plan" gamifies the guarantee; kid cook-night runs). HARD RULE: never streak an individual's food intake (eating-pressure guard).
+- **D-10 (2026-07-06): Notifications are a GENERATIVE emotional-intelligence engine** — the neurodivergent-first-manager model. Every message freshly generated; jumps channel/genre/vibe regularly, more during suspected slumps; decides soft-encouragement vs kick-in-pants vs humor from read-the-room state. Grounded in ADHD motivation research (reward-anticipation not threat, never shame, novelty is load-bearing, one tiny step, real named stakes). Prompt corpus to draw on ADDitude / ADHD.love-style guidance.
+- **D-11 (2026-07-06): Fried rice is EASY.** Leftover-consumer meals are busy-night heroes — scheduler gives them a bonus on dense days (correcting my assumption).
+- **D-12 (2026-07-06): Local sales awareness (Phase 2)** — needs-aligned healthy deals auto-proposed to the list; verify Kroger API path for Harris Teeter; never coupon spam.
+- **D-4 (2026-07-06): Leftovers are a legit meal AND a chain.** Meals can produce components on purpose (extra rice) and other meals can be leftover-DEPENDENT (fried rice, curry). Scheduler enforces producer→consumer within a freshness window. Component-template meals REJECTED (too complicated; sheet-pan framing stresses Ria — don't seed sheet-pan anchors).
+- **D-5 (2026-07-06): Attendance matters (marching band).** Hard constraints apply to attendees only; Caddie-away unlocks gluten ("all-the-gluten pizza night" gets a bonus). Chad counts 1.5–2 people on his favorites (appetiteBase + favorite boost, tunable).
+- **D-6 (2026-07-06): Kid cook-nights.** Tag meals per member as "likes to MAKE" (not just eat); optional anchor gives each kid a night. Elsie's real requirement = sandwich basics + garbanzo beans ALWAYS stocked (StapleItems under the guarantee) — replaces the abstract plate rule.
+- **D-7 (2026-07-06): Eating out is nuclear.** Never auto-scheduled, never proposed for occasions; manual/emergency only.
+- **D-8 (2026-07-06): Mood tags + calendar-inferred conditions.** Cleaner visit → kitchen-gorgeous → griddle night eligible; two kid events → simple + healthy. Mappings user-editable.
+- **D-9 (2026-07-06): Reminders need emotional intelligence.** Unactioned alert → ONE friendly meme follow-up (user-curated meme pack — e.g. Ria's Gosling/Project-Hail-Mary astronaut memes — with warm rotating captions), then silence-as-signal.
+- **D-2 (2026-07-06): Cooldown = min 6 weeks, max ~6 months, always user-adjustable.** TuningConfig: `cooldownDefaultDays=42`, `cooldownMinDays=42`, `cooldownMaxDays=180`; per-meal override allowed within range.
+- **D-3 (2026-07-06): Escalation must genuinely yell (with novelty) AND be snoozable.** "For real, shut up" = explicit snooze for when life legitimately explodes — but it can NEVER go offline permanently: auto-reactivates in ≤7 days. TuningConfig: `escalationSnoozeMaxDays=7`. New tests: GT-9 (snooze silences all escalation), GT-10 (auto-return ≤7 days), GT-11 (snooze never disables §1 safety warnings).
+- **D-1 (2026-07-06): Multi-slot YES — breakfast-for-dinner is a thing.** But it's conditional: only on a *peaceful* day when the kitchen is guaranteed clean. Wednesday is the likely home. → Model: `slots: [SlotKind]` array; new `requiresCalmDay: Bool` scheduling condition; seed a soft Wednesday breakfast-for-dinner anchor (inactive by default, one tap to enable).
