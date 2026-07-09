@@ -2,6 +2,10 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [F13] — M3–M8 backlog APPROVED + restructured (2026-07-09, live)
+- Outcome: **approved** ("This all looks great and yeah, break it up as you see fit"). Applied: M3 reordered value-first (M3-1 plumbing → M3-6 check-in → M3-7 "just decide" → capture M3-2..5 → foundations M3-8..10); M4 split into M4 core (M4-0,1,2,3,5,6,7,12,14 — produces a valid safe week plan) and M4b guardrails/chains/care (M4-4,8,9,10,11,13,15,16); M5 split into M5 infra+reminders+EQ (M5-1,2,3,14,15,16), M5b personas+envelope (M5-4..9), M5c streaks/rewards/Vent (M5-10..13). Task IDs unchanged — only order and milestone boundaries moved. M4-8 AC generalized to D-45 boost-rule coverage. Q3 also closed (−2…+2 confirmed).
+- Tests added: none (planning). Remaining for Ria: only the three screenshots in docs/screenshots/, at leisure.
+
 ### [D-44] — GF safety model rewritten: risk classes + brands + substitutions (2026-07-09, live)
 - Outcome: **canon recorded (D-44)**. Ria retired the verified-per-ingredient model entirely ("I do not want to have to mark fresh broccoli as gf"): whole foods safe with no marking; gluten carriers (seeded: flour, bread, pasta, crackers, beer, regular soy sauce; extendable) are the only class that raises anything — recipe shows "substitutions may be required" until a per-recipe standard mod is recorded (her quiche → King Arthur gf pie crust mix, verbatim in canon); packaged goods get optional preferred brands that ride to shopping lists, safe by default when unset. §1 flagged for rewrite at M4-0 with her sign-off gate before old tests die; shipped app keeps conservative behavior until then. Her GF-API question → Q9 (Open Food Facts, assistive-grade, M6, new-dep gate; near-term Claude capture-time carrier flagging at M3-2). Elsie (second push-back): NO rule at all — D-35 objective + scores + staples carry the end goal; smallest-fix-later only if usage shows dinners failing her. M4-0 re-scoped (split candidate a/b), M3-2 re-scoped, D-42 digest amended again.
 - Tests added: none (docs only; code swap lands at M4-0).

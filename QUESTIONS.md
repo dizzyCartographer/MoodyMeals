@@ -2,7 +2,6 @@
 Claude Code appends; Ria answers inline at morning/evening review. Answered items move to the bottom with the decision recorded (they become canon).
 
 ## Open
-- [Q3] Liking/Fit resolution: −2…+2 enough? *(non-blocking — implemented as Int −2…+2 per spec §2 unless Ria wants finer)*
 - [Q9] (2026-07-09) GF lookup at ingredient-add (Ria asked "is there a standard gf api?"): no authoritative public certified-GF API exists. Candidate: Open Food Facts — free, crowdsourced, barcode-keyed allergen + "may contain" traces; assistive-grade only, never authoritative. NEW-DEPENDENCY gate applies; parked for M6 (pairs with photo/barcode inventory). Near-term, dependency-free path already planned: M3-2 Claude capture flags likely carriers (D-44).
 
 ## M0-2 verification findings (2026-07-07, adversarial review)
@@ -39,9 +38,10 @@ Full end-to-end read of requirements, build-spec, TEST_CASES, DECISIONS, DESIGN_
 - **[F12] methodAffinity key type.** `methodAffinity: [String:Int]` uses String keys documented as CookMethod (SwiftData dict constraint). Confirm intent = store `CookMethod.rawValue` strings so M0-2 encodes consistently. Low.
 
 ### M0-0b (backlog extension) — awaits approval
-- **[F13] M3–M8 backlog drafted (M0-0b).** Task breakdowns for M3–M8 + a Phase 2 pointer are now in BACKLOG.md, criteria-tagged and traced to TC IDs, AI-prompt tasks marked PROMPT-REVIEW. AC requires your approval in a digest. Two structural asks: **M4 (16 tasks)** and **M5 (15 tasks)** are oversized — recommend splitting M4→M4/M4b and M5→M5/M5b/M5c. Not urgent (doesn't block M0-1); confirm at a review window.
+- **[F13] ✅ RESOLVED 2026-07-09 (live: "This all looks great and yeah, break it up as you see fit").** M3–M8 approved; splits applied (M4→M4/M4b, M5→M5/M5b/M5c); M3 reordered value-first (M3-1 → M3-6 → M3-7 → capture tasks → foundations). Original finding: Task breakdowns for M3–M8 + a Phase 2 pointer are in BACKLOG.md, criteria-tagged and traced to TC IDs, AI-prompt tasks marked PROMPT-REVIEW; M4/M5 were oversized.
 
 ## Answered (canon)
+- **[Q3] (2026-07-09):** Liking/Fit resolution stays −2…+2 — presented live with recommendation, approved in Ria's blanket "this all looks great."
 - **[Q6] (2026-07-07 evening, via D-34):** `staple` added to ItemSource — lifeline items carry provenance.
 - **[Q7] (2026-07-07, via D-35):** No one hardcoded; all-5-full-dinner is the scheduler objective. Elsie: `proteinVegStarch` soft goal + staples safety net — staples are never her dinner plan.
 - **[Q8] (2026-07-07, via D-36):** Mixed precision allowed — Precise recipes may carry amount-less items (seasoning by taste); never reject, never downgrade. DM-4 resolved.
