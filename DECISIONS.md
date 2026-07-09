@@ -26,7 +26,7 @@ Format per item:
 **D-39. Can catalog ingredients ever be hard-deleted? (F18/F19 in QUESTIONS.)** Recipes/shopping/inventory/waste/staples all point at the ingredient catalog; deleting a referenced ingredient crashes those reads today, and recipes reference ingredients non-optionally. Also includes retroactive confirm of F18 (I extended your D-37 delete-degrades-gracefully rule to the new M0-5 edges: member staples, purchase history).
 → Options: a) never hard-delete — retire/merge only, like meals (recommended; matches "nothing retires for good") b) allow deletion, nil out references, recipes get a merge prompt
 → Blocks: nothing until M0-7's catalog CRUD; F18 confirm is bookkeeping
-**Ria:** _____
+**Ria:** soft delete / archive — never hard-delete; retire/merge only (2026-07-09, in chat) → ANSWERED, moved to canon (F18 retroactive confirm rides along)
 
 ---
 ## Digest — 2026-07-07 (M0-0 consistency read)
@@ -61,11 +61,11 @@ Format per item:
 ## Digest — 2026-07-06 (self pressure-test)
 **D-17. Fairness floor default: is 1×/week facing a −2 meal the right ceiling per person?**
 → Options: a) 1/week b) 0 — never schedule anyone's −2 c) 2/week (recommended: a; b starves the pool)
-**Ria:** _____
+**Ria:** stricter than every offered option — a −2 meal no more than once every 2 weeks; a −1 meal no more than once a week (2026-07-09, in chat) → ANSWERED, moved to canon
 
 **D-18. Kid cook-night on a stressor day: hold or yield?**
 → Options: a) holds at severity ≤2, yields at 3 (current default) b) always holds — kid cooking IS the relief c) always yields (recommended: a)
-**Ria:** _____
+**Ria:** none of the above — "feels like extra constraints… as long as it's easy for me to swap things." What helps on a stressor day is unpredictable (a kid cooking might be amazing OR extra stressful); never auto-decide, keep swapping one tap (2026-07-09, in chat) → ANSWERED, moved to canon
 
 ## Digest — [awaiting first run]
 *(Seeded from the build spec's open questions so the first morning isn't empty:)*
@@ -74,6 +74,9 @@ Format per item:
 
 
 ## Answered (canon)
+- **D-39 (2026-07-09): Ingredients are NEVER hard-deleted — soft delete/archive only.** Retiring hides an ingredient from pickers; recipes, shopping/purchase history, inventory, waste log, and staples keep their references intact. Duplicates get a merge flow, not deletion. Closes the F19 crash class by construction (none of the six referencing edges can dangle); F18's retroactive extension of D-37 confirmed with it. Affordance queued as M2-6; no hard-delete UI existed yet, so nothing to rip out.
+- **D-17 (2026-07-09): Dislike floor is PER-TIER, stricter than proposed.** Per person: a −2 meal at most once every 14 days; a −1 meal at most once every 7 days; the no-consecutive-days rule stands. Supersedes §8's single `dislikeFloorPerWeek` — becomes two TuningConfig windows (keys named at M4-1, defaults 14/7 days). PT-2 re-parameterizes at M4-10.
+- **D-18 (2026-07-09): Cook-night × stressor collisions are NOT auto-decided.** No hold/yield rule at any severity — what's useful on a stressor day is situational (a kid cooking can be relief OR extra load), so the app never moves a kid cook-night on its own. The obligation flips to friction: swapping any entry must stay one-tap easy (the Tonight/week-grid swap is the affordance). PT-9's auto-yield half is retired; its no-fault streak pause (the kid's streak is unaffected by a swap) stays. M4-16 re-scoped.
 - **D-40 (2026-07-07): LUNCH IS IN SCOPE — breakfast pattern.** Ria: "we eat lunch too." Overrides build-spec §1's "lunch out of scope." `SlotKind.lunch` added everywhere (grid, editor, calendar sync at a lunch hour); each member gets a per-person `currentLunch` default with burnout-swap, exactly like breakfast (joins M7's default+burnout work). Manual lunch planning works today via the week grid.
 - **D-41 (2026-07-07): Snacks stay STOCKED, NOT SCHEDULED.** The replenishment system (favorites + rebuy rhythms + always-in-stock) is the right model; no snack calendar slot.
 - **D-34 (2026-07-07): `staple` joins ItemSource.** {meal, snackCadence, breakfastStaple, manual, staple} — lifeline items (D-6 StapleItems) carry their own provenance for PT-7 dedup and list explanations.

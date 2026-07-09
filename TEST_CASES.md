@@ -255,14 +255,14 @@ Sections marked ⚠️ are safety-critical: a red test here halts feature work.
 
 ## §21 Pressure-test findings (cross-system collisions)
 - **PT-1** — Cold start: with all scores at 0, the scheduler runs the reduced mode (frequency+effort+hard constraints), labels it, and never presents tie-breaking as optimization.
-- **PT-2** — Fairness floor: Elsie at −2 on a meal the other four rate +2 → it appears ≤ `dislikeFloorPerWeek`/week and never on consecutive days; Σ-liking alone can't bury one member.
+- **PT-2** — Fairness floor: Elsie at −2 on a meal the other four rate +2 → it appears ≤ `dislikeFloorPerWeek`/week and never on consecutive days; Σ-liking alone can't bury one member. *(D-17 2026-07-09: floor is now per-tier — a −2 meal ≤ once/14 days, a −1 meal ≤ once/7 days, per person; consecutive-day ban stands.)*
 - **PT-3** — Notification pre-generation: content is generated ≤60 min before send using current state; a capacity flip after generation but before send triggers regeneration.
 - **PT-4** — Offline: with no network at send time, the fallback bank supplies corpus-flavored, novelty-tracked content — never a visible template string.
 - **PT-5** — Photo privacy: an image containing a detected person is never uploaded; the user is prompted to retake/crop; the crop is what ships.
 - **PT-6** — EventKit drift: moving a Moody event in the Calendar app re-runs guarantee + capacity checks for the new date; deleting one prompts skip-vs-reschedule; content edits are reconciled back to app truth.
 - **PT-7** — Cross-source dedup: garbanzo beans required by a meal + staples floor + snack cadence in the same window → ONE line item, summed, strictest need-by.
 - **PT-8** — DST/day boundaries: streak days, plan dates, and "tonight" resolve correctly across DST transitions and late-night logging (a 12:30am "we ate" log counts for the evening just ended, not tomorrow).
-- **PT-9** — Cook-night × stressor: severity ≤2 keeps the kid's cook-night; severity 3 yields to a low-effort fill; either way the kid's streak is unaffected (no-fault pause).
+- **PT-9** — Cook-night × stressor: severity ≤2 keeps the kid's cook-night; severity 3 yields to a low-effort fill; either way the kid's streak is unaffected (no-fault pause). *(D-18 2026-07-09: auto hold/yield RETIRED — collisions stay manual with one-tap swap; the no-fault streak pause stands.)*
 - **PT-10** — Leftover chain × attendance: a producer cooked at reduced attendance yields a smaller leftover belief; if it can't cover the consumer's portions, the consumer is flagged before its day, not discovered at the stove.
 
 ## §19g The Vent

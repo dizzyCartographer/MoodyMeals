@@ -23,6 +23,7 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M2-3] **[DONE 2026-07-07]** (90m) Guarantee check v1 (no inventory) — coverage between now and next confirmed run; violation → structured result naming at-risk meals. **AC:** TC-GT-1..6. → 16 tests; adversarial review found 3 verified blockers (phantom purchases, day-vs-clock granularity, no freshness floor) — all fixed + mutation-pinned.
 - [M2-4] **[DONE 2026-07-07]** (60m) Markdown + Reminders export of a run's list. **AC:** TC-SL-6; Reminders export behind permission check. → 3 tests; strictest-need-by merging (PT-7 spirit); Shopping tab UI ships with M2-5.
 - [M2-5] (45m) Run skip/delay flow — recheck guarantee, produce at-risk report object (UI later). **AC:** TC-GT-7..8.
+- [M2-6] (45m) Ingredient archive/retire + merge (added 2026-07-09 per D-39) — catalog ingredients get retire (hidden from pickers; recipes/history render unchanged) + merge-duplicates flow; hard delete never exposed. **AC:** retire hides from recipe-editor picker while existing references stay intact; merge re-points all six referencing edges; tests pin both (closes F19 crash class).
 
 ## M3 — Brain, part 1 (Claude NL capture) — [M0-0b draft, awaits digest approval]
 *Tags: PROMPT-REVIEW = AI-prompt/tone task, review-gated (do not tune autonomously). NEEDS-VISUAL-REVIEW = UI.*
@@ -48,13 +49,13 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M4-7] (60m) Frequency + recency + locks (Step 4) — no repeat in recency window; frequency pressure; locks immovable. **AC:** SCH-5, SCH-8.
 - [M4-8] (90m) Fit-coverage guardrails (Step 4) — iron ≥`ironCoveragePerWeek`, calorie-dense ≥`calorieDense…`; patch lowest-margin; warnings. **AC:** SCH-10, SCH-11.
 - [M4-9] (90m) Leftover chains (Step 1d/4a2) — requiresComponents placement, pull-in producer, leftover InventoryItem+useBy, busy-night bonus. **AC:** LC-1..5, SCH-17, PT-10. *(depends on D-33)*
-- [M4-10] (60m) Fairness floor (Step 4d) — `dislikeFloorPerWeek`, no consecutive −2. **AC:** PT-2. *(D-17 default)*
+- [M4-10] (60m) Fairness floor (Step 4d) — per-tier windows per D-17 (2026-07-09): −2 ≤ once/14 days, −1 ≤ once/7 days per person, never consecutive; the two window keys land in TuningConfig at M4-1 (supersede `dislikeFloorPerWeek`). **AC:** PT-2 re-parameterized per D-17.
 - [M4-11] (60m) Cook nights + servings (Step 4c) — kid anchors, likesToCook, portions = Σ appetiteBase + favorite boost. **AC:** SCH-15, SCH-16.
 - [M4-12] (60m) Cold-start reduced mode (Step 4f) — frequency+effort+hard only until signal; labeled; onboarding swipe pass. **AC:** PT-1.
 - [M4-13] (60m) Calm-day gate + calendar conditions (Step 1b/4b) — requiresCalmDay eligibility; user-editable signal→rule maps; Wednesday b4d anchor seeded OFF. **AC:** SCH-6 + condition-gate tests.
 - [M4-14] (60m) Reactivity + 12-month horizon — re-score today+tomorrow only; horizon gen; near-term syncs; novelty dial. **AC:** SCH-7, SCH-9 *(needs F7)*, SCH-12.
 - [M4-15] (45m) Signature floor (4g) + joy-cooking invite (4h) — memory reps; invitation register. **AC:** ATF-5, ATF-6, ATF-7. PROMPT-REVIEW (invite copy).
-- [M4-16] (60m) Stressor adaptation + cook-night collision (4e) — severity holds/yields; preemptive effort caps. **AC:** STRS-1..3, PT-9. *(D-18 default)*
+- [M4-16] (60m) Stressor adaptation (4e) — preemptive effort caps, quiet notifications, severity scaling. Cook-night collisions are NOT auto-decided (D-18, 2026-07-09): no hold/yield logic; rely on one-tap swap; PT-9's no-fault streak pause stays. **AC:** STRS-1..3, PT-9 as re-scoped. *(Scope check pending: does D-18's "what's useful can change" also soften STRS-1's preemptive auto-adaptations? Asked 2026-07-09.)*
 
 ## M5 — Notifications & the generative EQ engine — [M0-0b draft]
 *Note: M5 is very large (15 tasks) — genuinely 2–3 milestones. Recommend split (M5 infra+reminders / M5b personas+envelope / M5c streaks+rewards+vent). Flagged for Ria. Nearly all tasks PROMPT-REVIEW.*

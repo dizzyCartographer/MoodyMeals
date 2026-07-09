@@ -2,6 +2,12 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [D-39/D-17/D-18] — Live answers recorded (2026-07-09, docs only)
+- Outcome: **applied to docs**. Ria (live chat): D-39 ingredients soft-delete/archive only (retire/merge, never hard-delete — F19 closed, F18 confirmed; affordance queued as M2-6); D-17 dislike floor per-tier (−2 ≤ once/14d, −1 ≤ once/7d per person; consecutive ban stands — supersedes single `dislikeFloorPerWeek`, keys land at M4-1); D-18 no auto hold/yield on cook-night × stressor (manual + one-tap swap; PT-9 auto-yield retired, no-fault streak pause stays; M4-16 re-scoped). DECISIONS/QUESTIONS/BACKLOG/TEST_CASES annotated.
+- Tests added: none — no code touched; suite stands at 102/102 from M2-4. Implementations land with M2-6 / M4-1 / M4-10 / M4-16.
+- Notes: asked Ria one scope clarification — whether D-18's "what's useful can change" also applies to STRS-1's preemptive stressor adaptations (effort caps, quiet notifications) or only to moving cook-nights. Design status surfaced: this coding session has no access to the Claude Design project from the remote env (design auth unavailable here); the three NEEDS-VISUAL-REVIEW screenshots are functional scaffolding, not the design pass.
+
+---
 ## Session summary — 2026-07-07 (first autonomous run)
 - **Done:** repo bootstrap (clone + specs/harness/test-bank committed & pushed); M0-0 consistency read
 - **Blocked:** none new (M0-4's listed blockers Q1/Q2/Q4/Q5 are stale — resolved by canon D-1/D-5/D-2/D-3; see D-32)
