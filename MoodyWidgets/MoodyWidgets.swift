@@ -28,13 +28,26 @@ struct MoodyWidgetsBundle: WidgetBundle {
 /// snapshot (Data/Persistence.swift); `.demo` mirrors `AppState`'s seeds
 /// (Taco Tuesday, groceries covered thru Friday) for first launch/previews.
 struct TonightEntry: TimelineEntry {
+    /// D-35: no family member is ever hardcoded. Placeholder faces (first
+    /// launch, gallery previews) carry need-framed, family-neutral badges —
+    /// no names. Live entries take whatever per-attendee badges the snapshot's
+    /// meal provides; when the snapshot projection carries member data (P2),
+    /// live badges derive from it (e.g. member initials), not from constants.
+    static let placeholderBadges: [SafetyBadgeInfo] = [
+        SafetyBadgeInfo(text: "GF ✓", slot: Palette.green),
+        SafetyBadgeInfo(text: "plain ✓", slot: Palette.blue),
+        SafetyBadgeInfo(text: "×2 ✓", slot: Palette.yellow),
+    ]
+
     let date: Date
     var label = "TONIGHT · TACO TUESDAY"
     var mealName = "Build-your-own tacos"
     /// The guarantees. Derived from the meal exactly like the app does —
     /// never dropped from any widget size.
-    var badges: [SafetyBadgeInfo] = Meal(id: "tacos", name: "Build-your-own tacos", effort: 2).badges
-    var badgeSummary = "GF ✓ · plain ✓ · ×2 ✓"
+    var badges: [SafetyBadgeInfo] = TonightEntry.placeholderBadges
+    /// Small-face one-liner — derived from the placeholder list, never a
+    /// free-floating literal (D-35's spirit: one source, zero names).
+    var badgeSummary = TonightEntry.placeholderBadges.map(\.text).joined(separator: " · ")
     var coveredLine = "covered thru FRI ✓"
     var tank: Tank = .steady
 

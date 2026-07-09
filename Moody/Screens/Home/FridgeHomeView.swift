@@ -73,9 +73,18 @@ struct FridgeHomeView: View {
 
     // MARK: - Tonight card (paper, ink border, r20, tilt −0.5°, pink magnet)
 
-    private var tonightCard: some View {
-        let meal = appState.tonight.meal ?? appState.fallbackMeal
-        return VStack(spacing: 0) {
+    @ViewBuilder private var tonightCard: some View {
+        if let meal = appState.tonight.meal {
+            plannedTonightCard(meal)
+        } else {
+            // Cold start is canon (PT-1): no plan entry exists tonight, and
+            // the door says so honestly — never fallback-as-plan (D-35 note).
+            emptyTonightCard
+        }
+    }
+
+    private func plannedTonightCard(_ meal: Meal) -> some View {
+        VStack(spacing: 0) {
             Text(appState.tonightLabel)
                 .font(.nunito(10.5, .black))
                 .kerning(1.05)                        // .1em at 10.5
@@ -105,6 +114,38 @@ struct FridgeHomeView: View {
                 .accessibilityHidden(true)
         }
         .rotationEffect(.degrees(-0.5))     // per mockup
+    }
+
+    /// Nothing planned tonight (cold start / open day): no badges to fake
+    /// (zero scores exist by canon), no swap of nothing — DECIDE FOR ME stays
+    /// the sole hero action (law 1). Composed from the kit; the layout is
+    /// designed-ADJACENT, not designed — flagged for a real design pass.
+    private var emptyTonightCard: some View {
+        VStack(spacing: 0) {
+            Text("TONIGHT")
+                .font(.nunito(10.5, .black))
+                .kerning(1.05)
+                .foregroundStyle(Palette.pink.label)
+            Text("nothing yet — that's allowed")
+                .font(.baloo(24, .heavy))
+                .foregroundStyle(Theme.ink)
+                .multilineTextAlignment(.center)
+                .padding(.top, 3)
+            Button("DECIDE FOR ME") { appState.decideForMe(); onWin?() }
+                .buttonStyle(PillButtonStyle(background: Palette.pink.color, emphasis: true))
+                .frame(height: 48)
+                .padding(.top, 11)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(EdgeInsets(top: 16, leading: 15, bottom: 15, trailing: 15))
+        .inkCard()
+        .softHardShadow(x: 5, y: 5)
+        .overlay(alignment: .top) {
+            MagnetDot(color: Palette.pink.color, size: 18)
+                .offset(y: -9)
+                .accessibilityHidden(true)
+        }
+        .rotationEffect(.degrees(-0.5))
     }
 
     /// Actions grid 1.5fr / 1fr, gap 8 — "decide for me" is always the most

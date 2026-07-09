@@ -11,6 +11,8 @@ settings:
     CODE_SIGN_IDENTITY: ""
     CODE_SIGNING_REQUIRED: "NO"
     GENERATE_INFOPLIST_FILE: "YES"
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "1"
 targets:
   # The domain engine from the parallel build (SwiftData models, GF safety,
   # shopping pipeline, calendar sync) — its own module so type names never

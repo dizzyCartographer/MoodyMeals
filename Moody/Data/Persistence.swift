@@ -22,7 +22,12 @@ struct MoodySnapshot: Codable {
 
 enum Persistence {
     /// Bump when the snapshot shape changes incompatibly.
-    static let schemaVersion = 1
+    /// v2 (unify): Meal carries derived per-attendee badges (D-35); week/runs
+    /// are projections of the SwiftData engine store, not sources of truth.
+    /// v1 snapshots fail decode on the new Meal shape and are discarded below
+    /// (fresh projections rebuild everything except streak/thread/tank/sass —
+    /// acceptable one-time loss at the graft).
+    static let schemaVersion = 2
     static let appGroupID = "group.com.mariayarley.Moody"
 
     /// `snapshot.json` in the App Group container; Documents fallback keeps

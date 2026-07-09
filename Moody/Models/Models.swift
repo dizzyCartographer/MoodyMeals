@@ -39,27 +39,45 @@ struct Persona: Identifiable {
 // MARK: - Meals & plan
 
 struct Meal: Identifiable, Equatable, Codable {
-    let id: String
+    let id: String             // stable slug derived from the engine meal's title
     var name: String
-    var effort: Int            // 1–3, shown as ●○○
+    var effort: Int            // 1–3, shown as ●○○ (engine noCook|assembly→1, simple→2, involved→3)
     var isFallback: Bool = false
     /// Short label for week magnets ("Tue tacos") — ids are internal and can
     /// read badly on screen ("Tue gfmac"), so surfaces use this instead.
     var keyword: String = ""
     var displayKeyword: String { keyword.isEmpty ? id : keyword }
-    /// Safety badges are derived guarantees, not decorations. Every planned
-    /// meal must carry all three for the demo household.
-    var badges: [SafetyBadgeInfo] {
-        [SafetyBadgeInfo(text: "Caddie GF ✓", slot: Palette.green),
-         SafetyBadgeInfo(text: "Elsie plain ✓", slot: Palette.blue),
-         SafetyBadgeInfo(text: "Chad ×2 ✓", slot: Palette.yellow)]
-    }
+    /// Safety badges are derived guarantees, not decorations. D-35: derived
+    /// per ATTENDING member from data (GF verdict, MemberMealScore.isSafeFood,
+    /// appetiteBase) at projection time — no member is ever hardcoded. Cold
+    /// start legitimately has no safe-food badges (zero scores exist, PT-1).
+    var badges: [SafetyBadgeInfo] = []
 }
 
 struct SafetyBadgeInfo: Identifiable, Equatable {
     var text: String
     var slot: PaletteSlot
     var id: String { text }
+}
+
+// Codable via the slot's stable id ("her-1"…): PaletteSlot itself is design
+// system (not persisted); decode re-binds to the live palette so badge tints
+// follow palette swaps (law 6). Unknown ids degrade to green, never crash.
+extension SafetyBadgeInfo: Codable {
+    private enum CodingKeys: String, CodingKey { case text, slotID }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        text = try c.decode(String.self, forKey: .text)
+        let slotID = try c.decode(String.self, forKey: .slotID)
+        slot = Palette.slots.first { $0.id == slotID } ?? Palette.green
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(text, forKey: .text)
+        try c.encode(slot.id, forKey: .slotID)
+    }
 }
 
 enum Weekday: Int, CaseIterable, Identifiable, Codable {

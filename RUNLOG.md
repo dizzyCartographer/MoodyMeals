@@ -1,4 +1,11 @@
 # RUNLOG.md — autonomous session log
+
+## 2026-07-09 — [P0+P1] Unification graft (design surface × engine)
+- DONE: MoodyEngine framework target (their MoodyMeals/ sources minus retired UI), MoodyEngineTests scheme; AppState rewritten as facade over the engine (projections, D-35 derived badges, real decide/swap via WeekPlan/Tonight, shopping via explosion→routing→guarantee); D-13 copy pass; cold-start empty tonight card (designed-adjacent, flagged).
+- SUITE: 102/102 green post-graft; app builds; runtime-verified on iPhone 17 Pro sim (cold start, decide→GF mac & cheese w/ derived badges, 3-relaunch persistence).
+- NEEDS-VISUAL-REVIEW: empty tonight card; contains-gluten badge state; guarantee banner copy vs data-driven line.
+- NEXT: P2 App Group store move; P3 HC-5 confirm on manual assignment + copy pass; open decisions D-39/D-17/D-18 + Wednesday question for Ria.
+
 Newest at top. One block per task; one Session summary per run window.
 
 ---

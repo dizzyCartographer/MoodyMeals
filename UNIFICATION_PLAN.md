@@ -36,7 +36,7 @@ ShoppingListBuilder merges by name while explosion merges by UUID (dupe-name dat
 
 ## Decisions only Maria can make
 
-1. **🔴 PRIVACY (urgent, independent of everything):** the GitHub repo is PUBLIC and contains a minor's medical diagnosis and family details under real names. Flip it private: repo Settings → Danger Zone → Change visibility, or `gh repo edit dizzyCartographer/MoodyMeals --visibility private`. I don't change repo access controls myself — this one's your click, tonight if possible.
+1. ~~PRIVACY~~ **Resolved (Maria, 2026-07-09):** the family names throughout are nicknames — the repo is pseudonymized by design — and she judges GF status non-sensitive. The repo stays public at her discretion; no action needed.
 2. **D-39, D-17, D-18** — still open in DECISIONS.md (ingredient deletion; fairness floor; kid-cook-night on stressor days). Answer inline there, digest-style.
 3. **Taste grid:** their PT-1 cold-start canon (zero pre-seeded scores, test-enforced) vs. workbook item 22 (hand-seed the grid). Recommendation: respect PT-1 — the onboarding swipe pass creates scores; item 22 is withdrawn from the workbook.
 4. **Wednesday collision:** local demo says Chad-cooks-ramen-Wednesday; canon's only seeded anchor is Wednesday breakfast-for-dinner (D-1, inactive). Which is real?

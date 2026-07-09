@@ -38,7 +38,9 @@ private struct StreaksHeroCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("DINNERS FROM HOME")
+            // D-13: ANY dinner counts — fallback, leftovers, even the nuclear
+            // option. The hero counts dinners that HAPPENED, not dinners cooked.
+            Text("DINNERS THAT HAPPENED")
                 .font(.nunito(12, .black))
                 .kerning(0.96)   // .08em of 12px
                 .foregroundStyle(Palette.pink.labelMuted)
@@ -195,7 +197,9 @@ private struct StreaksFreezePopsCard: View {
                     }
                 }
             }
-            Text("auto-protects a wild day. you earn one every 7 dinners. no confessions required.")
+            // D-13: the earn rate is tunable (TuningDefaults) — copy never
+            // states a number.
+            Text("auto-protects a wild day. you earn them by showing up. no confessions required.")
                 .font(.nunito(12, .heavy))
                 .foregroundStyle(Palette.blue.label)
         }
@@ -239,7 +243,8 @@ private struct StreaksReturnCard: View {
             StreaksReturnProgressBar(progress: 0.66)
                 .padding(.top, 9)
 
-            Text("cook tonight and this app throws you a parade. no pressure. (some pressure.)")
+            // D-13 framing: dinner has to HAPPEN, not be cooked from scratch.
+            Text("make dinner happen tonight and this app throws you a parade. no pressure. (some pressure.)")
                 .font(.nunito(11.5, .heavy))
                 .foregroundStyle(Theme.textDisabled)
                 .padding(.top, 7)
