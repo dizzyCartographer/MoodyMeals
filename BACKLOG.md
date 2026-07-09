@@ -75,6 +75,7 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M5-13] (60m) The Vent (§7c3, D-25) — voice-first dump, listener register, ⚠️ isolation covenant, local-only mode, one consented follow-up, never punitive. **AC:** VNT-1..6 ⚠️. PROMPT-REVIEW + NEEDS-VISUAL-REVIEW.
 - [M5-14] (60m) Shopping escalation (D-3) — normal→"for real" w/ named stakes; snooze ≤7d auto-return; NEVER mutes §1 safety. **AC:** GT-8, GT-9, GT-10, GT-11 ⚠️, NT-4. PROMPT-REVIEW.
 - [M5-15] (45m) Check-in modality rotation + quiet-down — oneTap/textStyle/voice; `quietDownAfterSkips`. **AC:** NT-3, NT-5, RM-2.
+- [M5-16] (45m) Unresolved-recipe nudges (added 2026-07-09, D-44 fourth refinement) — a scheduled meal in awaitingSubstitution/notCheckedYet gets a time-bound nudge stream keyed to the covering run's need-by, then cook time; nudges are one-tap-actionable using stored suggested subs; resolution silences immediately; EQ/tone rules apply. **AC:** nudge-fires-before-run-need-by; one-tap-resolve-updates-shopping-line; resolved ⇒ silent; test IDs assigned in the D-44 §1/NT rewrite. PROMPT-REVIEW (nudge copy).
 
 ## M6 — Inventory + photos — [M0-0b draft]
 - [M6-1] (90m) Photo → vision → structured items (`reconcileInventory` p1) — item list + flaggedUnclear. **AC:** INV-1. PROMPT-REVIEW.
