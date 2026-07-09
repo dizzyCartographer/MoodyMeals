@@ -3,6 +3,7 @@ Derived from the requirements + build spec. Format: **ID — Given / When / Then
 Sections marked ⚠️ are safety-critical: a red test here halts feature work.
 
 ## §1 ⚠️ Hard constraints (dietary safety)
+*(D-44 2026-07-09: this section is scheduled for REWRITE at M4-0 — the unverified⇒unsafe tri-state model (HC-3, HC-4, HC-6, HC-7 as written) is retired in favor of Ria's risk-class model: whole foods safe with no marking; gluten carriers need a recorded per-recipe substitution; packaged goods carry optional preferred brands and are safe by default. HC-1/2/5/8/9/10 survive. The rewritten §1 goes to Ria for sign-off BEFORE old tests are deleted; the shipped app keeps the current, more conservative behavior until M4-0 lands.)*
 - **HC-1** — Given Caddie attends dinner / When the scheduler fills any slot / Then no meal containing a gluten ingredient is ever selected, regardless of score.
 - **HC-2** — Given a meal scores maximum Liking+Fit for all five members but contains regular soy sauce (gluten) / When scheduling with Caddie attending / Then it is excluded (optimization can never outrank a hard constraint).
 - **HC-3** — Given an ingredient with `isGlutenFreeVerified == nil` (unverified) / When evaluating meal safety for Caddie / Then the meal is treated as UNSAFE (unverified = unsafe for GF members).
@@ -247,22 +248,22 @@ Sections marked ⚠️ are safety-critical: a red test here halts feature work.
 - **LOV-8** — Place-loves flow both ways: a favorite shop can appear in reward framing AND as a preferred store for run planning; GF-strong store notes attach to place items.
 
 ## §19f Stressor profile
-- **STRS-1** — A calendar day matching a declared stressor ("two+ kid events") preemptively: caps effort at simple, boosts safe foods + satisfied leftover-consumers, and switches notifications to quiet/warm — WITHOUT waiting for a check-in.
-- **STRS-2** — Declared beats inferred: if inference says "fine" but a declared stressor matches, the stressor adaptation wins.
-- **STRS-3** — Severity scales response: severity 3 also suppresses optional asks (no pool-health prompts, no reward pairings) that day.
+- **STRS-1** — A calendar day matching a declared stressor ("two+ kid events") preemptively: caps effort at simple, boosts safe foods + satisfied leftover-consumers, and switches notifications to quiet/warm — WITHOUT waiting for a check-in. *(D-43 2026-07-09, refined: a stressor match — or a sudden calendar-load spike — prompts EXTRA ASSISTANCE: one concrete, reasoned, plan-preserving suggestion (named stakes, one-tap accept, free to ignore); it does NOT preemptively cap effort, rewrite the plan, auto-switch notifications, or ever apply the suggestion itself.)*
+- **STRS-2** — Declared beats inferred: if inference says "fine" but a declared stressor matches, the stressor adaptation wins. *(D-43: precedence dissolves — declared patterns supply context/flexibility; behavioral signals (ignored notifications, time-since-open) are the primary state detector.)*
+- **STRS-3** — Severity scales response: severity 3 also suppresses optional asks (no pool-health prompts, no reward pairings) that day. *(D-43: folds into the EQ engine's judgment (M5-3), not a standalone rule.)*
 - **STRS-4** — Reflection-proposed stressors require explicit acceptance; declining is remembered and not re-proposed for 60 days.
 - **STRS-5** — Stressor page is fully visible/editable; deleting one stops its adaptations immediately.
 
 ## §21 Pressure-test findings (cross-system collisions)
 - **PT-1** — Cold start: with all scores at 0, the scheduler runs the reduced mode (frequency+effort+hard constraints), labels it, and never presents tie-breaking as optimization.
-- **PT-2** — Fairness floor: Elsie at −2 on a meal the other four rate +2 → it appears ≤ `dislikeFloorPerWeek`/week and never on consecutive days; Σ-liking alone can't bury one member.
+- **PT-2** — Fairness floor: Elsie at −2 on a meal the other four rate +2 → it appears ≤ `dislikeFloorPerWeek`/week and never on consecutive days; Σ-liking alone can't bury one member. *(D-17 2026-07-09: floor is now per-tier — a −2 meal ≤ once/14 days, a −1 meal ≤ once/7 days, per person; consecutive-day ban stands.)*
 - **PT-3** — Notification pre-generation: content is generated ≤60 min before send using current state; a capacity flip after generation but before send triggers regeneration.
 - **PT-4** — Offline: with no network at send time, the fallback bank supplies corpus-flavored, novelty-tracked content — never a visible template string.
 - **PT-5** — Photo privacy: an image containing a detected person is never uploaded; the user is prompted to retake/crop; the crop is what ships.
 - **PT-6** — EventKit drift: moving a Moody event in the Calendar app re-runs guarantee + capacity checks for the new date; deleting one prompts skip-vs-reschedule; content edits are reconciled back to app truth.
 - **PT-7** — Cross-source dedup: garbanzo beans required by a meal + staples floor + snack cadence in the same window → ONE line item, summed, strictest need-by.
 - **PT-8** — DST/day boundaries: streak days, plan dates, and "tonight" resolve correctly across DST transitions and late-night logging (a 12:30am "we ate" log counts for the evening just ended, not tomorrow).
-- **PT-9** — Cook-night × stressor: severity ≤2 keeps the kid's cook-night; severity 3 yields to a low-effort fill; either way the kid's streak is unaffected (no-fault pause).
+- **PT-9** — Cook-night × stressor: severity ≤2 keeps the kid's cook-night; severity 3 yields to a low-effort fill; either way the kid's streak is unaffected (no-fault pause). *(D-18 2026-07-09: auto hold/yield RETIRED — collisions stay manual with one-tap swap; the no-fault streak pause stands.)*
 - **PT-10** — Leftover chain × attendance: a producer cooked at reduced attendance yields a smaller leftover belief; if it can't cover the consumer's portions, the consumer is flagged before its day, not discovered at the stove.
 
 ## §19g The Vent

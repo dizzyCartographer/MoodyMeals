@@ -4,6 +4,8 @@
 ## The mission (design against this)
 *"I don't need one meal. I need all the meals, and I need them to be from me."* Moody makes an AuDHD mom-of-three who LOVES to cook harder to knock over at 4:30pm. The interface itself is an accommodation.
 
+**The goal sentence (Ria, 2026-07-09):** *"It should be crazy easy for me to see who loves this meal, who this meal serves. That's the goal: to feed my family more intentionally and more enjoyably."*
+
 ## Who it's for
 Ria: AuDHD, skilled cook, decision-fatigued at day's end. Household of 5 incl. a celiac kid (safety badges matter), a meat-averse kid, a 14yo who needs volume. The app must feel like a warm found-family group chat wrapped around a planner — never like productivity software.
 
@@ -19,7 +21,7 @@ Ria: AuDHD, skilled cook, decision-fatigued at day's end. Household of 5 incl. a
 ## Screen inventory (v1)
 - **Tonight / Today card** — the hero. Tonight's meal, per-member safety badges (GF ✓ per person), swap + "just decide" + safe-fallback actions, capacity one-tap (Low/Med/High). Widget + Live Activity variants.
 - **Week plan** — grid of dinner slots (+ per-person breakfast defaults shown compactly), lock toggles, theme-anchor markers (Taco Tuesday), attendance chips (who's home), assigned-cook avatar on kid cook-nights.
-- **Meal library** — browse/filter by effort, method (grill/griddle/oven…), tags, per-member liking/fit; rotation-state visible (active / resting-until / retired); Signature and All-Timer badges; "sick of this" action.
+- **Meal library** — browse/filter by effort, method (grill/griddle/oven…), tags, per-member liking/fit; rotation-state visible (active / resting-until / retired); Signature and All-Timer badges; "sick of this" action. **THE CHIPS (D-46, the hero element):** every meal row carries per-person chips on two independent axes — ❤️ who loves it, ✅/❌ who it serves (meets/violates their food rules). Canonical example: steak & potatoes = [maria ❤️][maria ✅][caddie ❤️][chuck ❤️][chuck ❌]. Must be legible at a glance for 5 people without clutter; filter by "serves X" / "loved by X". Edge states (awaiting-substitution, not-checked-yet) need a chip treatment — design's call, review with Ria.
 - **Recipe editor** — Loose vs Precise modes; Loose = fast ingredient list, no amounts, no friction.
 - **Shopping** — tiered runs (Costco / weekly / midweek) as cards with dates; consolidated list grouped by run; guarantee status ("everything covered through Friday ✓" / at-risk meals named); staples always-stocked section.
 - **Inventory** — photo capture flow (person-detected → retake/crop prompt), reconciliation chat ("is that chili or sauce?"), belief-confidence shown softly (not clinical percentages), leftover items with use-by.
