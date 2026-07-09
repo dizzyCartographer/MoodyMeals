@@ -120,4 +120,4 @@ Nutrition (USDA) + auto-Fit tagging; Instacart; fridge-spec container recs; week
 - Any aesthetic iteration; notification copy/tone bank; Claude API prompt tuning.
 
 ## Blocked pending Ria
-- *(cleared 2026-07-07 per D-32 — Q1/Q2/Q4/Q5 were already canon via D-1/D-5/D-2/D-3; M0-4 unblocked. Q3 closed 2026-07-09 — Liking/Fit stays −2…+2 per Ria's live approval. Nothing currently blocked; only the Wednesday question (Chad-ramen vs breakfast-for-dinner) awaits her.)*
+- *(cleared 2026-07-07 per D-32 — Q1/Q2/Q4/Q5 were already canon via D-1/D-5/D-2/D-3; M0-4 unblocked. Q3 closed 2026-07-09 — Liking/Fit stays −2…+2 per Ria's live approval. Nothing currently blocked; the Wednesday question dissolved 2026-07-09 per D-47 — seed data is disposable, nothing awaits Ria.)*
