@@ -3,6 +3,7 @@ Claude Code appends; Ria answers inline at morning/evening review. Answered item
 
 ## Open
 - [Q3] Liking/Fit resolution: −2…+2 enough? *(non-blocking — implemented as Int −2…+2 per spec §2 unless Ria wants finer)*
+- [Q9] (2026-07-09) GF lookup at ingredient-add (Ria asked "is there a standard gf api?"): no authoritative public certified-GF API exists. Candidate: Open Food Facts — free, crowdsourced, barcode-keyed allergen + "may contain" traces; assistive-grade only, never authoritative. NEW-DEPENDENCY gate applies; parked for M6 (pairs with photo/barcode inventory). Near-term, dependency-free path already planned: M3-2 Claude capture flags likely carriers (D-44).
 
 ## M0-2 verification findings (2026-07-07, adversarial review)
 - **[F14] ✅ RESOLVED 2026-07-07 evening (D-37: bundle approved).** All five edges pinned with explicit inverses + tests (DM-5, DM-6, flag-and-refill, attendee/cook nullify). Original finding: Deleting a Meal or a FamilyMember leaves dangling references that TRAP on access (all empirically verified). The full set now:

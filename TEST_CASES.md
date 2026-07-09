@@ -3,6 +3,7 @@ Derived from the requirements + build spec. Format: **ID — Given / When / Then
 Sections marked ⚠️ are safety-critical: a red test here halts feature work.
 
 ## §1 ⚠️ Hard constraints (dietary safety)
+*(D-44 2026-07-09: this section is scheduled for REWRITE at M4-0 — the unverified⇒unsafe tri-state model (HC-3, HC-4, HC-6, HC-7 as written) is retired in favor of Ria's risk-class model: whole foods safe with no marking; gluten carriers need a recorded per-recipe substitution; packaged goods carry optional preferred brands and are safe by default. HC-1/2/5/8/9/10 survive. The rewritten §1 goes to Ria for sign-off BEFORE old tests are deleted; the shipped app keeps the current, more conservative behavior until M4-0 lands.)*
 - **HC-1** — Given Caddie attends dinner / When the scheduler fills any slot / Then no meal containing a gluten ingredient is ever selected, regardless of score.
 - **HC-2** — Given a meal scores maximum Liking+Fit for all five members but contains regular soy sauce (gluten) / When scheduling with Caddie attending / Then it is excluded (optimization can never outrank a hard constraint).
 - **HC-3** — Given an ingredient with `isGlutenFreeVerified == nil` (unverified) / When evaluating meal safety for Caddie / Then the meal is treated as UNSAFE (unverified = unsafe for GF members).
