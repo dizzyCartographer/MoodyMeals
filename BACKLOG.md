@@ -17,6 +17,12 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M1-2] **[DONE 2026-07-07]** (90m) EventKit service — dedicated "Moody" calendar; create/update/delete events from PlanEntries; handle permission denial gracefully. **AC:** TC-CAL-1..4 (integration tests may be simulator-limited; document what's mockable). → 5 tests vs mock seam; EK adapter thin, manual-verify; sync wired into Plan tab.
 - [M1-3] **[DONE 2026-07-07 — NEEDS-VISUAL-REVIEW]** (60m) Tonight view — today's dinner, swap button, per-member safe badge. **AC:** TC-SF-1..3. → 4 tests; per-member badges incl. GF-hard cap; swap records status. **M1 COMPLETE.**
 
+## U — Unification completion (P2–P4 of UNIFICATION_PLAN.md; P0/P1 done + merged 2026-07-09)
+- [U-0] (60m) DESIGN_REVIEW.md fixes (Ria's designer pass, in design_handoff_v2/) — adopt the label-contrast fix everywhere (retire `labelMuted`), de-sticker the week-plan date chip, restore swipe-back alongside the styled back chip, streaks caption derives from strip data (never contradicts the tiles), confetti z-order if cheap. **AC:** each review verdict closed or noted in RUNLOG; screenshots. NEEDS-VISUAL-REVIEW.
+- [U-1] (90m) App Group store move — SwiftData store into the App Group container; widgets/Live Activity read a `MoodySnapshot` projection emitted on save (no cross-process SwiftData). **AC:** app + widgets show the same live data across relaunch; existing store data survives the move.
+- [U-2] (90m) Surface canon-compliance pass — streak copy audit (D-13), badge states (tri-state = shipped interim per D-44; style minimally), HC-5 confirm styled to the kit (unsafe band only per D-44; yellow ceiling, no red — escalation-pattern gravity), edge-state voice pass (law 4/7) on every ported string. **AC:** ported strings/states pass the voice laws; screenshots. NEEDS-VISUAL-REVIEW.
+- [U-3] (60m) Integrations homed — calendar sync + Reminders export move behind a Settings root with in-voice permission primers (toolbar entry retires only after Settings exists; DESIGN_BRIEF_V2 Wave-1 item 7 designs the surface). **AC:** CAL-1..4 stay green; export reachable from Settings. NEEDS-VISUAL-REVIEW.
+
 ## M2 — Shopping core
 - [M2-1] **[DONE 2026-07-07]** (90m) Meal→items explosion — precise amounts summed, loose items listed without amounts, dedup. **AC:** TC-SL-1..5. → pure `ShoppingExplosion` service, 5 tests; GF qualifier carried for RT-6.
 - [M2-2] **[DONE 2026-07-07]** (90m) Run tiers + routing — perishability/neededBy routing per spec §4 step 4. **AC:** TC-RT-1..6. → pure `RunRouting`, 6 tests; unroutable ⇒ violation for GT.
@@ -114,4 +120,4 @@ Nutrition (USDA) + auto-Fit tagging; Instacart; fridge-spec container recs; week
 - Any aesthetic iteration; notification copy/tone bank; Claude API prompt tuning.
 
 ## Blocked pending Ria
-- *(cleared 2026-07-07 per D-32 — Q1/Q2/Q4/Q5 were already canon via D-1/D-5/D-2/D-3; M0-4 unblocked. Only Q3 (score resolution) remains open and it's non-blocking: −2…+2 per spec §2 unless Ria wants finer.)*
+- *(cleared 2026-07-07 per D-32 — Q1/Q2/Q4/Q5 were already canon via D-1/D-5/D-2/D-3; M0-4 unblocked. Q3 closed 2026-07-09 — Liking/Fit stays −2…+2 per Ria's live approval. Nothing currently blocked; only the Wednesday question (Chad-ramen vs breakfast-for-dinner) awaits her.)*

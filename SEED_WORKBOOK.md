@@ -1,6 +1,6 @@
 # Moody seed workbook — the information that makes it *yours*
 
-> **⚡ UPDATE 2026-07-09:** Your other Claude session already answered a big chunk of this (see `UNIFICATION_PLAN.md`). **Now answered:** item 1 (roster + needs), item 2 (Chad = 1.5×, up to 2× on favorites — tunable math, not flat double), the lunch half of item 5 (lunch IS in scope, per-person defaults), most of item 16's substance (the flour line: from-scratch wheat baking is the ban, packaged gluten is fine tagged unsafe; King Arthur GF = house standard), items 23–24 substantially (18 real meals with ingredients + GF status seeded, incl. a leftover chain), and the tuning numbers behind item 7's tank mapping. **Withdrawn:** item 22 (taste grid) — canon says scores must NOT be pre-seeded (the onboarding swipe pass creates them honestly). **Still genuinely yours to answer:** items 3, 4, 6, 8–15, 17 (Elsie's list — the seed has her *lifeline*, not her safe-foods list), 18–21, 25–27, plus three open decisions in the other build's DECISIONS.md (D-39, D-17, D-18) and the Wednesday question (Chad-ramen vs breakfast-for-dinner — which is real?).
+> **⚡ UPDATE 2026-07-09:** Your other Claude session already answered a big chunk of this (see `UNIFICATION_PLAN.md`). **Now answered:** item 1 (roster + needs), item 2 (Chad = 1.5×, up to 2× on favorites — tunable math, not flat double), the lunch half of item 5 (lunch IS in scope, per-person defaults), most of item 16's substance (the flour line: from-scratch wheat baking is the ban, packaged gluten is fine tagged unsafe; King Arthur GF = house standard), items 23–24 substantially (18 real meals with ingredients + GF status seeded, incl. a leftover chain), and the tuning numbers behind item 7's tank mapping. **Withdrawn:** item 22 (taste grid) — canon says scores must NOT be pre-seeded (the onboarding swipe pass creates them honestly). **Still genuinely yours to answer:** items 3, 4, 6, 8–15, 17 (reframed by D-42 — see its note), 18–21, 25–27, and the Wednesday question (Chad-ramen vs breakfast-for-dinner — which is real?). *(D-39/D-17/D-18 answered 2026-07-09 in your live cloud session — see DECISIONS.md Answered; items 9/17/19 below carry D-42/D-43/D-44 reframing notes from the same session.)*
 
 Everything the app currently fakes with demo data, turned into gatherable pieces. Compiled from what the code actually consumes (every item maps to a real model field or a Wave-1 screen).
 
@@ -38,7 +38,7 @@ Each of these is one coffee. Just you.
 8. **Pinned traditions & honest rest days.** Is Taco Tuesday real? Other pinned nights? Which nights are *standing* planned skips (takeout Friday, leftovers Sunday) that should count as rest days — guilt-free by design, decided in advance?
    `→ per weekday: pinned tradition · standing rest-day flag`
 
-9. **The real always-stocked shelf.** Walk the pantry: the 7–15 things your kitchen genuinely never runs out of. Each needs a GF-safety note (safe / has-GF-variant-note). Then pick THE fallback meal — cookable entirely from that shelf, forever. (Cross-checking every fallback ingredient against the shelf is my job.)
+9. **The real always-stocked shelf.** Walk the pantry: the 7–15 things your kitchen genuinely never runs out of. *(Per D-44, 2026-07-09: no per-item GF note needed — flag only gluten carriers, plus optional preferred brands for packaged items; whole foods are safe with no marking, ever.)* Then pick THE fallback meal — cookable entirely from that shelf, forever. (Cross-checking every fallback ingredient against the shelf is my job.)
    `→ staples list + one fallback meal pick`
 
 10. **Shopping reality.** Which store is the quick top-up? Weekly run: which day, which store? Bulk: actually Costco? Who shops, who does pickup?
@@ -64,14 +64,14 @@ Each of these is one coffee. Just you.
 16. **🔒 Caddie's celiac rule sheet** *(safety-critical — everything else can be wrong and fixed later; this one can't)*. The diagnosis in operational terms: strictness level, cross-contamination rules (shared toaster? colander? butter tub?), trusted GF certifications/brands, oat tolerance, co-occurring restrictions. This is what turns "Caddie GF ✓" from decoration into a guarantee.
     `→ hard rules (never) · conditional rules (ok if certified) · trusted brands · kitchen protocol`
 
-17. **Elsie's safe-foods list — co-authored with Elsie.** ~10–20 items, each with its prep rule ("nothing touching", brand-specific, temperature). Always-yes vs. sometimes. Plus the hard-no textures/smells so the solver never proposes near-misses. Doing this *with* her is data-gathering and buy-in at once.
+17. **Elsie's safe-foods list — co-authored with Elsie.** ~10–20 items, each with its prep rule ("nothing touching", brand-specific, temperature). Always-yes vs. sometimes. Plus the hard-no textures/smells. Doing this *with* her is data-gathering and buy-in at once. *(Per D-42, 2026-07-09: this feeds her MemberMealScore likings and hard-no dislikes — there is no safe-foods RULE anymore; how it's captured lands with the swipe-rating design.)*
     `→ food · prep rule · brand · always/sometimes + a hard-no list`
 
 18. **Who are Hannah, Cat, and Julie — really?** Keep them, rename them, or invent your own found-family (1–5 personas, any size works). Per persona: name, one-line role, a backstory hook ("met at my sister's 40th"), voice register, and who notices slumps vs. comebacks. **🤝 I draft, you edit**: give me the people; I'll write their message banks (sticky notes, nudges, celebrations, chef tips) for you to redline.
     `→ per persona: name · role · hook · voice · duty`
 
-19. **The stressor interview — on yourself.** What makes 4:30pm hard, specifically: decision fatigue? sensory load? executive-function walls? interruptions? Which stressors should map to which accommodations (what should Fumes *actually do* for you)? **🤝 I draft, you edit**: I'll write the question set (~6–10, one per screen); you answer it.
-    `→ answers + "when X, the app should Y" rules`
+19. **The stressor interview — on yourself.** What makes 4:30pm hard, specifically: decision fatigue? sensory load? executive-function walls? interruptions? **🤝 I draft, you edit**: I'll write the question set (~6–10, one per screen); you answer it. *(Per D-43, 2026-07-09: answers become context for one-tap flexibility offers, never "when X the app does Y" automation — the deliverable is reframed accordingly. Item 7's Fumes tank-cap question is unaffected: that's declared current state, not prediction.)*
+    `→ answers (context for offers, not behavior rules)`
 
 20. **Pantry baseline.** One walk-through beyond the staples: what's in pantry/fridge/freezer as have/low/out (the app shows confidence *softly*, never percentages), plus current leftovers with use-by. Also: how do you want to tell the app "we're actually out of tortillas"?
     `→ item: have/low/out · leftovers with dates`
@@ -81,8 +81,7 @@ Each of these is one coffee. Just you.
 21. **Blob draft night.** Everyone picks their blob shape + color from the rendered variants in the app. (I'll put a picker screen or a printable sheet together when you're ready.)
     `→ per person: variant · color`
 
-22. **The taste grid.** Meals × family members, 4-point scale (emoji works: 😍 🙂 😐 🚫). This is exactly what the future swipe-rating screens collect — hand-seeding it makes decide-for-me feel smart on day one. Also catches non-safety aversions (Caddie hating mushrooms is preference data, not celiac data).
-    `→ grid, plus per-person ingredient vetoes`
+22. ~~**The taste grid.**~~ *WITHDRAWN (see header): PT-1 canon forbids pre-seeded scores — the onboarding swipe pass (designed 2026-07-08, Phase 2 screen 12) creates them honestly. The one salvageable piece: per-person ingredient vetoes (Caddie hating mushrooms is preference data, not celiac data) — those can ride item 17's hard-no list.*
 
 ## Part 4 — The meal spreadsheet 📋 (the big one: one evening, ~8–10 min × 15 meals)
 

@@ -82,4 +82,4 @@ Fixed (highlights):
 Flagged for your judgment (not fixed):
 - **Muted-label contrast**: `labelMuted` companions measure ~2.4:1 on their tints (e.g. "PB 23 · the rebuild" pink-on-pink). It's the mockup's exact palette — but worth a design pass; using the slot's primary `label` color instead already hits 4.4:1.
 - **Week plan's "JUL 6–12" date chip** reads as a third sticker moment (law 5 says max one; the mockup itself draws it). Mockup parity won tonight.
-- Unwired model stubs kept intentionally: `Persona.role/.duty`, `HouseholdMember.need` (safety badges are hardcoded demo strings — the real constraint solver should derive them from `need`).
+- Unwired model stubs kept intentionally: `Persona.role/.duty`, `HouseholdMember.need` (safety badges are hardcoded demo strings). *[Historical — badges are derived post-P1 graft; the go-forward derivation is FoodRules + D-46 chips (see DECISIONS.md D-42/D-44/D-46), not the `need` enum.]*
