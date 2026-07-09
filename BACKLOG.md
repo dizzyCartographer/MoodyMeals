@@ -56,13 +56,13 @@ Work top-down. Format: `[ID] (est) Task — Acceptance criteria`. Statuses: `TOD
 - [M4-13] (60m) Calm-day gate + calendar conditions (Step 1b/4b) — requiresCalmDay eligibility; user-editable signal→rule maps; Wednesday b4d anchor seeded OFF. **AC:** SCH-6 + condition-gate tests.
 - [M4-14] (60m) Reactivity + 12-month horizon — re-score today+tomorrow only; horizon gen; near-term syncs; novelty dial. **AC:** SCH-7, SCH-9 *(needs F7)*, SCH-12.
 - [M4-15] (45m) Signature floor (4g) + joy-cooking invite (4h) — memory reps; invitation register. **AC:** ATF-5, ATF-6, ATF-7. PROMPT-REVIEW (invite copy).
-- [M4-16] (60m) Stressor adaptation (4e) — preemptive effort caps, quiet notifications, severity scaling. Cook-night collisions are NOT auto-decided (D-18, 2026-07-09): no hold/yield logic; rely on one-tap swap; PT-9's no-fault streak pause stays. **AC:** STRS-1..3, PT-9 as re-scoped. *(Scope check pending: does D-18's "what's useful can change" also soften STRS-1's preemptive auto-adaptations? Asked 2026-07-09.)*
+- [M4-16] (60m) Stressor-day flexibility (4e) — per D-43: a declared stressor match OFFERS flexibility (swap + "just decide" lead; low-effort alternates pre-staged) and never preemptively rewrites the plan, caps effort, or auto-switches behavior; cook-nights never auto-move (D-18); PT-9's no-fault streak pause stays. **AC:** STRS-1..3 as re-scoped by D-43; PT-9 as re-scoped by D-18. NEEDS-VISUAL-REVIEW (the flexibility surface is UX).
 
 ## M5 — Notifications & the generative EQ engine — [M0-0b draft]
 *Note: M5 is very large (15 tasks) — genuinely 2–3 milestones. Recommend split (M5 infra+reminders / M5b personas+envelope / M5c streaks+rewards+vent). Flagged for Ria. Nearly all tasks PROMPT-REVIEW.*
 - [M5-1] (90m) Notification infra — UNUserNotificationCenter scheduling, persisted history (survives relaunch), quiet/snooze plumbing. **AC:** NT-6.
 - [M5-2] (90m) Tonight reminder generation — fresh copy, varied emoji/phrasing/time; JIT pre-gen; offline bank. **AC:** NT-1, NT-2, NT-10, PT-3, PT-4. PROMPT-REVIEW.
-- [M5-3] (90m) EQ engine core (§7b) — decide need/channel/format from read-the-room; one tiny step + named stakes; ⚠️ shame-audit. **AC:** NT-11, NT-12, NT-13. PROMPT-REVIEW.
+- [M5-3] (90m) EQ engine core (§7b) — decide need/channel/format from read-the-room; one tiny step + named stakes; ⚠️ shame-audit. **AC:** NT-11, NT-12, NT-13. PROMPT-REVIEW. *(D-43: ignored-notification count + time-since-app-open are the PRIMARY read-the-room inputs, ahead of calendar prediction.)*
 - [M5-4] (90m) Persona cast + co-creation (D-21/26) — Persona model, 2+2 onboarding, roles (Noticer/Never-Left/Hype/Kindred), stylized avatars. **AC:** NT-18, NT-20b, NT-21. PROMPT-REVIEW + NEEDS-VISUAL-REVIEW.
 - [M5-5] (90m) Presentation Envelope + communication-style notifications (D-20) — {persona,channel,visual,sound,copy} tuple; intent donation; palette from loves. **AC:** NT-14, NT-15, NT-16. NEEDS-VISUAL-REVIEW.
 - [M5-6] (90m) Habituation Horizon enforcement (D-21/22) — `dimensionConstancyMaxDays`, `habituationHorizonDays`, quarter-hour ban, near-dup rejection. **AC:** NT-19, NT-22 ⚠️, NT-24, NT-17.

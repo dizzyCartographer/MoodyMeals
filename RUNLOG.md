@@ -2,6 +2,10 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [D-43] — Stressor days: flexibility, not automation (2026-07-09, live)
+- Outcome: **canon recorded**. Ria's refinement of D-18: keep declared stressor patterns in the flow, but a match OFFERS flexibility (swap/"just decide" lead, low-effort alternates staged) — never preemptive caps/plan rewrites/auto-switching. Behavioral disengagement (ignored-notification count, time-since-app-open) named the primary state signal, ahead of calendar prediction. STRS-1..3 re-scoped in TEST_CASES; M4-16 re-scoped to "stressor-day flexibility" (NEEDS-VISUAL-REVIEW); M5-3 annotated with primary signals. Net effect: fewer rules in the scheduler, not more.
+- Tests added: none (docs only; implementations land at M4-16 / M5-3 / M5-15).
+
 ### [D-42] — Food-rules generalization proposed (2026-07-09, live)
 - Outcome: **proposed, awaiting Ria** (D-42 digest). Ria spotted that dietary needs are enum-hardcoded (`DietaryRequirement`/`FoodNeedGoal`) — a new restriction (Chuck's high cholesterol) can't land without a code change, violating D-35's no-hardcoding spirit at the condition level. Proposed generic per-member FoodRule {never/limit/boost + ingredient tags + frequency knob}; §1 gluten-verification machinery explicitly preserved; task queued as M4-0 BLOCKED(D-42).
 - Tests added: none (proposal only).

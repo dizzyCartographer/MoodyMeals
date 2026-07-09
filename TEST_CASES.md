@@ -247,9 +247,9 @@ Sections marked ⚠️ are safety-critical: a red test here halts feature work.
 - **LOV-8** — Place-loves flow both ways: a favorite shop can appear in reward framing AND as a preferred store for run planning; GF-strong store notes attach to place items.
 
 ## §19f Stressor profile
-- **STRS-1** — A calendar day matching a declared stressor ("two+ kid events") preemptively: caps effort at simple, boosts safe foods + satisfied leftover-consumers, and switches notifications to quiet/warm — WITHOUT waiting for a check-in.
-- **STRS-2** — Declared beats inferred: if inference says "fine" but a declared stressor matches, the stressor adaptation wins.
-- **STRS-3** — Severity scales response: severity 3 also suppresses optional asks (no pool-health prompts, no reward pairings) that day.
+- **STRS-1** — A calendar day matching a declared stressor ("two+ kid events") preemptively: caps effort at simple, boosts safe foods + satisfied leftover-consumers, and switches notifications to quiet/warm — WITHOUT waiting for a check-in. *(D-43 2026-07-09: RE-SCOPED — a stressor match OFFERS flexibility (swap/"just decide" lead, low-effort alternates pre-staged); it does NOT preemptively cap effort, rewrite the plan, or auto-switch notifications.)*
+- **STRS-2** — Declared beats inferred: if inference says "fine" but a declared stressor matches, the stressor adaptation wins. *(D-43: precedence dissolves — declared patterns supply context/flexibility; behavioral signals (ignored notifications, time-since-open) are the primary state detector.)*
+- **STRS-3** — Severity scales response: severity 3 also suppresses optional asks (no pool-health prompts, no reward pairings) that day. *(D-43: folds into the EQ engine's judgment (M5-3), not a standalone rule.)*
 - **STRS-4** — Reflection-proposed stressors require explicit acceptance; declining is remembered and not re-proposed for 60 days.
 - **STRS-5** — Stressor page is fully visible/editable; deleting one stops its adaptations immediately.
 
