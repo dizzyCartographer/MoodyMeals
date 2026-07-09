@@ -8,7 +8,7 @@ Authority order when documents conflict: `QUESTIONS.md` answers from Ria > `mood
 1. Take the topmost unblocked task in `BACKLOG.md`.
 2. Implement it. Small, focused changes only — do not refactor beyond the task's scope.
 3. Run the full test suite (`xcodebuild test` on the iPhone simulator). All green before commit.
-4. Commit with message `[TASK-ID] summary`. One commit per task.
+4. Commit with message `[TASK-ID] summary`. One commit per task. **Push after every commit** (chosen by Ria 2026-07-09: she runs cloud coding sessions from her phone off the GitHub remote — a stale remote strands them; a `.claude/settings.json` hook also auto-pushes as backup).
 5. Append an entry to `RUNLOG.md` (task, outcome, tests added/passing, anything notable).
 6. Move to the next task.
 
@@ -35,7 +35,7 @@ Ria walks away during autonomous runs. Send a dispatch push (PushNotification) �
 Never ping for routine progress.
 
 ## Session end — the Decision Digest (required, every run)
-Before a run window closes: commit or stash cleanly, then write TWO things:
+Before a run window closes: commit or stash cleanly, confirm the branch is pushed, then write TWO things:
 
 1. **RUNLOG session summary** (done / blocked / needs-visual-review / suite status / next up).
 2. **DECISIONS.md digest** — the top of DECISIONS.md gets a dated block containing **3 to 5 legitimate decisions** Ria should make, ranked by how much they unblock. Rules:

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // empty' | grep -q 'git commit' && { git push github HEAD --quiet 2>/dev/null || git push origin HEAD --quiet 2>/dev/null; } || true",
+            "timeout": 60,
+            "statusMessage": "Pushing to GitHub…"
+          }
+        ]
+      }
+    ]
+  }
+}
