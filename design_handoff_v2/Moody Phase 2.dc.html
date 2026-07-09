@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E3DED3;font-family:'Nunito',system-ui,sans-serif}
+a{color:#B04A72;text-decoration:none}
+a:hover{color:#8A2E52}
+.dv-turn{padding:40px 44px 32px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-intro{max-width:760px;font:400 12px/1.55 system-ui,sans-serif;color:rgba(0,0,0,.6);margin:0 0 24px}
+.dv-opts{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t5">
+  <div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Phase 2 — the not-built-yet screens, Sticker Aisle system</span></div>
+  <p class="dv-intro">Direction locked: shelf background #F7F4EE, ink borders, hard shadows, one sticker max per screen, Ria's 5 slots, ≥48pt targets, voice on every input. Cast: Caddie (GF), Elsie (safe foods), Chad (×2), Chuck; personas Hannah / Cat / Julie. Covers HANDOFF.md's not-built list: onboarding steps 4–5 (<a class="dv-oid" href="#5a">5a</a>–<a class="dv-oid" href="#5b">5b</a>), meal library + recipe editor for the real-data milestone (<a class="dv-oid" href="#5c">5c</a>–<a class="dv-oid" href="#5d">5d</a>), inventory (<a class="dv-oid" href="#5e">5e</a>), check-in roulette (<a class="dv-oid" href="#5f">5f</a>), fine-tuning (<a class="dv-oid" href="#5g">5g</a>), rewards + loves (<a class="dv-oid" href="#5h">5h</a>), the go-shopping escalation (<a class="dv-oid" href="#5i">5i</a>).</p>
+  <div class="dv-opts">
+
+    <!-- ══ 5a STRESSOR INTERVIEW ══ -->
+    <div class="dv-opt" id="5a">
+      <div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Onboarding step 4 — stressor interview, one question at a time, voice-first</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Onboarding stressors" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:14px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:11px;font-weight:900;letter-spacing:.08em;color:#8A84A0">THE HARD PARTS</div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span style="width:10px;height:10px;border-radius:50%;background:#8CC63E;border:2px solid #2A2440"></span>
+              <span style="width:10px;height:10px;border-radius:50%;background:#8CC63E;border:2px solid #2A2440"></span>
+              <span style="width:10px;height:10px;border-radius:50%;background:#8CC63E;border:2px solid #2A2440"></span>
+              <span style="width:10px;height:10px;border-radius:50%;background:#FFD34E;border:2px solid #2A2440"></span>
+              <span style="width:10px;height:10px;border-radius:50%;background:#FFF;border:2px solid #B3AECB"></span>
+            </div>
+          </div>
+          <div style="font-family:'Baloo 2',sans-serif;font-size:28px;font-weight:800;line-height:1.12">When does dinner<br>usually fall apart?</div>
+          <div style="font-size:13px;font-weight:700;color:#8A84A0;margin-top:-6px">one question at a time. no essay answers. the scheduler plans around whatever you pick.</div>
+          <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px">
+            <div style="border:2px solid #2A2440;border-radius:18px;padding:13px 15px;background:#FFF4CE;box-shadow:3px 3px 0 #2A2440">
+              <div style="font-size:15px;font-weight:900">the 4:30 decision cliff</div>
+              <div style="font-size:12px;font-weight:800;color:#8A6D1E">brain's out of choices by then — plan must already exist</div>
+            </div>
+            <div style="border:2px solid #2A2440;border-radius:18px;padding:13px 15px;background:#FFFFFF">
+              <div style="font-size:15px;font-weight:900">pickup-to-dinner sprint</div>
+              <div style="font-size:12px;font-weight:800;color:#8A84A0">school run lands at 5, everyone's starving at 5:01</div>
+            </div>
+            <div style="border:2px solid #2A2440;border-radius:18px;padding:13px 15px;background:#FFFFFF">
+              <div style="font-size:15px;font-weight:900">sensory overload days</div>
+              <div style="font-size:12px;font-weight:800;color:#8A84A0">noise + touch + smells = kitchen is hostile territory</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;border:2px solid #9B7EDE;background:#EFE8FA;border-radius:999px;padding:11px 16px">
+              <span style="flex:none;width:30px;height:30px;border-radius:50%;background:#9B7EDE;display:inline-flex;align-items:center;justify-content:center"><span style="width:9px;height:13px;border:2px solid #FFF;border-radius:999px;display:inline-block;position:relative"><span style="position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);width:2px;height:4px;background:#FFF"></span></span></span>
+              <span style="font-size:14px;font-weight:900;color:#6B54A8">something else — just say it</span>
+            </div>
+          </div>
+          <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+            <div style="background:#FF7BAC;border:2px solid #2A2440;border-radius:999px;padding:15px 0;text-align:center;font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;box-shadow:4px 4px 0 #2A2440">THAT'S THE ONE</div>
+            <div style="text-align:center;font-size:12px;font-weight:800;color:#8A84A0">skip — Fine-tuning holds these anytime</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5b SWIPE RATING ══ -->
+    <div class="dv-opt" id="5b">
+      <div class="dv-olabel"><a class="dv-oid" href="#5b">5b</a>Onboarding step 5 — per-member meal ratings, ~3 min each, skippable</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Onboarding swipe rating" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:14px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="position:relative;width:30px;height:27px;background:#8CC63E;border:2px solid #2A2440;border-radius:52% 48% 46% 54% / 44% 57% 43% 56%"><span style="position:absolute;left:8px;top:9px;width:3.5px;height:3.5px;border-radius:50%;background:#2A2440"></span><span style="position:absolute;right:8px;top:9px;width:3.5px;height:3.5px;border-radius:50%;background:#2A2440"></span><span style="position:absolute;left:11px;bottom:6px;width:7px;height:3.5px;border-radius:0 0 7px 7px;background:#2A2440"></span></span>
+              <span style="font-size:12px;font-weight:900;letter-spacing:.06em">CADDIE'S TAKES · CARD 12</span>
+            </div>
+            <span style="font-size:11.5px;font-weight:800;color:#8A84A0">~3 min · skippable</span>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:24px;background:#FFFFFF;box-shadow:5px 5px 0 #FFD34E;overflow:hidden;transform:rotate(-.6deg);position:relative">
+            <span style="position:absolute;top:10px;right:12px;background:#FFE3EE;border:2px solid #2A2440;border-radius:9px;padding:3px 9px;transform:rotate(3deg);font-size:10.5px;font-weight:900;color:#B04A72;z-index:2">12 ♥ SO FAR</span>
+            <div style="height:170px;background:repeating-linear-gradient(-45deg,#E9F5D3 0 16px,#F4FAE8 16px 32px);display:flex;align-items:center;justify-content:center;border-bottom:2px solid #2A2440">
+              <span style="font-family:ui-monospace,monospace;font-size:11px;color:#5F7F28;background:rgba(255,255,255,.85);border-radius:6px;padding:4px 8px">photo: sheet-pan gnocchi</span>
+            </div>
+            <div style="padding:14px 16px 16px">
+              <div style="font-family:'Baloo 2',sans-serif;font-size:24px;font-weight:800">Sheet-pan gnocchi</div>
+              <div style="display:flex;gap:6px;margin-top:7px">
+                <span style="background:#E9F5D3;border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:900;color:#5F7F28">GF ✓ for you</span>
+                <span style="background:#F7F4EE;border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:900;color:#8A84A0">oven · simple</span>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:12px;font-weight:800;color:#8A84A0">swipe, or tap —</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:9px">
+            <div style="border:2px solid #2A2440;background:#FFFFFF;border-radius:999px;padding:13px 0;text-align:center;font-size:15px;font-weight:900;color:#8A84A0">nope</div>
+            <div style="border:2px solid #2A2440;background:#FFFFFF;border-radius:999px;padding:13px 0;text-align:center;font-size:15px;font-weight:900">fine</div>
+            <div style="border:2px solid #2A2440;background:#FF7BAC;border-radius:999px;padding:13px 0;text-align:center;font-family:'Baloo 2',sans-serif;font-size:16px;font-weight:800;box-shadow:3px 3px 0 #2A2440">LOVE ♥</div>
+          </div>
+          <div style="margin-top:auto;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+              <span style="width:22px;height:20px;background:#5BC2E7;border:2px solid #2A2440;border-radius:48% 52% 55% 45% / 55% 46% 54% 45%;display:inline-block"></span>
+              <span style="font-size:12px;font-weight:800;color:#8A84A0">Elsie's turn after — hers only counts safe-food candidates</span>
+            </div>
+            <div style="text-align:center;font-size:11.5px;font-weight:800;color:#B3AECB">ratings feed the picker. they are never a report card.</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5c MEAL LIBRARY ══ -->
+    <div class="dv-opt" id="5c">
+      <div class="dv-olabel"><a class="dv-oid" href="#5c">5c</a>Meal library — rotation states visible, per-member fit, "sick of this"</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Meal library" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:11px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <div style="font-family:'Baloo 2',sans-serif;font-size:30px;font-weight:800">Meal library</div>
+            <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:900">62</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span style="border:2px solid #2A2440;background:#E9F5D3;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;color:#5F7F28;box-shadow:2px 2px 0 #8CC63E">Caddie-safe ✓</span>
+            <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900">effort ≤ ●●○○</span>
+            <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900">grill</span>
+            <span style="border:2px dashed #B3AECB;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;color:#8A84A0">resting</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+            <div style="border:2px solid #2A2440;border-radius:18px;background:#FFFFFF;padding:12px 14px;position:relative">
+              <span style="position:absolute;top:-10px;right:12px;background:#FFD34E;border:2px solid #2A2440;border-radius:9px;padding:2px 9px;transform:rotate(2deg);font-size:10px;font-weight:900;box-shadow:2px 2px 0 #FF7BAC">ALL-TIMER</span>
+              <div style="font-size:15.5px;font-weight:900">Build-your-own tacos</div>
+              <div style="display:flex;align-items:center;gap:7px;margin-top:4px">
+                <span style="width:7px;height:7px;border-radius:50%;background:#8CC63E"></span>
+                <span style="font-size:11.5px;font-weight:800;color:#8A84A0">active · never fatigues (exempt by law)</span>
+              </div>
+            </div>
+            <div style="border:2px solid #2A2440;border-radius:18px;background:#FFFFFF;padding:12px 14px;box-shadow:4px 4px 0 #8CC63E">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:15.5px;font-weight:900">Sheet-pan gnocchi</div>
+                <span style="background:#2A2440;color:#FFF;border-radius:8px;padding:2px 8px;font-size:10px;font-weight:900">SIGNATURE ⭐</span>
+              </div>
+              <div style="display:flex;gap:9px;align-items:center;margin-top:8px">
+                <span style="display:inline-flex;align-items:center;gap:4px;background:#E9F5D3;border-radius:999px;padding:3px 9px 3px 4px"><span style="width:16px;height:15px;background:#8CC63E;border-radius:52% 48% 46% 54% / 44% 57% 43% 56%;display:inline-block"></span><span style="font-size:11px;font-weight:900;color:#5F7F28">♥</span></span>
+                <span style="display:inline-flex;align-items:center;gap:4px;background:#E1F1FA;border-radius:999px;padding:3px 9px 3px 4px"><span style="width:16px;height:15px;background:#5BC2E7;border-radius:48% 52% 55% 45% / 55% 46% 54% 45%;display:inline-block"></span><span style="font-size:11px;font-weight:900;color:#3E7A96">ok — plain half</span></span>
+                <span style="display:inline-flex;align-items:center;gap:4px;background:#FFF4CE;border-radius:999px;padding:3px 9px 3px 4px"><span style="width:16px;height:15px;background:#FFD34E;border-radius:46% 54% 52% 48% / 58% 55% 45% 42%;display:inline-block"></span><span style="font-size:11px;font-weight:900;color:#8A6D1E">♥ ×2</span></span>
+              </div>
+              <div style="display:flex;gap:7px;margin-top:10px">
+                <span style="flex:1;border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:8px 0;text-align:center;font-size:12px;font-weight:900">sick of this → rest it</span>
+                <span style="flex:1;border:2px solid #2A2440;background:#FFE3EE;border-radius:999px;padding:8px 0;text-align:center;font-size:12px;font-weight:900;color:#B04A72">pin to a day</span>
+              </div>
+            </div>
+            <div style="border:2px solid #2A2440;border-radius:18px;background:#E1F1FA;padding:12px 14px">
+              <div style="font-size:15.5px;font-weight:900">Birria (the project)</div>
+              <div style="display:flex;align-items:center;gap:7px;margin-top:4px">
+                <span style="width:7px;height:7px;border-radius:50%;background:#5BC2E7"></span>
+                <span style="font-size:11.5px;font-weight:800;color:#3E7A96">resting until Aug 2 — comes back on its own</span>
+              </div>
+            </div>
+            <div style="border:2px dashed #B3AECB;border-radius:18px;padding:12px 14px">
+              <div style="font-size:15.5px;font-weight:900;color:#8A84A0">Beige buffet</div>
+              <div style="font-size:11.5px;font-weight:800;color:#B3AECB;margin-top:3px">retired · one tap resurrects, zero ceremony</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:12px;font-weight:800;color:#8A84A0">resting ≠ gone. the rotation breathes so nothing goes invisible.</div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5d RECIPE EDITOR ══ -->
+    <div class="dv-opt" id="5d">
+      <div class="dv-olabel"><a class="dv-oid" href="#5d">5d</a>Recipe editor — Loose mode default: names only, no amounts, no friction</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Recipe editor loose" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:13px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:38px;height:38px;border-radius:50%;background:#FFF;border:2px solid #2A2440;display:inline-flex;align-items:center;justify-content:center;font-weight:900">‹</span>
+            <div style="font-family:'Baloo 2',sans-serif;font-size:28px;font-weight:800">Birria</div>
+          </div>
+          <div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="border:2px solid #2A2440;border-radius:16px;padding:11px 0;text-align:center;font-size:14px;font-weight:900;background:#FFD34E;box-shadow:3px 3px 0 #2A2440">LOOSE</div>
+              <div style="border:2px solid #2A2440;border-radius:16px;padding:11px 0;text-align:center;font-size:14px;font-weight:900;background:#FFF;color:#8A84A0">precise</div>
+            </div>
+            <div style="font-size:11.5px;font-weight:800;color:#8A84A0;margin-top:6px">loose = just names. precise adds amounts + steps — only if you ever want them.</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:900;letter-spacing:.08em;color:#8A84A0;margin-bottom:7px">WHAT GOES IN</div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:900">chuck roast ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:900">dried chiles ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:900">tortillas ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:900">white onion ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:900">lime ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:900">the good cinnamon ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFD34E;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:900;box-shadow:2px 2px 0 #2A2440">+ add</span>
+              <span style="width:34px;height:34px;border-radius:50%;background:#EFE8FA;border:2px solid #9B7EDE;display:inline-flex;align-items:center;justify-content:center"><span style="width:8px;height:12px;border:2px solid #6B54A8;border-radius:999px;display:inline-block;position:relative"><span style="position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);width:2px;height:4px;background:#6B54A8"></span></span></span>
+            </div>
+          </div>
+          <div style="border:2px solid #9B7EDE;background:#EFE8FA;border-radius:16px;padding:11px 14px;font-size:12.5px;font-weight:800;color:#6B54A8;line-height:1.5">amounts live in your head. that's allowed. Cat can walk anyone else through it if you ever lend this out.</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between;border:2px solid #2A2440;border-radius:16px;padding:11px 14px;background:#FFF">
+              <span style="font-size:13.5px;font-weight:900">needs a calm day</span>
+              <span style="background:#E9F5D3;border:2px solid #2A2440;border-radius:999px;padding:3px 11px;font-size:11.5px;font-weight:900;color:#5F7F28">yes ✓</span>
+            </div>
+            <div style="border:2px solid #2A2440;border-radius:16px;padding:11px 14px;background:#E9F5D3">
+              <div style="font-size:13.5px;font-weight:900;color:#5F7F28">makes extra: shredded beef →</div>
+              <div style="font-size:11.5px;font-weight:800;color:#6B8A2E;margin-top:2px">feeds Chad's ramen within 3 days. the chain is on purpose.</div>
+            </div>
+          </div>
+          <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+            <div style="background:#FF7BAC;border:2px solid #2A2440;border-radius:999px;padding:15px 0;text-align:center;font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;box-shadow:4px 4px 0 #2A2440">SAVE — DONE ENOUGH</div>
+            <div style="text-align:center;font-size:12px;font-weight:800;color:#8A84A0">a loose recipe is a complete recipe</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5e INVENTORY ══ -->
+    <div class="dv-opt" id="5e">
+      <div class="dv-olabel"><a class="dv-oid" href="#5e">5e</a>Inventory — photo capture, reconciliation chat, soft confidence, leftovers w/ use-by</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Inventory" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:12px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="font-family:'Baloo 2',sans-serif;font-size:30px;font-weight:800">What's on hand</div>
+          <div style="border:2px dashed #8A84A0;border-radius:20px;padding:14px;display:flex;align-items:center;gap:12px;background:#FFFFFF">
+            <span style="flex:none;width:46px;height:46px;border-radius:14px;background:#E1F1FA;border:2px solid #2A2440;display:inline-flex;align-items:center;justify-content:center"><span style="width:20px;height:15px;border:2.5px solid #2A2440;border-radius:4px;display:inline-block;position:relative"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6px;height:6px;border:2px solid #2A2440;border-radius:50%"></span></span></span>
+            <div style="flex:1">
+              <div style="font-size:14.5px;font-weight:900">snap the fridge / pantry</div>
+              <div style="font-size:11.5px;font-weight:800;color:#8A84A0">last scan spotted a human — auto-cropped, asked before keeping ✓</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:900;letter-spacing:.08em;color:#8A84A0;margin-bottom:7px">QUICK QUESTION</div>
+            <div style="border:2px solid #2A2440;border-radius:4px 18px 18px 18px;background:#FFFFFF;box-shadow:3px 3px 0 #5BC2E7;padding:12px 15px">
+              <div style="font-size:14px;font-weight:800;line-height:1.4">red container, shelf 2 — leftover chili or enchilada sauce?</div>
+              <div style="display:flex;gap:7px;margin-top:10px">
+                <span style="border:2px solid #2A2440;background:#FFF4CE;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:900">chili</span>
+                <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:900">sauce</span>
+                <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:900;color:#8A84A0">no idea — toss it</span>
+              </div>
+            </div>
+            <div style="font-size:11px;font-weight:800;color:#B3AECB;margin-top:5px">one question at a time · never a form</div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:11px;font-weight:900;letter-spacing:.08em;color:#8A84A0;margin-bottom:7px">LEFTOVERS</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between;border:2px solid #2A2440;border-radius:16px;padding:11px 14px;background:#FFF4CE">
+                <div><div style="font-size:13.5px;font-weight:900">taco fixings</div><div style="font-size:11px;font-weight:800;color:#8A6D1E">solid — saw them this morning</div></div>
+                <span style="background:#FFD34E;border:2px solid #2A2440;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900">use by Thu</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;border:2px solid #2A2440;border-radius:16px;padding:11px 14px;background:#FFFFFF">
+                <div><div style="font-size:13.5px;font-weight:900">rice (a lot)</div><div style="font-size:11px;font-weight:800;color:#8A84A0">pretty sure</div></div>
+                <span style="background:#E9F5D3;border:2px solid #2A2440;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;color:#5F7F28">feeds Wed ramen</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;border:2px solid #2A2440;border-radius:16px;padding:11px 14px;background:#FFFFFF">
+                <div><div style="font-size:13.5px;font-weight:900">mystery soup</div><div style="font-size:11px;font-weight:800;color:#8A84A0">honestly guessing</div></div>
+                <span style="background:#EFE8FA;border:2px solid #2A2440;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;color:#6B54A8">sniff test</span>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:12px;font-weight:800;color:#8A84A0">confidence is a vibe here, never a percentage</div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5f CHECK-IN ══ -->
+    <div class="dv-opt" id="5f">
+      <div class="dv-olabel"><a class="dv-oid" href="#5f">5f</a>Check-in — format roulette; tonight's is one-tap</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Check-in" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:14px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:11px;font-weight:900;letter-spacing:.08em;color:#8A84A0">TONIGHT'S CHECK-IN</div>
+            <span style="background:#FFD34E;border:2px solid #2A2440;border-radius:9px;padding:3px 10px;transform:rotate(2deg);font-size:10.5px;font-weight:900;box-shadow:2px 2px 0 #FF7BAC">FORMAT: ONE TAP</span>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:24px;background:#FFFFFF;box-shadow:5px 5px 0 rgba(42,36,64,.12);padding:20px 18px">
+            <div style="font-family:'Baloo 2',sans-serif;font-size:27px;font-weight:800;text-align:center">dinner happened?</div>
+            <div style="font-size:12.5px;font-weight:800;color:#8A84A0;text-align:center;margin-top:3px">that's it. that's the whole question.</div>
+            <div style="display:flex;flex-direction:column;gap:9px;margin-top:16px">
+              <div style="border:2px solid #2A2440;background:#E9F5D3;border-radius:999px;padding:14px 0;text-align:center;font-size:16px;font-weight:900;color:#4E7020;box-shadow:3px 3px 0 #8CC63E">cooked ✓</div>
+              <div style="border:2px solid #2A2440;background:#FFFFFF;border-radius:999px;padding:14px 0;text-align:center;font-size:16px;font-weight:900">fed, didn't cook <span style="font-size:12px;font-weight:800;color:#8A84A0">— still counts</span></div>
+              <div style="border:2px solid #2A2440;background:#E1F1FA;border-radius:999px;padding:14px 0;text-align:center;font-size:16px;font-weight:900;color:#3E7A96">rest day</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:900;letter-spacing:.08em;color:#8A84A0;margin-bottom:7px">TOMORROW MIGHT BE</div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="border:2px dashed #B3AECB;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;color:#8A84A0">two words</span>
+              <span style="border:2px dashed #B3AECB;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;color:#8A84A0">voice note</span>
+              <span style="border:2px dashed #B3AECB;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;color:#8A84A0">picture of the plate</span>
+              <span style="border:2px dashed #B3AECB;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;color:#8A84A0">Hannah asks</span>
+            </div>
+          </div>
+          <div style="margin-top:auto;text-align:center;font-size:12px;font-weight:800;color:#8A84A0">same question, never the same outfit — repetition is how things go invisible</div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5g FINE-TUNING ══ -->
+    <div class="dv-opt" id="5g">
+      <div class="dv-olabel"><a class="dv-oid" href="#5g">5g</a>Fine-tuning — plain-language dials, reset everywhere, cast + stressors live here</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Fine-tuning" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:10px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-family:'Baloo 2',sans-serif;font-size:30px;font-weight:800">Fine-tuning</div>
+            <span style="background:#EFE8FA;border:2px solid #2A2440;border-radius:9px;padding:3px 10px;transform:rotate(-2deg);font-size:10.5px;font-weight:900;color:#6B54A8;box-shadow:2px 2px 0 #9B7EDE">YOUR DIALS</span>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:18px;background:#FFF;padding:12px 14px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14px;font-weight:900">cast chattiness</span><span style="font-size:11px;font-weight:800;color:#B3AECB">reset</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:900;color:#8A84A0;margin:8px 0 5px"><span>MILD</span><span>SASS</span><span>FULL CHAOS</span></div>
+            <div style="position:relative;height:12px;border:2px solid #2A2440;border-radius:999px;background:#FFF"><div style="position:absolute;left:0;top:0;bottom:0;width:60%;background:#FFD34E;border-radius:999px"></div><div style="position:absolute;left:60%;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#FFF;border:2px solid #2A2440;box-shadow:2px 2px 0 #2A2440"></div></div>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:18px;background:#FFF;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:14px;font-weight:900">repeat spacing</div><div style="font-size:11.5px;font-weight:800;color:#8A84A0">how long before a meal comes back</div></div>
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="width:34px;height:34px;border-radius:50%;border:2px solid #2A2440;display:inline-flex;align-items:center;justify-content:center;font-weight:900;background:#FFF">−</span>
+              <span style="font-size:14px;font-weight:900">12 days</span>
+              <span style="width:34px;height:34px;border-radius:50%;border:2px solid #2A2440;display:inline-flex;align-items:center;justify-content:center;font-weight:900;background:#FFD34E">+</span>
+            </div>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:18px;background:#FFF;padding:12px 14px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14px;font-weight:900">shopping-nag patience</span><span style="font-size:11px;font-weight:800;color:#B3AECB">reset</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:900;color:#8A84A0;margin:8px 0 5px"><span>GENTLE</span><span>FOR-REAL FASTER</span></div>
+            <div style="position:relative;height:12px;border:2px solid #2A2440;border-radius:999px;background:#FFF"><div style="position:absolute;left:0;top:0;bottom:0;width:35%;background:#8CC63E;border-radius:999px"></div><div style="position:absolute;left:35%;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#FFF;border:2px solid #2A2440;box-shadow:2px 2px 0 #2A2440"></div></div>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:18px;background:#FFF;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="display:flex">
+                <span style="width:26px;height:24px;background:#FF7BAC;border:2px solid #2A2440;border-radius:46% 54% 52% 48% / 58% 55% 45% 42%"></span>
+                <span style="width:26px;height:24px;background:#5BC2E7;border:2px solid #2A2440;border-radius:52% 48% 46% 54% / 44% 57% 43% 56%;margin-left:-8px"></span>
+                <span style="width:26px;height:24px;background:#9B7EDE;border:2px solid #2A2440;border-radius:48% 52% 55% 45% / 55% 46% 54% 45%;margin-left:-8px"></span>
+              </span>
+              <div><div style="font-size:14px;font-weight:900">the cast</div><div style="font-size:11.5px;font-weight:800;color:#8A84A0">Hannah · Cat · Julie — voices, duties, retirement</div></div>
+            </div>
+            <span style="font-weight:900;color:#8A84A0">›</span>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:18px;background:#FFF;padding:12px 14px">
+            <div style="font-size:14px;font-weight:900;margin-bottom:7px">stressor patterns</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span style="background:#FFF4CE;border:2px solid #2A2440;border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:900">4:30 cliff ✓</span>
+              <span style="background:#FFF4CE;border:2px solid #2A2440;border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:900">pickup sprint ✓</span>
+              <span style="border:2px dashed #B3AECB;border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:900;color:#8A84A0">+ add</span>
+            </div>
+          </div>
+          <div style="margin-top:auto;text-align:center;font-size:12px;font-weight:800;color:#8A84A0">every dial has a default — reset anything, no archaeology required</div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5h REWARDS + LOVES ══ -->
+    <div class="dv-opt" id="5h">
+      <div class="dv-olabel"><a class="dv-oid" href="#5h">5h</a>Reward menu + Loves corpus — tiered, sourced, deletable anywhere</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Rewards and loves" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:11px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="font-family:'Baloo 2',sans-serif;font-size:30px;font-weight:800">Reward menu</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="border:2px solid #2A2440;border-radius:18px;background:#FFF;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+              <div><div style="font-size:10.5px;font-weight:900;letter-spacing:.08em;color:#8A84A0">SMALL · WEEKLY-ISH</div><div style="font-size:14.5px;font-weight:900;margin-top:2px">fancy coffee on the Friday run</div></div>
+              <span style="background:#F7F4EE;border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:900;color:#8A84A0">added by you</span>
+            </div>
+            <div style="border:2px solid #2A2440;border-radius:18px;background:#FFF;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+              <div><div style="font-size:10.5px;font-weight:900;letter-spacing:.08em;color:#8A84A0">MEDIUM · STREAK WEEKS</div><div style="font-size:14.5px;font-weight:900;margin-top:2px">new cookbook — browsing counts</div></div>
+              <span style="background:#F7F4EE;border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:900;color:#8A84A0">you agreed</span>
+            </div>
+            <div style="border:2px solid #2A2440;border-radius:18px;background:#FFE3EE;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:4px 4px 0 #FF7BAC">
+              <div><div style="font-size:10.5px;font-weight:900;letter-spacing:.08em;color:#B04A72">BIG · THE RETURN</div><div style="font-size:14.5px;font-weight:900;margin-top:2px">solo bookstore hour, phone off</div></div>
+              <span style="background:rgba(255,255,255,.8);border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:900;color:#B04A72">added by you</span>
+            </div>
+          </div>
+          <div style="flex:1;margin-top:6px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:7px">
+              <span style="font-size:11px;font-weight:900;letter-spacing:.08em;color:#8A84A0">LOVES CORPUS</span>
+              <span style="font-size:11px;font-weight:800;color:#B3AECB">personas quote these — they never invent</span>
+            </div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:900">that one ramen place ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:900">fresh flowers ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:900">Moriah Elizabeth uploads ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:900">the good markers ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:900">thrift-store mugs ✕</span>
+              <span style="border:2px solid #2A2440;background:#FFD34E;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:900;box-shadow:2px 2px 0 #2A2440">+ add</span>
+              <span style="width:34px;height:34px;border-radius:50%;background:#EFE8FA;border:2px solid #9B7EDE;display:inline-flex;align-items:center;justify-content:center"><span style="width:8px;height:12px;border:2px solid #6B54A8;border-radius:999px;display:inline-block;position:relative"><span style="position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);width:2px;height:4px;background:#6B54A8"></span></span></span>
+            </div>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:16px;background:#FFF;padding:11px 14px;display:flex;align-items:center;gap:10px">
+            <span style="position:relative;flex:none;width:30px;height:27px;background:#FF7BAC;border:2px solid #2A2440;border-radius:46% 54% 52% 48% / 58% 55% 45% 42%"><span style="position:absolute;left:8px;top:9px;width:3.5px;height:3.5px;border-radius:50%;background:#2A2440"></span><span style="position:absolute;right:8px;top:9px;width:3.5px;height:3.5px;border-radius:50%;background:#2A2440"></span><span style="position:absolute;left:11px;bottom:6px;width:7px;height:3.5px;border-radius:0 0 7px 7px;background:#2A2440"></span></span>
+            <span style="font-size:12px;font-weight:800;color:#8A84A0">how it's used: <b style="color:#2A2440">"day 5. the bookstore hour is EARNED. go."</b> — Hannah, eventually</span>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- ══ 5i ESCALATION ══ -->
+    <div class="dv-opt" id="5i">
+      <div class="dv-olabel"><a class="dv-oid" href="#5i">5i</a>"For real, go shopping" — urgent, never guilt; snooze + adaptation always offered</div>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+        <div data-screen-label="Shopping escalation" style="height:100%;box-sizing:border-box;background:#F7F4EE;display:flex;flex-direction:column;gap:12px;padding:70px 20px 44px;font-family:'Nunito',sans-serif;color:#2A2440;overflow:hidden">
+          <div style="font-family:'Baloo 2',sans-serif;font-size:30px;font-weight:800">Shopping</div>
+          <div style="border:2px solid #2A2440;border-radius:22px;background:#FFF4CE;box-shadow:5px 5px 0 #FFD34E;padding:16px;position:relative">
+            <span style="position:absolute;top:-11px;right:14px;background:#FFD34E;border:2px solid #2A2440;border-radius:9px;padding:3px 10px;transform:rotate(3deg);font-size:10.5px;font-weight:900;box-shadow:2px 2px 0 #2A2440">FOR REAL THIS TIME</span>
+            <div style="font-family:'Baloo 2',sans-serif;font-size:23px;font-weight:800;line-height:1.15">3 dinners now ride on tonight's run</div>
+            <div style="font-size:13px;font-weight:800;color:#8A6D1E;margin-top:5px">zero judgment — just math. Thu gnocchi, Fri pizza, and Sat's birria all need items. list's already built: 9 things, one store.</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:13px">
+              <div style="background:#2A2440;color:#FFF;border-radius:999px;padding:14px 0;text-align:center;font-family:'Baloo 2',sans-serif;font-size:16px;font-weight:800">going — show me the list</div>
+              <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:8px">
+                <div style="border:2px solid #2A2440;background:#FFF;border-radius:999px;padding:11px 0;text-align:center;font-size:13px;font-weight:900">snooze to 5:00</div>
+                <div style="border:2px solid #2A2440;background:#E9F5D3;border-radius:999px;padding:11px 0;text-align:center;font-size:13px;font-weight:900;color:#4E7020">can't today — re-plan around the pantry</div>
+              </div>
+            </div>
+          </div>
+          <div style="border:2px solid #2A2440;border-radius:16px;background:#FFF;padding:11px 14px;font-size:12px;font-weight:800;color:#8A84A0;line-height:1.5">if you snooze past 6, the week quietly re-solves itself — swaps Thu to pantry meals, moves gnocchi out. nothing breaks, nothing scolds.</div>
+          <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:center;gap:7px">
+              <span style="width:7px;height:7px;border-radius:50%;background:#8CC63E"></span>
+              <span style="font-size:12px;font-weight:800;color:#8A84A0">GF mac stays cookable from the staples shelf no matter what ✓</span>
+            </div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>
