@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M0-7 acceptance: creates/edits persist — exercising the same model
 /// operations the CRUD screens perform, verified through a fresh context.

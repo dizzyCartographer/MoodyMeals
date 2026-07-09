@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M0-6 acceptance: seed loads idempotently; used by all later tests.
 final class SeedDataTests: XCTestCase {

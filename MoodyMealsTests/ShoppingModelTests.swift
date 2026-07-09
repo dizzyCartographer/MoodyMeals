@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M0-5 acceptance: persistence tests for each shopping/inventory/household
 /// model. Fresh-context discipline throughout.

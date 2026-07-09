@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M2-3 acceptance: TC-GT-1..6 ⚠️ (§10 — halt-the-line tests).
 final class GuaranteeCheckTests: XCTestCase {

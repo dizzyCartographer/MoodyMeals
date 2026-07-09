@@ -1,5 +1,5 @@
 import XCTest
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M2-2 acceptance: TC-RT-1..6, against the pure routing rules.
 final class RunRoutingTests: XCTestCase {

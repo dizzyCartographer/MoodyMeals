@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 // ── Mock store: what EventKit integration can't do on CI, the mock pins.
 // The EKEventStore adapter itself is thin and exercised manually (RUNLOG). ──

@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M1-1 acceptance: PlanEntry created/edited; lock persists. Plus the HC-5
 /// confirmation guard that manual assignment must honor (§1 ⚠️).

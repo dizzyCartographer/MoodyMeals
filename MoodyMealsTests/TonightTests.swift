@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M1-3 acceptance: TC-SF-1..3 against the Tonight service.
 final class TonightTests: XCTestCase {

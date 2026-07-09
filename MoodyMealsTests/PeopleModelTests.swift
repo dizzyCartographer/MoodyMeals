@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M0-2 acceptance: round-trip persistence for the People models and
 /// TC §1 model-level invariants compiling against the real model API.

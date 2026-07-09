@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M2-4 acceptance: TC-SL-6 + Reminders export behind permission check.
 final class ShoppingListBuilderTests: XCTestCase {

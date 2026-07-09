@@ -10,7 +10,35 @@ settings:
     TARGETED_DEVICE_FAMILY: "1"
     CODE_SIGN_IDENTITY: ""
     CODE_SIGNING_REQUIRED: "NO"
+    GENERATE_INFOPLIST_FILE: "YES"
 targets:
+  # The domain engine from the parallel build (SwiftData models, GF safety,
+  # shopping pipeline, calendar sync) — its own module so type names never
+  # collide with the presentation structs the screens bind to.
+  MoodyEngine:
+    type: framework
+    platform: iOS
+    deploymentTarget: "17.0"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mariayarley.Moody.Engine
+        # Engine API is internal; the app uses `@testable import MoodyEngine`
+        # until the public-API pass lands (BACKLOG P5-1). Debug-stage tradeoff.
+        ENABLE_TESTABILITY: "YES"
+    sources:
+      - path: MoodyMeals
+        excludes:
+          - "MoodyMealsApp.swift"   # their @main — retired
+          - "ContentView.swift"     # their tab shell — retired
+          - "Views/**"              # NEEDS-VISUAL-REVIEW placeholders — retired
+  MoodyEngineTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: MoodyMealsTests
+    dependencies:
+      - target: MoodyEngine
   Moody:
     type: application
     platform: iOS
@@ -21,6 +49,8 @@ targets:
       - path: MoodyWidgets/CookModeActivity.swift
     dependencies:
       - target: MoodyWidgets
+        embed: true
+      - target: MoodyEngine
         embed: true
     # App Group shared with MoodyWidgets — the snapshot.json contract
     # (Moody/Data/Persistence.swift). XcodeGen generates the file; app groups
@@ -85,3 +115,12 @@ targets:
           - Nunito-ExtraBold.ttf
           - Nunito-Black.ttf
           - Quicksand-SemiBold.ttf
+schemes:
+  MoodyEngine:
+    build:
+      targets:
+        MoodyEngine: all
+        MoodyEngineTests: [test]
+    test:
+      targets:
+        - MoodyEngineTests

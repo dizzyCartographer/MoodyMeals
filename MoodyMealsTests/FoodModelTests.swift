@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M0-3 acceptance: loose recipe with nil amounts persists; TC-HC-6 passes.
 /// Same round-trip discipline as PeopleModelTests: save on mainContext,

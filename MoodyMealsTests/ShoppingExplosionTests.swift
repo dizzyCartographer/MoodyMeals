@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M2-1 acceptance: TC-SL-1..5.
 final class ShoppingExplosionTests: XCTestCase {

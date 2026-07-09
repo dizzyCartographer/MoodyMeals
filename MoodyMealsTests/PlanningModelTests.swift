@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M0-4 acceptance: meal with zero recipes + freeform text is valid (TC-DM-3),
 /// plus round-trips for the full Meal shape, PlanEntry, and ThemeAnchor.

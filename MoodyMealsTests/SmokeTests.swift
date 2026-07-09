@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import MoodyMeals
+@testable import MoodyEngine
 
 /// M0-1 acceptance: the test target builds and runs, and the SwiftData
 /// container initializes and round-trips a model in memory.
