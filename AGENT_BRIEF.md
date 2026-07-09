@@ -1,5 +1,7 @@
 # Moody screen-builder brief
 
+> **⚠️ HISTORICAL (round-1 screen builds, pre-unification).** Autonomous runs follow `CLAUDE.md` + `BACKLOG.md`; canon lives in `DECISIONS.md` (through D-48). Details below are stale where they conflict — e.g. AppState is now a facade over MoodyEngine (not demo data), "Wed ramen cook" is disposable seed lore (D-47: the chain example is a kid's fried-rice night), and safety badges derive from the engine.
+
 You are building one SwiftUI screen of **Moody**, a meal-planning app whose interface is itself an accommodation for an AuDHD user. Read these before writing any code:
 
 1. `design_handoff_moody_app/README.md` — the authoritative spec. Read ALL of it, especially your screen's section, Design Laws, Design Tokens, and The Cast.

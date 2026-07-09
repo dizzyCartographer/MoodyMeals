@@ -90,9 +90,14 @@ final class SeedDataTests: XCTestCase {
         try SeedData.loadIfNeeded(into: context)
 
         let fresh = ModelContext(container)
-        // Cold-start rule (PT-1): the seed creates ZERO Liking/Fit data.
-        XCTAssertEqual(try fresh.fetch(FetchDescriptor<MemberMealScore>()).count, 0,
-                       "seeded scores would fake optimization signal (Step 4f)")
+        // Cold-start rule (PT-1): the seed creates ZERO Liking/Fit signal.
+        // (D-47 allows likesToCook-only rows — a cook-night tag is not taste data.)
+        let scores = try fresh.fetch(FetchDescriptor<MemberMealScore>())
+        XCTAssertTrue(scores.allSatisfy { $0.liking == 0 && $0.fit == 0 && !$0.isSafeFood },
+                      "seeded scores would fake optimization signal (Step 4f)")
+        // D-47 + D-6: the leftover-chain consumer is a kid's likes-to-MAKE meal.
+        XCTAssertTrue(scores.contains { $0.meal.title == "Fried rice" && $0.likesToCook && !$0.member.isAdult },
+                      "fried rice is the canonical chain example, assigned to a kid")
 
         // D-4: no sheet-pan framing anywhere.
         let meals = try fresh.fetch(FetchDescriptor<Meal>())

@@ -142,6 +142,9 @@ enum SeedData {
         context.insert(friedRice)
         friedRice.directItems = [RecipeItem(ingredient: eggs),
                                  RecipeItem(ingredient: gfTamari)]
+        // D-47 (Ria): fried rice is THE chain example — assigned to a kid (D-6).
+        // liking/fit stay 0: a cook-night tag is not taste signal (PT-1 intent holds).
+        context.insert(MemberMealScore(member: chad, meal: friedRice, likesToCook: true))
 
         // 6. Breakfast-for-dinner (D-1: calm-day gated, multi-slot)
         let pancakes = Meal(title: "Pancake night", effort: .simple,
