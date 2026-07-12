@@ -8,10 +8,15 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1"
-    CODE_SIGN_IDENTITY: ""
-    CODE_SIGNING_REQUIRED: "NO"
+    # TF-1: automatic signing with Maria's team (simulator builds don't need
+    # certs; device archives get profiles + the App Group registered via
+    # `-allowProvisioningUpdates`). Was CODE_SIGNING_REQUIRED=NO (sim-only).
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: RC99K6SXQX
     GENERATE_INFOPLIST_FILE: "YES"
     MARKETING_VERSION: "0.2.0"
+    # Build number is stamped by scripts/testflight.sh (git commit count) —
+    # this default only covers ad-hoc Xcode builds.
     CURRENT_PROJECT_VERSION: "1"
 targets:
   # The domain engine from the parallel build (SwiftData models, GF safety,
@@ -65,6 +70,9 @@ targets:
       path: Moody/Info.plist
       properties:
         CFBundleDisplayName: Moody
+        # TestFlight export compliance: no non-exempt encryption (HTTPS only),
+        # answered here once so every upload skips the compliance interview.
+        ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait

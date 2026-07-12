@@ -6,6 +6,31 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-12 (TestFlight-push run)
+
+⚠️ **One action before any decision matters: accept Apple's updated Program License Agreement** — developer.apple.com → Account/Agreements, ~1 minute, Account Holder only. Verified today: it hard-blocks ALL provisioning (profiles + App Group), so nothing can archive for TestFlight until it's done. Not a decision (there's only one answer), so it's not numbered — it's just first.
+
+**D-49. App Store name for the app record?** Names are unique across the whole store even for TestFlight-only apps, and plain "Moody" is very likely taken.
+→ Options: a) try "Moody", fall back to "Moody Meals" if rejected (recommended — 30 seconds to try, matches the repo either way) b) pick a different name you love now (say it and I'll note it everywhere)
+→ Blocks: the App Store Connect app record → TF-2 (first upload). You create the record; docs/TESTFLIGHT.md has the exact fields.
+**Ria:** _
+
+**D-50. U-2 visual review — five screenshots + two judgment calls.** docs/screenshots/u2-{home,week,shopping,streaks,thread}.png show the voice pass: D-48 cuts applied, AM strip now HIDES (no breakfast defaults exist yet — the old line was fiction), run cards + guarantee banner fully data-driven, banner gained a yellow-"!" violation variant (yellow ceiling, interim styling). I KEPT two lines as law-7 sass rather than D-48 violations: THE RETURN's "no pressure. (some pressure.)" and the thread composer's "reply if you feel like it".
+→ Options: a) all good, ship to the family as-is (recommended) b) cut one/both kept lines (one-line deletes, say which) c) notes on any screenshot
+→ Blocks: nothing mechanical — this is the review gate before the family reads it.
+**Ria:** _
+
+**D-51. Where does the HC-5 warn-confirm live?** Finding from U-2: it's currently UNREACHABLE — decide/swap only ever offer safe meals (by design), and no unrestricted manual picker survived the graft. The engine guard stays test-pinned either way; §1 safety is not weakened.
+→ Options: a) the confirm ships WITH the meal library / unrestricted picker, DESIGN_BRIEF_V2 Wave-1 item 4 (recommended — its natural home, no dead UI meanwhile) b) build a minimal interim any-meal picker sooner just to host it
+→ Blocks: nothing today; shapes Wave-1 ordering.
+**Ria:** _
+
+**D-52. Beta privacy policy URL — external TestFlight (the family) requires one at Beta App Review.** Internal testing (your phone) needs nothing.
+→ Options: a) I draft a one-page honest policy (data stays on device / in your iCloud; recipe text goes to Claude at capture once M3 lands) and publish it via GitHub Pages on this repo — needs your OK since it's public (recommended) b) you supply a URL from anywhere else
+→ Blocks: the family joining TestFlight; not your own install.
+**Ria:** _
+
+---
 ## Digest — 2026-07-09 (live session)
 
 **D-42. Generalize dietary needs into data-driven Food Rules? (Ria-proposed; AMENDED 2026-07-09 per her simplification — no special gluten machinery, no special plate rule.)** Today a new restriction is a CODE change: hard needs and soft goals are fixed lists in source (`DietaryRequirement`, `FoodNeedGoal` enums), so Chuck's high cholesterol has nowhere to go without editing the app — the smell Ria spotted. Proposed replacement: one generic per-member **FoodRule** — {name, direction: **never / limit / boost / require**, matching tags, frequency knob} — with user-extendable tags on ingredients AND on recipes/meals. Mapping (as amended AGAIN 2026-07-09 — see D-44): **Caddie = the D-44 risk-class model** (whole foods safe with no marking; gluten carriers need a recorded substitution; packaged goods carry optional preferred brands) — replaces both the tri-state field and this digest's earlier require{gf} idea. **Elsie = NO rule** (second amendment): the end goal — dinners she actually eats — is already the scheduler's objective per D-35, carried by her liking scores + the fairness floor; the staples lifeline (D-6) stays as the net; if real usage shows her dinners failing, propose the smallest fix then, from data. Chuck = limit{red meat, pork} ≤1×/week default (tunable per rule); Ria = boost{iron, fiber, anti-inflammatory}; Chad = boost{calorie-dense}. Scheduler mapping is 1:1 with what's already planned: never/require→hard filter (M4-2); boost→fit-coverage guardrails (M4-8, generalized); limit→a cap window symmetric to D-17's dislike windows. Ingredient catalog becomes filterable by rule. Sole remaining carve-out: taste dislikes stay in scores (D-17), not rules.
