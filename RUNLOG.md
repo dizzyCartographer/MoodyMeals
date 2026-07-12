@@ -9,6 +9,12 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [U-1] — App Group store move (2026-07-12)
+- Outcome: **done**. SwiftData store resolves through a new engine type `StoreLocation`: fresh installs land in the App Group container (`Store/MoodyEngine.store`); a store found in the legacy Application Support home is MOVED on first resolve — copy-all-then-delete with rollback so a half-moved store is never opened, and the SQLite sidecars (`-shm`/`-wal`) travel with the base file (a WAL left behind is silent data loss). Conflicts never clobber: an already-migrated group store wins, legacy files stay put for recovery. Nil group container (engine tests, CI) falls back to the legacy home. `MOODY_RESET=1` now wipes BOTH homes so a stale legacy store can't resurrect through migration. Widgets keep reading the snapshot, never the store — no cross-process SwiftData.
+- Tests added: 7 in StoreLocationTests — fresh install, full migration with byte-equality on all three files, partial sidecars, nil-container fallback, both-exist conflict (group wins, legacy untouched), second-launch idempotence, reset footprint. Suite **109/109**.
+- Notes: runtime-verified the REAL migration on the iPhone 17 Pro sim — the store from the July-9 P1 sessions moved out of Application Support (file mtimes preserved through the move), legacy dir left empty, app relaunched cleanly on the migrated store, and `snapshot.json` re-emitted fresh from the same group container (widget read path unchanged, schemaVersion 2, full week present).
+
+---
 ### [F13] — M3–M8 backlog APPROVED + restructured (2026-07-09, live)
 - Outcome: **approved** ("This all looks great and yeah, break it up as you see fit"). Applied: M3 reordered value-first (M3-1 plumbing → M3-6 check-in → M3-7 "just decide" → capture M3-2..5 → foundations M3-8..10); M4 split into M4 core (M4-0,1,2,3,5,6,7,12,14 — produces a valid safe week plan) and M4b guardrails/chains/care (M4-4,8,9,10,11,13,15,16); M5 split into M5 infra+reminders+EQ (M5-1,2,3,14,15,16), M5b personas+envelope (M5-4..9), M5c streaks/rewards/Vent (M5-10..13). Task IDs unchanged — only order and milestone boundaries moved. M4-8 AC generalized to D-45 boost-rule coverage. Q3 also closed (−2…+2 confirmed).
 - Tests added: none (planning). Remaining for Ria: only the three screenshots in docs/screenshots/, at leisure.

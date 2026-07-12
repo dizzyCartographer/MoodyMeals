@@ -27,21 +27,35 @@ final class AppState: ObservableObject {
     private let container: ModelContainer?
     private var context: ModelContext? { container?.mainContext }
 
-    /// On-disk store in Application Support (App Group move is P2 — widgets
-    /// keep reading the snapshot, never the store, so no cross-process risk).
+    /// Store lives in the App Group container (U-1); a store found in the old
+    /// Application Support home is moved there on first resolve — data
+    /// survives. Widgets still read the snapshot, never the store, so nothing
+    /// cross-process opens SwiftData.
     private static var storeURL: URL {
-        let fm = FileManager.default
-        let base = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        let dir = base.appendingPathComponent("Moody", isDirectory: true)
-        try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent("MoodyEngine.store")
+        StoreLocation.resolve(
+            groupContainer: FileManager.default.containerURL(
+                forSecurityApplicationGroupIdentifier: Persistence.appGroupID),
+            legacyDirectory: legacyStoreDirectory)
+    }
+
+    /// Pre-U-1 home; migration source and the no-entitlement fallback.
+    private static var legacyStoreDirectory: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("Moody", isDirectory: true)
     }
 
     private static func destroyStore() {
-        for suffix in ["", "-shm", "-wal"] {
-            try? FileManager.default.removeItem(
-                at: URL(fileURLWithPath: storeURL.path + suffix))
+        // Both homes — a reset must not let a stale legacy store resurrect
+        // through the migration on the next launch.
+        let fm = FileManager.default
+        var targets = StoreLocation.allFiles(
+            of: StoreLocation.legacyStoreURL(directory: legacyStoreDirectory))
+        if let group = fm.containerURL(
+            forSecurityApplicationGroupIdentifier: Persistence.appGroupID) {
+            targets += StoreLocation.allFiles(
+                of: StoreLocation.groupStoreURL(container: group))
         }
+        targets.forEach { try? fm.removeItem(at: $0) }
     }
 
     /// Never crash, never block launch: corrupt/unmigratable store → rebuild
