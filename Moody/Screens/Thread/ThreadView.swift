@@ -41,12 +41,10 @@ struct ThreadView: View {
                 }
             }
 
-            Text("lurking counts as participating ✓")
-                .font(.nunito(11.5, .heavy))
-                .foregroundStyle(threadMutedText)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 6)
-                .padding(.bottom, 8)
+            // D-48: zero response debt is carried by the design (no unread
+            // counts, no nagging) — announcing it in app voice converts it
+            // into an expectation. (Footer removed; spacing kept.)
+            Spacer().frame(height: 14)
 
             composer
         }

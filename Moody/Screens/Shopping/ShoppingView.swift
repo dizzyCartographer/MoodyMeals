@@ -18,14 +18,24 @@ struct ShoppingView: View {
     private var bulk: ShoppingRun? { appState.runs.first { $0.tier == .bulk } }
     private var atRiskNote: String? { appState.runs.compactMap(\.atRisk).first }
 
+    /// guaranteeLine, minus its trailing " ✓" — the banner's icon carries it.
+    private var bannerHeadline: String {
+        let line = appState.guaranteeLine
+        return line.hasSuffix(" ✓") ? String(line.dropLast(2)) : line
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 11) {
             Text("Shopping")
                 .font(.baloo(30, .heavy))
                 .foregroundStyle(Theme.ink)
 
-            ShoppingGuaranteeBanner(headline: "Every dinner covered through Friday",
-                                    atRisk: atRiskNote)
+            // Data-driven guarantee verdict (was the mockup's hardcoded line —
+            // the P1 review flag). The headline already names the violation and
+            // its out, so the atRisk sub-line would duplicate it — omitted.
+            ShoppingGuaranteeBanner(headline: bannerHeadline,
+                                    atRisk: nil,
+                                    risk: atRiskNote != nil)
 
             if let topUp {
                 ShoppingTopUpCard(run: topUp,
@@ -54,14 +64,19 @@ struct ShoppingView: View {
 struct ShoppingGuaranteeBanner: View {
     var headline: String
     var atRisk: String?
+    /// Violation state: yellow, never red (law 4 / D-44 — yellow is the
+    /// ceiling). Interim styling per U-2: minimal, expect the design pass.
+    var risk: Bool = false
+
+    private var slot: PaletteSlot { risk ? Palette.yellow : Palette.green }
 
     var body: some View {
         HStack(spacing: 9) {
-            Text("✓")
+            Text(risk ? "!" : "✓")
                 .font(.nunito(11, .black))
-                .foregroundStyle(.white)
+                .foregroundStyle(risk ? Theme.ink : .white)
                 .frame(width: 22, height: 22)
-                .background(Palette.green.color, in: Circle())
+                .background(slot.color, in: Circle())
                 .overlay(Circle().strokeBorder(Theme.ink, lineWidth: Theme.borderWidth))
             VStack(alignment: .leading, spacing: 0) {
                 Text(headline)
@@ -70,14 +85,14 @@ struct ShoppingGuaranteeBanner: View {
                 if let atRisk {
                     Text(atRisk)
                         .font(.nunito(11.5, .heavy))
-                        .foregroundStyle(Palette.green.labelMuted)
+                        .foregroundStyle(slot.labelMuted)
                 }
             }
             Spacer(minLength: 0)
         }
         .padding(EdgeInsets(top: 11, leading: 14, bottom: 11, trailing: 14))
-        .inkCard(background: Palette.green.tint, radius: 16)
-        .hardShadow(Palette.green.color, x: 3, y: 3)
+        .inkCard(background: slot.tint, radius: 16)
+        .hardShadow(slot.color, x: 3, y: 3)
     }
 }
 
@@ -161,10 +176,17 @@ struct ShoppingWeeklyCard: View {
                     .font(.nunito(15, .black))
                     .foregroundStyle(Theme.ink)
                 Spacer(minLength: 8)
-                Text("\(run.items.count) items · covers Wed→Fri")
+                Text("\(run.items.count) item\(run.items.count == 1 ? "" : "s")")
                     .font(.nunito(11.5, .heavy))
                     .foregroundStyle(Theme.textSecondary)
             }
+            // What this run protects, from the routing itself — the mockup's
+            // "covers Wed→Fri" placeholder now derives (D-35 class: no fiction).
+            Text(run.protects)
+                .font(.nunito(12, .heavy))
+                .foregroundStyle(Theme.textSecondary)
+                .lineLimit(2)
+                .padding(.top, 3)
             ShoppingFlowLayout(spacing: 6) {
                 ForEach(Array(categoryCounts.enumerated()), id: \.element.name) { i, entry in
                     Text("\(entry.name) \(entry.count)")
@@ -194,13 +216,16 @@ struct ShoppingBulkCard: View {
                     .font(.nunito(15, .black))
                     .foregroundStyle(Theme.ink)
                 Spacer(minLength: 8)
-                Text("\(run.items.count) items · bulk + birria")
+                Text("\(run.items.count) item\(run.items.count == 1 ? "" : "s")")
                     .font(.nunito(11.5, .heavy))
                     .foregroundStyle(Theme.textSecondary)
             }
-            Text("chuck roast, dried chiles, the 900 granola bars Chad requires")
+            // Derived coverage line (was hardcoded demo fiction with a member
+            // name — the D-35 class the graft exists to kill).
+            Text(run.protects)
                 .font(.nunito(12, .heavy))
                 .foregroundStyle(Theme.textSecondary)
+                .lineLimit(2)
                 .padding(.top, 3)
         }
         .padding(EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14))

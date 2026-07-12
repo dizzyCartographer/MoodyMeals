@@ -418,11 +418,8 @@ struct CelebrationDemoView: View {
                 SectionLabel(text: "last style · \(last.displayName)")
                     .padding(.top, Theme.Space.s)
             }
-
-            Text("misses have no button here — there is no API for them.")
-                .font(.nunito(11.5, .heavy))
-                .foregroundStyle(Theme.textSecondary)
-                .padding(.top, Theme.Space.s)
+            // D-48: the win-only list IS the statement — narrating that misses
+            // aren't tracked converts calm into commentary. (Line removed.)
         }
         .padding(Theme.Space.l)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

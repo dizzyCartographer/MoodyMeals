@@ -198,8 +198,9 @@ private struct StreaksFreezePopsCard: View {
                 }
             }
             // D-13: the earn rate is tunable (TuningDefaults) — copy never
-            // states a number.
-            Text("auto-protects a wild day. you earn them by showing up. no confessions required.")
+            // states a number. D-48: how they trigger is the whole sentence;
+            // "no confessions required" narrated the non-judgment and is gone.
+            Text("auto-protects a wild day. you earn them by showing up.")
                 .font(.nunito(12, .heavy))
                 .foregroundStyle(Palette.blue.label)
         }

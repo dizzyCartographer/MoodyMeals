@@ -53,7 +53,7 @@ struct WeekPlanView: View {
                 .font(.baloo(30, .heavy))
                 .foregroundStyle(Theme.ink)
             Spacer()
-            Text("JUL 6–12")
+            Text(appState.weekSpanLabel)   // derived — the literal went stale
                 .font(.nunito(11, .black))
                 .foregroundStyle(Theme.ink)
                 .padding(.horizontal, 10)
@@ -64,23 +64,27 @@ struct WeekPlanView: View {
         }
     }
 
-    // MARK: Compact AM strip — per-person breakfast defaults
+    // MARK: Compact AM strip — per-person breakfast defaults, derived (D-35:
+    // never hardcoded). No defaults on file ⇒ the strip hides — honest empty
+    // until per-member breakfasts land (M7).
 
-    private var amStrip: some View {
-        HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) {
-            Text("AM")
-                .font(.nunito(10.5, .black))
-                .kerning(0.8)
-                .foregroundStyle(Theme.textSecondary)
-            Text("Caddie waffles (GF) · Elsie eggs · Chad everything not nailed down")
-                .font(.nunito(12, .heavy))
-                .foregroundStyle(Theme.ink)
-                .lineLimit(2)
+    @ViewBuilder private var amStrip: some View {
+        if let line = appState.amBreakfastLine {
+            HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) {
+                Text("AM")
+                    .font(.nunito(10.5, .black))
+                    .kerning(0.8)
+                    .foregroundStyle(Theme.textSecondary)
+                Text(line)
+                    .font(.nunito(12, .heavy))
+                    .foregroundStyle(Theme.ink)
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 7)
+            .padding(.horizontal, Theme.Space.m)
+            .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 7)
-        .padding(.horizontal, Theme.Space.m)
-        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     // MARK: Day rows

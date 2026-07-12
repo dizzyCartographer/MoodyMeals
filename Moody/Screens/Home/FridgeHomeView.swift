@@ -126,7 +126,7 @@ struct FridgeHomeView: View {
                 .font(.nunito(10.5, .black))
                 .kerning(1.05)
                 .foregroundStyle(Palette.pink.label)
-            Text("nothing yet — that's allowed")
+            Text("nothing picked yet")   // D-48: state, not permission
                 .font(.baloo(24, .heavy))
                 .foregroundStyle(Theme.ink)
                 .multilineTextAlignment(.center)

@@ -253,6 +253,16 @@ final class AppState: ObservableObject {
     private var fallbackEngineID: UUID?
     private var fallbackPresentation: Meal?
     private var weekDates: [Date] = []
+
+    /// Plan-header chip ("JUL 6–12"), derived from the projected week — the
+    /// mockup's hardcoded date was fiction after its one true week.
+    var weekSpanLabel: String {
+        guard let first = weekDates.first, let last = weekDates.last else { return "" }
+        let start = DateFormatter(); start.dateFormat = "MMM d"
+        let sameMonth = Calendar.current.isDate(first, equalTo: last, toGranularity: .month)
+        let end = DateFormatter(); end.dateFormat = sameMonth ? "d" : "MMM d"
+        return "\(start.string(from: first))–\(end.string(from: last))".uppercased()
+    }
     private var isProjecting = false
 
     private func engineMeal(forSlug slug: String) -> MoodyEngine.Meal? {
@@ -378,6 +388,17 @@ final class AppState: ObservableObject {
         let attending = Set(entry.attendees.map(\.id))
         let away = engineMembers.filter { !attending.contains($0.id) }.map(\.name)
         return away.isEmpty ? "everyone home" : "\(away.joined(separator: ", ")) away"
+    }
+
+    /// AM strip line, derived per member (D-35 — no name ever hardcoded).
+    /// Members without a default just don't appear (DM-6's graceful nil);
+    /// none on file ⇒ nil and the strip hides until M7 lands breakfasts.
+    var amBreakfastLine: String? {
+        let lines = engineMembers.compactMap { member -> String? in
+            guard let breakfast = member.currentBreakfast else { return nil }
+            return "\(member.name) \(breakfast.title)"
+        }
+        return lines.isEmpty ? nil : lines.joined(separator: " · ")
     }
 
     private static func need(of member: FamilyMember) -> DietaryNeed? {
@@ -664,7 +685,11 @@ final class AppState: ObservableObject {
 
         if let violation = result.violations.first {
             let count = violation.missingItems.count
-            guaranteeLine = "\(violation.mealTitle) needs \(count) item\(count == 1 ? "" : "s") — a quick run fixes it"
+            // D-48: state the mechanic (the items ARE on the top-up card),
+            // never minimize the errand ("a quick run" was judging the run).
+            guaranteeLine = count == 1
+                ? "\(violation.mealTitle) needs 1 item — it's on the top-up"
+                : "\(violation.mealTitle) needs \(count) items — they're on the top-up"
         } else if entries.isEmpty {
             guaranteeLine = "no dinners planned yet — nothing to buy ✓"
         } else if let covered = result.coveredThrough {
