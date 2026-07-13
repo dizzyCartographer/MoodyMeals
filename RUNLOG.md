@@ -2,7 +2,7 @@
 
 ## Session summary — 2026-07-13 (overnight autonomous run, per Ria "review a couple times + keep working the backlog")
 - **Done:** REVIEW-1 (common-sense pass: Choose-tonight added; the phantom-entry writer class deleted — legacy `reconcileWeekEdits` + write-hooks; dark mode = sim quirk, code clean; stale pre-merge app removed), FR-1 (D-44 bands + D-45 FoodRules, engine + UI + backfill — the design-session model is on screen), FR-2 draft (the rewritten §1 sits in the digest as **D-57**, full text, one read to approve).
-- **Builds:** 66 (review fixes) + 67 (FR-1) uploaded overnight; 62–65 from the evening. One transient "Failed to Use Accounts" upload glitch self-resolved on retry.
+- **Builds:** 62–65 live from the evening. 66+67 (review fixes + FR-1) archived and EXPORTED but NOT uploaded — Xcode's ASC session expired overnight ("Failed to Use Accounts", persistent across retries; signing itself fine). One-minute fix in the digest header; the signed .ipa waits at build/export/Moody.ipa.
 - **Test suite:** **124/124** (was 109 — +15 FR-1). Legacy §1 gate test-pinned untouched.
 - **Blocked / for Ria:** D-57 (§1 sign-off — gates FR-3's live band gates + assessment), D-52 (privacy URL — family wave), name reconcile, streaks-mechanic question. REVIEW-2 (second pass) queued next run alongside FR-3 plumbing.
 - **Next up:** FR-3 (MoodyBrain client + capture assessment; prompt work is PROMPT-REVIEW gated), REVIEW-2, then C (cloud).

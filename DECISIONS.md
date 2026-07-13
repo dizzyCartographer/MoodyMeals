@@ -8,6 +8,8 @@ Format per item:
 ---
 ## Digest — 2026-07-13 (overnight run)
 
+⚠️ **One-minute action first: Xcode's App Store Connect session expired overnight** — builds 66/67 archived fine but the upload step can't authenticate. Open Xcode → Settings → Accounts → select your Apple ID (re-enter the password if it asks), then `scripts/testflight.sh --upload` sends build 67 (the signed .ipa is also sitting at build/export/Moody.ipa for Transporter). Build 67 = the review fixes + your whole food-rules model.
+
 **D-57. ⚠️ SIGN-OFF: the rewritten §1 (safety invariants) for the D-44 band model — old safety tests never die silently, so this needs your yes.** FR-1 shipped the bands tonight (additive — the old conservative gate still guards auto-fill until you approve this). The proposed new §1, complete:
 > **HC-1** Auto-fill (decide, deal-me, scheduler) never selects an UNSAFE-band meal for a night a GF-guaranteed member attends; it also skips NOT-CHECKED-YET (unknown ≠ calm — assessment or your banding resolves it first). SAFE and AWAITING-SUBSTITUTION fill freely — including Caddie nights (your correction stands: the indicator rides as a cook-time reminder, never friction).
 > **HC-2** No score, streak, or optimization ever outranks HC-1.
