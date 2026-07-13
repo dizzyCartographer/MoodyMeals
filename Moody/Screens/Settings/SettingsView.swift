@@ -72,7 +72,9 @@ struct SettingsView: View {
                 } header: {
                     Text("Food rules")
                 } footer: {
-                    Text("structured rules the week gets built around — Caddie's protection is the gluten guarantee above, and Elsie needs no rule: her dinners are the point, the shelf is the net")
+                    // D-35: no names in static copy — this footer must stay
+                    // true for ANY household.
+                    Text("structured records the week gets built around — a Gluten · never record is the guarantee auto-fill protects, and having no records is a fine way to be")
                 }
             }
 

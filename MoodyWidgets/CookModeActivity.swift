@@ -25,7 +25,7 @@ struct CookModeAttributes: ActivityAttributes {
 
     var mealName: String   // "Taco night"
     var eatTime: String    // "6:00"
-    var subLine: String    // "Chad on chop duty ✓ · tortillas warming"
+    var subLine: String    // derived per-cook at runtime — never a hardcoded name (D-35)
 }
 
 // Demo content mirroring the mockup — shared by the app-side demo trigger
@@ -34,7 +34,7 @@ extension CookModeAttributes {
     static let demo = CookModeAttributes(
         mealName: "Taco night",
         eatTime: "6:00",
-        subLine: "Chad on chop duty ✓ · tortillas warming")
+        subLine: "chop duty covered ✓ · tortillas warming")
 }
 
 extension CookModeAttributes.ContentState {

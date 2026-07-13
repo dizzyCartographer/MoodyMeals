@@ -24,6 +24,11 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [D-35 FIX] — Names out of static copy (2026-07-13 ~3:40am, Ria live)
+- Ria caught tonight's Settings food-rules footer naming two kids in a string literal — a straight D-35 violation ("no one is hardcoded; names appear in seed data only"). The line the fix draws, restated for future copy: names DERIVED from her data at runtime (the HC-5 confirm naming who's home — required by D-57) are correct; names as LITERALS in instructions/tooltips/footers are violations — the test is "would this copy be wrong if the household changed?"
+- Fixed: the Settings footer (household-generic now), and the Live Activity's placeholder subLine ("Chad on chop duty" — lock-screen-visible demo fiction) de-named. Full surface grep clean (comments + atticed seed data remain, both allowed). Suite 126/126. Ships as build 70.
+
+---
 ### [FR-1b] — D-58 restriction records: her shape, GF unified (2026-07-13 ~3am, Ria live)
 - Outcome: **done.** The member editor now carries a "Restrictions & requirements" section: records list (category + level + window), swipe-remove (gluten removal asks once, plainly), and **Add restriction** → category picker + never/infrequent/increased segmented control. The hardcoded GF toggle is GONE — a {Gluten · never} record is the guarantee, `isGFGuaranteed` (rules-first, legacy-flag fallback) powers every D-57 gate, and adding/removing the gluten record also retires the member's legacy flag so removal can never be silently undone by the fallback. Settings' household overview unchanged (chip now record-driven). Footer states the semantics in D-55 register: "never = filtered out · infrequent = capped · increased = the week leans toward it."
 - Storage: `FoodRule.categoryRaw` (optional ⇒ lightweight migration) + `RuleCategory` starter list; levels stored as the stable never/limit/boost raws, displayed in her words. Seed v2 (Caddie's gluten record + categories everywhere) + marker-guarded **backfill v2** — verified on the live sim store: all six rules categorized, `gluten|never` present.
