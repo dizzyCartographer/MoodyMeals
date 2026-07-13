@@ -304,6 +304,7 @@ final class AppState: ObservableObject {
         projectShopping()
         projectLibrary()
         projectSettings()
+        projectPlan()
     }
 
     // MARK: - Meal library (B-1: browse/detail/add/edit/retire — the doors
@@ -1050,6 +1051,96 @@ final class AppState: ObservableObject {
         } else {
             guaranteeLine = "every planned dinner is covered ✓"
         }
+    }
+
+    // MARK: - Plan calendar (NB: the in-app calendar — assign any future date)
+
+    @Published private(set) var planDays: [PlanDay] = []
+    private static let planHorizonDays = 28
+
+    private func projectPlan() {
+        guard let context else { planDays = []; return }
+        let calendar = Calendar.current
+        let today = WeekPlan.dayAnchor(for: .now)
+        guard let end = calendar.date(byAdding: .day, value: Self.planHorizonDays,
+                                      to: today) else { planDays = []; return }
+        let entries = ((try? context.fetch(FetchDescriptor<PlanEntry>())) ?? [])
+            .filter { $0.date >= today && $0.date < end }
+        var bySlot: [Date: [SlotKind: PlanEntry]] = [:]
+        for entry in entries {
+            bySlot[WeekPlan.dayAnchor(for: entry.date), default: [:]][entry.slot] = entry
+        }
+        let weekdayFormat = DateFormatter(); weekdayFormat.dateFormat = "EEE"
+        let monthFormat = DateFormatter(); monthFormat.dateFormat = "MMM"
+        planDays = (0..<Self.planHorizonDays).compactMap { offset in
+            guard let day = calendar.date(byAdding: .day, value: offset, to: today)
+            else { return nil }
+            let slots = bySlot[day] ?? [:]
+            let dayNumber = calendar.component(.day, from: day)
+            return PlanDay(
+                id: day,
+                weekdayLabel: weekdayFormat.string(from: day),
+                dayLabel: String(dayNumber),
+                monthLabel: (offset == 0 || dayNumber == 1)
+                    ? monthFormat.string(from: day) : nil,
+                isToday: offset == 0,
+                dinner: planSlotInfo(slots[.dinner]),
+                lunch: planSlotInfo(slots[.lunch]))
+        }
+    }
+
+    private func planSlotInfo(_ entry: PlanEntry?) -> PlanSlotInfo? {
+        guard let entry else { return nil }
+        guard let meal = entry.meal else {
+            // D-37: a deleted meal leaves a flagged entry, never a silent gap.
+            return PlanSlotInfo(mealID: nil, name: "needs a meal",
+                                pinned: entry.isLocked, needsRefill: true,
+                                gfBadge: nil, gfSafe: false)
+        }
+        let celiacHome = engineMembers.contains { $0.hardRequirements.contains(.glutenFree) }
+        let verdict = Self.gfVerdict(meal)
+        return PlanSlotInfo(
+            mealID: meal.id, name: meal.title,
+            pinned: entry.isLocked, needsRefill: false,
+            gfBadge: celiacHome
+                ? (verdict == .verified ? "GF ✓"
+                    : verdict == .containsGluten ? "not GF" : "check") : nil,
+            gfSafe: verdict == .verified)
+    }
+
+    /// HC-5 surface check: nil ⇒ frictionless; names ⇒ the confirm copy
+    /// (attending GF-hard members, from data — D-35).
+    func gfConfirmationNames(forMeal id: UUID) -> [String]? {
+        guard let meal = engineMeals.first(where: { $0.id == id }) else { return nil }
+        let attendees = engineMembers   // D-5 default: everyone home
+        return WeekPlan.requiresGFConfirmation(meal, attendees: attendees)
+            ? WeekPlan.gfAttendeeNames(attendees) : nil
+    }
+
+    func assignMeal(_ mealID: UUID, on date: Date, slotRaw: String) {
+        guard let context,
+              let meal = engineMeals.first(where: { $0.id == mealID }),
+              let slot = SlotKind(rawValue: slotRaw) else { return }
+        _ = try? WeekPlan.assign(meal, on: date, slot: slot,
+                                 attendees: engineMembers, in: context)
+        saveAndReproject()
+    }
+
+    func clearPlan(on date: Date, slotRaw: String) {
+        guard let context, let slot = SlotKind(rawValue: slotRaw),
+              let entry = (try? WeekPlan.entry(on: date, slot: slot, in: context)) ?? nil
+        else { return }
+        try? WeekPlan.clear(entry: entry, in: context)
+        saveAndReproject()
+    }
+
+    func togglePin(on date: Date, slotRaw: String) {
+        guard let context, let slot = SlotKind(rawValue: slotRaw),
+              let entry = (try? WeekPlan.entry(on: date, slot: slot, in: context)) ?? nil
+        else { return }
+        entry.isLocked.toggle()
+        entry.updatedAt = .now
+        saveAndReproject()
     }
 
     // MARK: - Settings (B-5 household/staples + B-6 calendar sync)

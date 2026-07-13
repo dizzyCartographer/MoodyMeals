@@ -100,6 +100,27 @@ struct LibraryRecipeItem: Identifiable, Equatable {
     var gfSafe: Bool
 }
 
+// MARK: - Plan calendar (NB: any date from today forward — the real planner)
+
+struct PlanDay: Identifiable, Equatable {
+    let id: Date                  // day anchor
+    var weekdayLabel: String      // "Mon"
+    var dayLabel: String          // "13"
+    var monthLabel: String?       // "Jul" on the 1st and on today's row
+    var isToday: Bool
+    var dinner: PlanSlotInfo?
+    var lunch: PlanSlotInfo?
+}
+
+struct PlanSlotInfo: Equatable {
+    var mealID: UUID?             // nil = D-37 needs-refill flag state
+    var name: String
+    var pinned: Bool
+    var needsRefill: Bool
+    var gfBadge: String?          // truthful chip when a celiac member is home
+    var gfSafe: Bool
+}
+
 // MARK: - Settings (B-5: household/profile doors)
 
 struct SettingsMember: Identifiable, Equatable {
