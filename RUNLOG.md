@@ -16,6 +16,13 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [D-54] — Surface-reality audit + Basics pivot (2026-07-12, live on build 58)
+- Trigger: Ria's first real use — "none of the basics are even close." She's right; recorded without varnish.
+- **What's real:** the engine (18 models, GF safety, explosion→routing→guarantee, EventKit sync, exports) and its 109 tests; 7 demo-grade designed screens (home/week/shopping-summary/streaks/vent/thread/onboarding) wired to real projections (U-1/U-2 work is genuine).
+- **What has NO door in the shipped app:** meal library/CRUD, recipe editor (M0-7's screens were the OLD build's UI — retired at the graft), shopping run detail/checklist, manual list add, Settings/household/profile editing, calendar-sync entry point (U-3 never ran), Reminders export surface. BACKLOG's DONE entries tracked engine tasks whose UI was deliberately retired with replacements queued behind DESIGN_BRIEF_V2 Wave-1 — which never ran. Session summaries (incl. today's "coherent v0 — plan, shop, safety") overstated tappable reality by reporting from docs, not from the phone.
+- **Pivot (D-54, canon):** milestone B (Basics, 6 tasks) now outranks everything; M3/M5* ON HOLD; order B → C → rest. U-3 absorbed into B-5/B-6. Reporting rule: "done" names the shipped surface.
+
+---
 ### [TF-2] — First TestFlight upload: build 58 up (2026-07-12)
 - Outcome: **done**. Maria accepted the PLA + created the "Moody Meals" record (D-49 canon) live. Attempt 1: Apple validation 90474 — the bundle declared iPad support (UIDeviceFamily [1,2]) while portrait-only, because **XcodeGen stamps a target-level `TARGETED_DEVICE_FAMILY="1,2"` default that shadows project-level settings**; pinned `"1"` at the app + widget targets (verified [1] in the built plists). Attempt 1 also exposed that `xcodebuild -exportArchive` can exit 0 on a REJECTED upload — the lane now gates on the "EXPORT SUCCEEDED" marker and fails loudly. Attempt 2: **"Upload succeeded"**, build 58 processing on Apple's side.
 - [D-53 same session] Cloud pivot recorded (see DECISIONS): CloudKit, whole household, ship-now-cloud-next. Milestone C queued; family wave gated on it. The just-shipped local build stays correct for Maria's solo testing; C-1's model pass is the next unit of work.
