@@ -2,7 +2,8 @@ import XCTest
 import SwiftData
 @testable import MoodyEngine
 
-/// M0-3 acceptance: loose recipe with nil amounts persists; TC-HC-6 passes.
+/// M0-3 acceptance (HC-6-as-written retired by D-57 2026-07-13 — band
+/// successors live in FoodRuleBandTests; ledger in RUNLOG): loose recipe with nil amounts persists; TC-HC-6 passes.
 /// Same round-trip discipline as PeopleModelTests: save on mainContext,
 /// assert through a FRESH ModelContext so decode-from-store is exercised.
 final class FoodModelTests: XCTestCase {
@@ -104,164 +105,11 @@ final class FoodModelTests: XCTestCase {
 
     // MARK: - HC-6 ⚠️ (safety-critical)
 
-    @MainActor
-    func test_HC6_unverifiedIngredientPropagatesToMeal_amountsIrrelevant() throws {
-        // Given a Loose recipe with nil amounts including one unverified
-        // ingredient → unverified status propagates to the MEAL.
-        let container = try makeContainer()
-        let context = container.mainContext
 
-        let brothGF = Ingredient(name: "GF broth", perishability: .pantry,
-                                 isGlutenFreeVerified: true)
-        let beansGF = Ingredient(name: "white beans", perishability: .pantry,
-                                 isGlutenFreeVerified: true)
-        let mysteryBroth = Ingredient(name: "that broth", perishability: .pantry,
-                                      isGlutenFreeVerified: nil) // unverified
 
-        let recipe = Recipe(title: "white chicken chili", kind: .loose)
-        let meal = Meal(title: "Chili night")
-        context.insert(brothGF)
-        context.insert(beansGF)
-        context.insert(mysteryBroth)
-        context.insert(recipe)
-        context.insert(meal)
-        recipe.items = [
-            RecipeItem(ingredient: beansGF),
-            RecipeItem(ingredient: mysteryBroth), // one unverified poisons all
-        ]
-        meal.recipes = [recipe]
-        meal.directItems = [RecipeItem(ingredient: brothGF)]
-        try context.save()
 
-        let fresh = ModelContext(container)
-        let fetchedMeal = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertFalse(fetchedMeal.isGFVerifiedForCeliac,
-                       "one unverified ingredient must make the whole meal unsafe")
 
-        // Control: verify the SAME meal flips safe once every item is verified.
-        let fetchedMystery = try XCTUnwrap(
-            try fresh.fetch(FetchDescriptor<Ingredient>())
-                .first { $0.name == "that broth" }
-        )
-        fetchedMystery.isGlutenFreeVerified = true
-        try fresh.save()
-        XCTAssertTrue(fetchedMeal.isGFVerifiedForCeliac,
-                      "all-verified composition must read safe (control)")
-    }
 
-    @MainActor
-    func test_HC6_falseVerification_isAsUnsafeAsNil() throws {
-        // Explicitly-gluten (false) and unverified (nil) must both read unsafe.
-        let container = try makeContainer()
-        let context = container.mainContext
-
-        let soySauce = Ingredient(name: "regular soy sauce", perishability: .pantry,
-                                  isGlutenFreeVerified: false)
-        let meal = Meal(title: "Stir-fry")
-        context.insert(soySauce)
-        context.insert(meal)
-        meal.directItems = [RecipeItem(ingredient: soySauce, amount: 2, unit: "tbsp")]
-        try context.save()
-
-        let fresh = ModelContext(container)
-        let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertFalse(fetched.isGFVerifiedForCeliac)
-    }
-
-    @MainActor
-    func test_HC6b_freeformOnlyMeal_readsUnverified_conservative() throws {
-        // F16 conservative default (flagged for Ria): unknown composition is
-        // treated as unverified — "Chipotle takeout" is not silently
-        // Caddie-safe just because we listed no ingredients.
-        let container = try makeContainer()
-        let context = container.mainContext
-
-        let takeout = Meal(title: "Chipotle takeout",
-                           freeformNotes: "everyone orders their own")
-        context.insert(takeout)
-        try context.save()
-
-        let fresh = ModelContext(container)
-        let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertFalse(fetched.isGFVerifiedForCeliac,
-                       "no known ingredients ⇒ NOT verified (fail-safe, F16)")
-    }
-
-    @MainActor
-    func test_HC6c_emptyRecipeChunk_poisonsOtherwiseVerifiedMeal() throws {
-        // A recipe with zero listed items is an UNKNOWN chunk: it must not be
-        // vacuously safe even when everything else in the meal is verified.
-        let container = try makeContainer()
-        let context = container.mainContext
-
-        let brothGF = Ingredient(name: "GF broth", perishability: .pantry,
-                                 isGlutenFreeVerified: true)
-        let mystery = Recipe(title: "grandma's casserole (from memory)", kind: .loose)
-        let meal = Meal(title: "Casserole night")
-        context.insert(brothGF)
-        context.insert(mystery)
-        context.insert(meal)
-        meal.recipes = [mystery] // no items listed — composition unknown
-        meal.directItems = [RecipeItem(ingredient: brothGF)]
-        try context.save()
-
-        let fresh = ModelContext(container)
-        let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertFalse(fetched.isGFVerifiedForCeliac,
-                       "an itemless recipe is unknown composition — never vacuously safe")
-    }
-
-    @MainActor
-    func test_HC6d_D38_notesAreCommentary_listedItemsDriveVerdict() throws {
-        // D-38 (Ria): notes are commentary, not composition — a casual note
-        // must not hold an all-verified meal unverified. (Freeform-ONLY meals
-        // still read unverified — HC6b pins that half.)
-        let container = try makeContainer()
-        let context = container.mainContext
-
-        let chipsGF = Ingredient(name: "GF tortilla chips", perishability: .pantry,
-                                 isGlutenFreeVerified: true)
-        let meal = Meal(title: "Nacho night",
-                        freeformNotes: "kids like extra cheese")
-        context.insert(chipsGF)
-        context.insert(meal)
-        meal.directItems = [RecipeItem(ingredient: chipsGF)]
-        try context.save()
-
-        let fresh = ModelContext(container)
-        let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertTrue(fetched.isGFVerifiedForCeliac,
-                      "a commentary note must not poison an all-verified meal (D-38)")
-    }
-
-    @MainActor
-    func test_HC6e_nilUnverifiedDirectItem_poisonsVerifiedRecipeMeal() throws {
-        // Mutation-review catch: nil-unverified must poison via the
-        // DIRECT-ITEMS path too, not just through recipes — this is exactly
-        // where quick-adds land (new Ingredients default to nil, HC-7 shape).
-        let container = try makeContainer()
-        let context = container.mainContext
-
-        let beansGF = Ingredient(name: "white beans", perishability: .pantry,
-                                 isGlutenFreeVerified: true)
-        let mysteryGarnish = Ingredient(name: "crispy topping", perishability: .pantry,
-                                        isGlutenFreeVerified: nil) // unverified
-        let recipe = Recipe(title: "verified chili base", kind: .loose)
-        let meal = Meal(title: "Chili night")
-        context.insert(beansGF)
-        context.insert(mysteryGarnish)
-        context.insert(recipe)
-        context.insert(meal)
-        recipe.items = [RecipeItem(ingredient: beansGF)]
-        meal.recipes = [recipe]
-        meal.directItems = [RecipeItem(ingredient: mysteryGarnish)]
-        try context.save()
-
-        let fresh = ModelContext(container)
-        let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertFalse(fetched.isGFVerifiedForCeliac,
-                       "nil on a direct item must poison the meal exactly like nil in a recipe")
-    }
 
     @MainActor
     func test_directItemsOnlyMeal_allVerified_readsVerified() throws {
@@ -287,17 +135,20 @@ final class FoodModelTests: XCTestCase {
 
         let fresh = ModelContext(container)
         let fetched = try XCTUnwrap(try fresh.fetch(FetchDescriptor<Meal>()).first)
-        XCTAssertTrue(fetched.isGFVerifiedForCeliac,
-                      "all-verified direct items with no recipes must read safe")
+        XCTAssertEqual(MealBand.band(for: fetched), .safe,
+                       "all-verified direct items with no recipes read the safe band")
     }
 
     @MainActor
-    func test_recipeLevel_zeroItemRecipe_neverReadsVerified() throws {
-        // The per-recipe API must be fail-safe standalone (future HC-1/HC-2
-        // filters call it directly): zero items = unknown = not verified.
+    func test_recipeLevel_zeroItemRecipe_neverReadsSafe() throws {
+        // Fail-safe standalone (D-57 HC-1 spirit): zero items = unknown.
+        let container = try makeContainer()
+        let context = container.mainContext
         let recipe = Recipe(title: "grandma's casserole (from memory)", kind: .loose)
-        XCTAssertFalse(recipe.allIngredientsGFVerified,
-                       "an itemless recipe must never read verified, even unpersisted")
+        context.insert(recipe)
+        try context.save()
+        XCTAssertEqual(MealBand.band(for: recipe), .notCheckedYet,
+                       "an itemless recipe must never read safe")
     }
 
     // MARK: - Cascade hygiene

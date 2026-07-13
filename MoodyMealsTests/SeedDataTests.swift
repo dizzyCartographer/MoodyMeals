@@ -78,9 +78,9 @@ final class SeedDataTests: XCTestCase {
         // Safety spot-check: the GF-shells taco meal reads verified-safe,
         // the regular-soy stir-fry doesn't.
         let tacoMeal = try XCTUnwrap(meals.first { $0.title.contains("Tacos") })
-        XCTAssertTrue(tacoMeal.isGFVerifiedForCeliac)
+        XCTAssertEqual(MealBand.band(for: tacoMeal), .safe)
         let stirFry = try XCTUnwrap(meals.first { $0.title.contains("stir-fry") })
-        XCTAssertFalse(stirFry.isGFVerifiedForCeliac)
+        XCTAssertEqual(MealBand.band(for: stirFry), .awaitingSubstitution)   // D-57: carrier = calm question
     }
 
     @MainActor

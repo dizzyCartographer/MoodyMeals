@@ -116,7 +116,8 @@ final class WeekPlanTests: XCTestCase {
     // MARK: - HC-5 ⚠️ (manual override allowed, silent never)
 
     @MainActor
-    func test_HC5_unverifiedMealWithGFAttendee_requiresConfirmation() throws {
+    func test_HC5_unsafeBand_withGFAttendee_requiresConfirmation() throws {
+        // D-57: the confirm belongs to the UNSAFE tier only.
         let container = try makeContainer()
         let context = container.mainContext
 
@@ -126,16 +127,57 @@ final class WeekPlanTests: XCTestCase {
         context.insert(caddie)
         context.insert(ria)
 
+        let flour = Ingredient(name: "flour", perishability: .pantry,
+                               isGlutenFreeVerified: false)
+        context.insert(flour)
+        let bread = Meal(title: "Homemade bread")   // the rubric's unsafe pin
+        context.insert(bread)
+        let recipe = Recipe(title: "bread", kind: .loose)
+        context.insert(recipe)
+        recipe.items = [RecipeItem(ingredient: flour)]
+        recipe.gfBand = .unsafe
+        recipe.gfBandSource = .manualOverride
+        bread.recipes = [recipe]
+        try context.save()
+
+        XCTAssertTrue(WeekPlan.requiresGFConfirmation(bread, attendees: [ria, caddie]),
+                      "unsafe band + GF attendee ⇒ explicit named confirmation")
+        XCTAssertEqual(WeekPlan.gfAttendeeNames([ria, caddie]), ["Caddie"])
+    }
+
+    @MainActor
+    func test_HC5_awaitingSubstitution_assignsFrictionlessly_theD57Flip() throws {
+        // Ria's correction, now live: a carrier line (regular soy sauce) is a
+        // calm cook-time reminder — NOT a confirmation wall, even for Caddie.
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let caddie = FamilyMember(name: "Caddie", isAdult: false,
+                                  hardRequirements: [.glutenFree])
+        context.insert(caddie)
+
         let soySauce = Ingredient(name: "regular soy sauce", perishability: .pantry,
                                   isGlutenFreeVerified: false)
         context.insert(soySauce)
         let stirFry = Meal(title: "Stir-fry")
         context.insert(stirFry)
         stirFry.directItems = [RecipeItem(ingredient: soySauce)]
+        try context.save()
 
-        XCTAssertTrue(WeekPlan.requiresGFConfirmation(stirFry, attendees: [ria, caddie]),
-                      "gluten meal + GF attendee ⇒ explicit confirmation required")
-        XCTAssertEqual(WeekPlan.gfAttendeeNames([ria, caddie]), ["Caddie"])
+        XCTAssertEqual(MealBand.band(for: stirFry), .awaitingSubstitution)
+        XCTAssertFalse(WeekPlan.requiresGFConfirmation(stirFry, attendees: [caddie]),
+                       "awaiting-substitution is frictionless (D-57 HC-5)")
+
+        let mystery = Ingredient(name: "mystery sauce", perishability: .pantry,
+                                 isGlutenFreeVerified: nil)
+        context.insert(mystery)
+        let casserole = Meal(title: "Casserole")
+        context.insert(casserole)
+        casserole.directItems = [RecipeItem(ingredient: mystery)]
+        try context.save()
+
+        XCTAssertFalse(WeekPlan.requiresGFConfirmation(casserole, attendees: [caddie]),
+                       "not-checked-yet assigns manually without friction too — auto-fill is what skips it")
     }
 
     @MainActor
@@ -166,6 +208,7 @@ final class WeekPlanTests: XCTestCase {
         context.insert(stirFry)
         stirFry.directItems = [RecipeItem(ingredient: soySauce)]
 
+        try context.save()
         XCTAssertFalse(WeekPlan.requiresGFConfirmation(stirFry, attendees: [ria]),
                        "SCH-14 groundwork: with the GF member absent, gluten is eligible")
     }

@@ -10,10 +10,13 @@ enum Tonight {
     }
 
     /// SF-2: safety is per (member, meal) — never household-wide.
-    /// A GF-hard member's "safe" additionally requires GF verification:
-    /// the hard constraint outranks the comfort flag (§1 spirit).
+    /// A GF-hard member's "safe" requires the SAFE band (D-57): awaiting,
+    /// not-checked, and unsafe all cap the comfort flag — the hard
+    /// constraint outranks it (§1 spirit, band vocabulary).
+    @MainActor
     static func isSafe(_ meal: Meal, for member: FamilyMember, at date: Date = .now) -> Bool {
-        if member.hardRequirements.contains(.glutenFree), !meal.isGFVerifiedForCeliac {
+        if member.hardRequirements.contains(.glutenFree),
+           MealBand.band(for: meal) != .safe {
             return false
         }
         guard let score = meal.memberScores.first(where: { $0.member.id == member.id })

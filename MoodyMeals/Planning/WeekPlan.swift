@@ -23,12 +23,15 @@ enum WeekPlan {
         }
     }
 
-    /// HC-5 (§1 ⚠️): manually assigning a meal that is not GF-verified to a
-    /// night where a gluten-free-hard member attends is allowed — but never
-    /// silently. The UI must confirm when this returns true.
+    /// HC-5 (§1 ⚠️, as approved in D-57): manual assignment warns ONLY for
+    /// the UNSAFE band — plainly, named, once (override allowed, silent
+    /// never). Awaiting-substitution and not-checked-yet assign
+    /// frictionlessly (Ria's correction: the badge rides as a cook-time
+    /// reminder, never friction).
+    @MainActor
     static func requiresGFConfirmation(_ meal: Meal, attendees: [FamilyMember]) -> Bool {
         let gfMembers = attendees.filter { $0.hardRequirements.contains(.glutenFree) }
-        return !gfMembers.isEmpty && !meal.isGFVerifiedForCeliac
+        return !gfMembers.isEmpty && MealBand.band(for: meal) == .unsafe
     }
 
     /// Names of attending GF-hard members, for warning copy (no one hardcoded — D-35).

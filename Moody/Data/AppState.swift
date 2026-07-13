@@ -677,7 +677,7 @@ final class AppState: ObservableObject {
             mealForSlug[slug] = meal.id
         }
 
-        // Fallback: staple-cookable if any, else lowest-effort verified-GF.
+        // Fallback: staple-cookable if any, else lowest-effort SAFE-band (D-57).
         let stapleNames = Set(engineStaples.map { $0.name.lowercased() })
         let pool = engineMeals.filter { !$0.isEatingOut }
         let fallback = pool.first(where: { meal in
@@ -685,7 +685,7 @@ final class AppState: ObservableObject {
             return !ingredients.isEmpty
                 && ingredients.allSatisfy { stapleNames.contains($0.name.lowercased()) }
         }) ?? pool
-            .filter { Self.gfVerdict($0) == .verified }
+            .filter { MealBand.band(for: $0) == .safe }
             .min { a, b in
                 (a.slots.contains(.dinner) ? 0 : 1, Self.mappedEffort(a.effort), a.title)
                     < (b.slots.contains(.dinner) ? 0 : 1, Self.mappedEffort(b.effort), b.title)
@@ -808,18 +808,6 @@ final class AppState: ObservableObject {
         meal.recipes.flatMap(\.items).map(\.ingredient) + meal.directItems.map(\.ingredient)
     }
 
-    /// Tri-state per HC-6: verified (their GlutenSafety verdict) /
-    /// contains gluten (an ingredient is explicitly not GF) / unverified.
-    private enum GFVerdict { case verified, containsGluten, unverified }
-
-    private static func gfVerdict(_ meal: MoodyEngine.Meal) -> GFVerdict {
-        if meal.isGFVerifiedForCeliac { return .verified }
-        if allIngredients(of: meal).contains(where: { $0.isGlutenFreeVerified == false }) {
-            return .containsGluten
-        }
-        return .unverified
-    }
-
     private func presentationMeal(_ meal: MoodyEngine.Meal,
                                   attendees: [FamilyMember]) -> Meal {
         Meal(id: slugForMeal[meal.id] ?? Self.slug(for: meal.title),
@@ -844,14 +832,15 @@ final class AppState: ObservableObject {
         var out: [SafetyBadgeInfo] = []
         for member in (ordered.isEmpty ? attendees : ordered) {
             if member.hardRequirements.contains(.glutenFree) {
-                switch Self.gfVerdict(meal) {
-                case .verified:
+                switch MealBand.band(for: meal) {   // D-57: band vocabulary
+                case .safe:
                     out.append(SafetyBadgeInfo(text: "\(member.name) GF ✓", slot: Palette.green))
-                case .unverified:   // yellow, never red — check the label
-                    out.append(SafetyBadgeInfo(text: "\(member.name) GF — check", slot: Palette.yellow))
-                case .containsGluten:   // excluded from decide/swap entirely;
-                    // manual surfaces still need the honest read (no red).
-                    out.append(SafetyBadgeInfo(text: "\(member.name) — not GF", slot: Palette.yellow))
+                case .awaitingSubstitution:   // schedulable; cook-time reminder
+                    out.append(SafetyBadgeInfo(text: "\(member.name) — sub needed", slot: Palette.yellow))
+                case .notCheckedYet:
+                    out.append(SafetyBadgeInfo(text: "\(member.name) — not checked", slot: Palette.yellow))
+                case .unsafe:   // yellow ceiling, words carry the weight (law 4)
+                    out.append(SafetyBadgeInfo(text: "\(member.name) — unsafe", slot: Palette.yellow))
                 }
             }
             if meal.memberScores.first(where: { $0.member.id == member.id })?.isSafeFood == true {
@@ -870,9 +859,10 @@ final class AppState: ObservableObject {
     private var effortCap: Int { tank == .fumes ? 1 : (tank == .steady ? 2 : 3) }
 
     /// The attendee-safe pool decide and swap draw from: dinner-slot, never
-    /// eating out (D-7), never retired, celiac attendee ⇒ GF-VERIFIED only
-    /// (contains-gluten AND unverified both excluded — no HC-5 in auto paths),
-    /// per-member "not today" windows honored.
+    /// eating out (D-7), never retired, per-member "not today" honored.
+    /// D-57 (HC-1): with a GF-guaranteed member home, UNSAFE and
+    /// NOT-CHECKED-YET are excluded; SAFE and AWAITING-SUBSTITUTION fill
+    /// freely — the awaiting badge rides as a cook-time reminder.
     private func decidePool() -> [MoodyEngine.Meal] {
         let now = Date()
         let celiacAttending = engineMembers.contains { $0.hardRequirements.contains(.glutenFree) }
@@ -880,7 +870,10 @@ final class AppState: ObservableObject {
             guard !meal.isEatingOut,
                   meal.slots.contains(.dinner),
                   meal.rotationState != .retired else { return false }
-            if celiacAttending, Self.gfVerdict(meal) != .verified { return false }
+            if celiacAttending {
+                let band = MealBand.band(for: meal)
+                if band == .unsafe || band == .notCheckedYet { return false }
+            }
             if engineMembers.contains(where: { Tonight.isHidden(meal, for: $0, at: now) }) {
                 return false
             }

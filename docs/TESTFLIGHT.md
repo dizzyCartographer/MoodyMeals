@@ -49,7 +49,7 @@ itself, processing takes ~5–15 min, then the build appears under TestFlight.
   no review.
 - **The family**: External Testing → create a "Family" group → add emails →
   first build submits to Beta App Review (usually <24 h; later builds are
-  instant). ASC will ask for: what-to-test notes, a contact email, and a
-  privacy policy URL (a one-page GitHub Pages note about on-device data
-  suffices for beta).
+  instant). ASC will ask for: what-to-test notes, a contact email, and the
+  privacy policy URL — **https://dizzycartographer.github.io/MoodyMeals/privacy.html**
+  (D-52, published from this repo's docs/).
 - Everyone installs the TestFlight app, taps the invite link, done.

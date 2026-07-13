@@ -145,22 +145,93 @@ final class FoodRuleBandTests: XCTestCase {
                        "unknown composition stays honest (D-38 fail-safe spirit)")
     }
 
-    // MARK: FR-1 is ADDITIVE — the legacy §1 gate is untouched (D-57 gates)
+    // MARK: D-57 gates are LIVE — band beats legacy, her word beats both
 
     @MainActor
-    func test_FR1_legacyGFGate_unaffectedByBands() throws {
+    func test_D57_manualSafeBand_overridesLegacyUnverified_noConfirm() throws {
         let container = try makeContainer()
         let context = container.mainContext
-        let meal = Meal(title: "banded but unverified")
+        let caddie = FamilyMember(name: "Caddie", isAdult: false,
+                                  hardRequirements: [.glutenFree])
+        context.insert(caddie)
+        let meal = Meal(title: "banded safe by Ria")
         context.insert(meal)
         let r = recipe(items: [("mystery flour", nil)], in: context)
-        r.gfBand = .safe                 // band says safe...
+        r.gfBand = .safe
         r.gfBandSource = .manualOverride
         meal.recipes = [r]
+        // SF-1: "safe for Caddie" is band AND her denotation — add the score.
+        context.insert(MemberMealScore(member: caddie, meal: meal, isSafeFood: true))
         try context.save()
-        XCTAssertFalse(meal.isGFVerifiedForCeliac,
-                       "...but the OLD conservative gate still guards auto-fill until the §1 sign-off")
+        XCTAssertFalse(WeekPlan.requiresGFConfirmation(meal, attendees: [caddie]),
+                       "her banding is the law — no confirm, no re-litigating")
+        XCTAssertTrue(Tonight.isSafe(meal, for: caddie),
+                      "safe band + safe-food denotation ⇒ safe for the GF member")
     }
+
+    @MainActor
+    func test_D57_notCheckedYet_capsSafety_forGFMember() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let caddie = FamilyMember(name: "Caddie", isAdult: false,
+                                  hardRequirements: [.glutenFree])
+        context.insert(caddie)
+        let meal = Meal(title: "unknown sauce night")
+        context.insert(meal)
+        let r = recipe(items: [("mystery sauce", nil)], in: context)
+        meal.recipes = [r]
+        try context.save()
+        XCTAssertFalse(Tonight.isSafe(meal, for: caddie),
+                       "not-checked-yet is never presented as safe (HC-1 spirit)")
+    }
+
+    // MARK: HC-6-as-written successors (the ledger's replacement pins)
+
+    @MainActor
+    func test_D57_notesAreCommentary_itemsDriveTheBand_D38() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let meal = Meal(title: "verified with chatty notes",
+                        freeformNotes: "kids like extra cheese")
+        context.insert(meal)
+        let r = recipe(items: [("rice", true), ("cheese", true)], in: context)
+        meal.recipes = [r]
+        try context.save()
+        XCTAssertEqual(MealBand.band(for: meal), .safe,
+                       "notes never poison a verified composition (D-38)")
+    }
+
+    @MainActor
+    func test_D57_emptyRecipeChunk_keepsMealHonest() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let meal = Meal(title: "combo with a stub recipe")
+        context.insert(meal)
+        let full = recipe("full", items: [("rice", true)], in: context)
+        let stub = recipe("stub", items: [], in: context)
+        meal.recipes = [full, stub]
+        try context.save()
+        XCTAssertEqual(MealBand.band(for: meal), .notCheckedYet,
+                       "an unknown chunk keeps the meal not-checked (HC-6c spirit)")
+    }
+
+    @MainActor
+    func test_D57_unknownDirectItem_keepsMealHonest() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let meal = Meal(title: "verified recipe + mystery side")
+        context.insert(meal)
+        let r = recipe(items: [("rice", true)], in: context)
+        meal.recipes = [r]
+        let mystery = Ingredient(name: "mystery fries", perishability: .freezer,
+                                 isGlutenFreeVerified: nil)
+        context.insert(mystery)
+        meal.directItems = [RecipeItem(ingredient: mystery)]
+        try context.save()
+        XCTAssertEqual(MealBand.band(for: meal), .notCheckedYet,
+                       "HC-6e spirit: the unknown side keeps the meal honest")
+    }
+
 
     // MARK: FoodRules (D-45 structure)
 

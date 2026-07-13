@@ -26,7 +26,6 @@
 		31AAE75D5EC4440DE67EFFFA /* Shopping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD54F3923E73B079932AED2 /* Shopping.swift */; };
 		3531BF334866E7519FD74306 /* Baloo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */; };
 		35D70FA54AB10A81A77973E9 /* StoreLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9780D9928515857A07003B4B /* StoreLocationTests.swift */; };
-		3782324AFC673F61AAF1AFAB /* GlutenSafety.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28526A699ED494899632683E /* GlutenSafety.swift */; };
 		3AB8ED92A24FE878A35722E3 /* GuaranteeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6373EDBE71B41C809AA5EDC6 /* GuaranteeCheck.swift */; };
 		4057E995DEE7A7B59EDEDF86 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57FC396EF114A79A3EF7500F /* Components.swift */; };
 		47381B67D7B2181C1E63C1FA /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D2CC8F87F1418118F290C2 /* Persistence.swift */; };
@@ -158,7 +157,6 @@
 		1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoodyEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20BD322121F2A369501AAF53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		24FAF8A63E4501DF35C308F7 /* RecipeEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeEditorView.swift; sourceTree = "<group>"; };
-		28526A699ED494899632683E /* GlutenSafety.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlutenSafety.swift; sourceTree = "<group>"; };
 		2CF9E1877843BAAC8F262E81 /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		2FB949E436A065885308EA2F /* WeekPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanTests.swift; sourceTree = "<group>"; };
 		3295D9466525ACF22798D98F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -390,7 +388,6 @@
 			children = (
 				057D46143F898B85C50403E4 /* Food.swift */,
 				50BA9FA90E0B077995023DD8 /* FoodRule.swift */,
-				28526A699ED494899632683E /* GlutenSafety.swift */,
 				B6EDE89B37C08B378A3133BF /* Meal.swift */,
 				F61CAE00CA5179E9AF844492 /* People.swift */,
 				2CF9E1877843BAAC8F262E81 /* Planning.swift */,
@@ -711,7 +708,6 @@
 				FF474436C89C2E5DBF1A04D5 /* CalendarSyncService.swift in Sources */,
 				2186F751839D23CB124D2BAB /* Food.swift in Sources */,
 				EA9378A462864C00DB49BAAC /* FoodRule.swift in Sources */,
-				3782324AFC673F61AAF1AFAB /* GlutenSafety.swift in Sources */,
 				3AB8ED92A24FE878A35722E3 /* GuaranteeCheck.swift in Sources */,
 				A9F35774EFDCDC22153E6D8C /* Meal.swift in Sources */,
 				968364351FBB779C1CD6EE69 /* MealBand.swift in Sources */,

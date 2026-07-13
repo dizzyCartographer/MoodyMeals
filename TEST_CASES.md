@@ -2,18 +2,21 @@
 Derived from the requirements + build spec. Format: **ID — Given / When / Then.** Household: Ria, Chuck, Caddie (GF-celiac, hard), Elsie (meat-averse, protein+veg+starch), Chad (14, high-calorie goal).
 Sections marked ⚠️ are safety-critical: a red test here halts feature work.
 
-## §1 ⚠️ Hard constraints (dietary safety)
-*(D-44 2026-07-09: this section is scheduled for REWRITE at M4-0 — the unverified⇒unsafe tri-state model (HC-3, HC-4, HC-6, HC-7 as written) is retired in favor of Ria's risk-class model: whole foods safe with no marking; gluten carriers need a recorded per-recipe substitution; packaged goods carry optional preferred brands and are safe by default. HC-1/2/5/8/9/10 survive. The rewritten §1 goes to Ria for sign-off BEFORE old tests are deleted; the shipped app keeps the current, more conservative behavior until M4-0 lands.)*
-- **HC-1** — Given Caddie attends dinner / When the scheduler fills any slot / Then no meal containing a gluten ingredient is ever selected, regardless of score.
-- **HC-2** — Given a meal scores maximum Liking+Fit for all five members but contains regular soy sauce (gluten) / When scheduling with Caddie attending / Then it is excluded (optimization can never outrank a hard constraint).
-- **HC-3** — Given an ingredient with `isGlutenFreeVerified == nil` (unverified) / When evaluating meal safety for Caddie / Then the meal is treated as UNSAFE (unverified = unsafe for GF members).
-- **HC-4** — Given "crispy" frozen fries marked unverified / When they appear in a meal / Then the meal is flagged for label verification before it can be scheduled with Caddie attending.
-- **HC-5** — Given a user manually assigns a gluten meal to a night Caddie attends / When saving the PlanEntry / Then the app warns explicitly and requires confirmation (manual override allowed, silent never).
-- **HC-6** — Given a Loose recipe with nil amounts including one unverified ingredient / When safety is evaluated / Then unverified status propagates to the meal (amounts irrelevant to safety).
-- **HC-7** — Given NL input creates a new recipe "beer-battered fish" / When parsed / Then gluten-containing ingredients default to unverified/unsafe, never silently verified.
-- **HC-8** — Given a meal is edited to add a gluten ingredient / When it already sits on future PlanEntries with Caddie attending / Then those entries are flagged and re-fill is proposed.
+## §1 ⚠️ Hard constraints (dietary safety) — REWRITTEN per D-57 (approved by Ria 2026-07-13)
+*(The D-44 band model: {safe | awaiting substitution | unsafe | not checked yet} per recipe, meal wears its worst band. The tri-state unverified⇒unsafe model — HC-3/4/6/7 as previously written — is retired; the ledger of retired tests → band successors is in RUNLOG [FR-2]. Prior §1 text preserved in git history.)*
+- **HC-1** — Given a GF-guaranteed member attends / When auto-fill runs (decide, deal-me, scheduler) / Then no UNSAFE-band meal is ever selected, and NOT-CHECKED-YET is skipped (unknown ≠ calm — assessment or Ria's banding resolves it first). SAFE and AWAITING-SUBSTITUTION fill freely, including her nights — the awaiting indicator rides as a cook-time reminder, never friction.
+- **HC-2** — Given a meal scores maximum Liking+Fit for all five / When its band is UNSAFE with the GF member attending / Then it is excluded — no score, streak, or optimization ever outranks HC-1.
+- **HC-3** — Given whole foods (fresh/frozen produce, plain meats) / When composing or capturing any recipe / Then they never prompt, flag, or ask — ever.
+- **HC-4** — Given a gluten-carrier line in a recipe / When the recipe is banded / Then it reads AWAITING SUBSTITUTION — a calm indicator, not a warning; recording a per-recipe standard modification (the quiche move) or a preferred brand makes it SAFE: indicator fully gone, zero residual nagging.
+- **HC-5** — Given a user manually assigns an UNSAFE-band meal to a night a GF-guaranteed member attends / When saving / Then the app warns plainly, naming the member, and asks once (override allowed, silent never). Awaiting/not-checked manual assignment is frictionless.
+- **HC-6** — Given Ria has banded a recipe herself / When any re-assessment runs / Then her band holds, permanently — the app never silently reclassifies anything she has touched.
+- **HC-7** — Given a new or edited recipe / When captured / Then it gets one assessment (band + per-line suggested subs); offline or API failure ⇒ NOT CHECKED YET + queued — never silently safe.
+- **HC-8** — Given a recipe edit changes its band / When it sits on future PlanEntries / Then those entries are re-flagged and refill is proposed, never silent.
 - **HC-9** — ⚠️ THE FLOUR LINE (dual rationale): no surface of the app ever suggests from-scratch wheat baking or raw wheat-flour work at home — (1) aerosolized contamination, (2) never baking something super delicious Caddie can't have. Packaged gluten items (bread, buns, crackers) remain normal purchases, tagged not-Caddie-safe. GF-mix baking (King Arthur GF standard) fully suggestible.
 - **HC-10** — Inclusion check on special deliciousness: any app-suggested celebratory/special/aromatic home-cooked item (occasion menus, joy-cooking, Signature bakes) must be Caddie-safe when she lives here — mundane contained gluten passes; exclusionary showstoppers never generate.
+
+- **HC-11** — The rubric trio is pinned as assessment eval fixtures (FR-3): homemade bread → UNSAFE; mac & cheese → AWAITING ("which gf pasta?"); a tablespoon of flour in a 20-ingredient soup → AWAITING (calm sub request).
+- **HC-12** — Given a shopping line from an AWAITING recipe / When lists render or export / Then it carries the substitution/brand qualifier (the RT-6 pipe).
 
 ## §2 Per-member safe foods & "not today"
 - **SF-1** — Given GF mac & cheese is `isSafeFood` for Chad only / When asking "what's safe for Chad tonight" / Then it returns Chad's safe list, not a household list.

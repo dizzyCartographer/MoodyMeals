@@ -25,7 +25,7 @@ Format per item:
 > **HC-12** Shopping lines from AWAITING recipes carry the substitution/brand qualifier (the RT-6 pipe).
 → Options: a) approved — activate the band gates at FR-3, retire HC-3/4/6/7-as-written then b) tweak (say which line) c) the one open call inside it: should auto-fill treat NOT-CHECKED-YET as fillable-with-nudges instead of skipped? (recommended: skip until assessed — a, as drafted)
 → Blocks: FR-3 (live gates + assessment); nothing tonight — FR-1 is additive.
-**Ria:** _
+**Ria:** approved, incl. (c) as drafted — skip not-checked-yet until assessed (2026-07-13, live ~2am) → ANSWERED, canon. Gates activate now (FR-2); old HC-3/4/6/7-as-written retire with a test ledger in RUNLOG.
 
 ---
 ## Digest — 2026-07-12 (TestFlight-push run)
@@ -40,17 +40,17 @@ Format per item:
 **D-50. U-2 visual review — five screenshots + two judgment calls.** docs/screenshots/u2-{home,week,shopping,streaks,thread}.png show the voice pass: D-48 cuts applied, AM strip now HIDES (no breakfast defaults exist yet — the old line was fiction), run cards + guarantee banner fully data-driven, banner gained a yellow-"!" violation variant (yellow ceiling, interim styling). I KEPT two lines as law-7 sass rather than D-48 violations: THE RETURN's "no pressure. (some pressure.)" and the thread composer's "reply if you feel like it".
 → Options: a) all good, ship to the family as-is (recommended) b) cut one/both kept lines (one-line deletes, say which) c) notes on any screenshot
 → Blocks: nothing mechanical — this is the review gate before the family reads it.
-**Ria:** _
+**Ria:** mooted by D-56 (2026-07-13) — the sticker surfaces moved to the attic before review; the two kept lines went with them. Re-raise only if the attic returns.
 
 **D-51. Where does the HC-5 warn-confirm live?** Finding from U-2: it's currently UNREACHABLE — decide/swap only ever offer safe meals (by design), and no unrestricted manual picker survived the graft. The engine guard stays test-pinned either way; §1 safety is not weakened.
 → Options: a) the confirm ships WITH the meal library / unrestricted picker, DESIGN_BRIEF_V2 Wave-1 item 4 (recommended — its natural home, no dead UI meanwhile) b) build a minimal interim any-meal picker sooner just to host it
 → Blocks: nothing today; shapes Wave-1 ordering.
-**Ria:** _
+**Ria:** answered by events (2026-07-13): the confirm shipped inside the Plan meal picker (NB-1) and, with D-57, now attaches to the UNSAFE band only.
 
 **D-52. Beta privacy policy URL — external TestFlight (the family) requires one at Beta App Review.** Internal testing (your phone) needs nothing.
 → Options: a) I draft a one-page honest policy (data stays on device / in your iCloud; recipe text goes to Claude at capture once M3 lands) and publish it via GitHub Pages on this repo — needs your OK since it's public (recommended) b) you supply a URL from anywhere else
 → Blocks: the family joining TestFlight; not your own install.
-**Ria:** _
+**Ria:** approved — draft + publish via GitHub Pages (2026-07-13, live) → ANSWERED. Published; URL in docs/TESTFLIGHT.md.
 
 ---
 ## Digest — 2026-07-09 (live session)
