@@ -20,20 +20,17 @@ Apple account in a browser and can't be automated.
 
 ## One-time setup
 
-0. **(Maria — currently THE blocker)** Accept Apple's updated Program License
-   Agreement: developer.apple.com → Account (or Agreements). Verified
-   2026-07-12: archives fail with *"PLA Update available … agree to the latest
-   Program License Agreement"* until this is done — no profile or App Group
-   can be issued. One minute, Account Holder only.
-1. Run `scripts/testflight.sh` once (no flag). This archives and exports an
-   .ipa, registering the bundle IDs + App Group on the developer portal along
-   the way. First run may pop a keychain-access prompt for the signing key —
-   click "Always Allow".
-2. **(Maria)** appstoreconnect.apple.com → My Apps → **+** → New App:
-   - Platform iOS · Bundle ID `com.mariayarley.Moody` (in the dropdown after
-     step 1) · SKU anything (e.g. `moody-001`) · Primary language.
-   - **Name**: must be unique across the whole App Store even for
-     TestFlight-only apps — "Moody" is likely taken; see the decision digest.
+0. ~~Accept Apple's updated Program License Agreement~~ **done 2026-07-12**
+   (it had hard-blocked all provisioning with *"PLA Update available…"*).
+1. ~~First archive/export~~ **done 2026-07-12** — bundle IDs + App Group
+   registered, signed .ipa verified. (Fresh machines: rerun
+   `scripts/testflight.sh`; a keychain prompt for the signing key may pop —
+   "Always Allow".)
+2. **(Maria — the one remaining step)** appstoreconnect.apple.com → My Apps →
+   **+** → New App:
+   - **Name: "Moody Meals"** (D-49, canon) · Platform iOS · Bundle ID
+     `com.mariayarley.Moody` (in the dropdown) · SKU anything (e.g.
+     `moody-001`) · Primary language.
 3. Upload: `scripts/testflight.sh --upload` (or drop the .ipa on Transporter).
 
 ## Per build after that
