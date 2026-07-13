@@ -1,11 +1,11 @@
 # RUNLOG.md — autonomous session log
 
 ## Session summary — 2026-07-12 (TestFlight-push run, live with Maria)
-- **Done:** U-1 (App Group store move, real July-9 store migrated + verified), U-2 (canon voice pass — NEEDS-VISUAL-REVIEW, 5 screenshots), TF-1 (TestFlight prep: signing, placeholder icon, compliance key, lane + runbook — new tasks TF-1/TF-2 added per Maria's "MVP to TestFlight sooner than later").
-- **Blocked:** TF-2 (first upload) on TWO one-minute Maria actions — accept Apple's updated Program License Agreement (verified today: it hard-blocks all provisioning), and create the App Store Connect app record (app-name decision in today's digest).
+- **Done:** U-1 (App Group store move, real July-9 store migrated + verified), U-2 (canon voice pass — NEEDS-VISUAL-REVIEW, 5 screenshots), TF-1 (TestFlight prep: signing, placeholder icon, compliance key, lane + runbook), **TF-2 (build 58 UPLOADED — "Upload succeeded", processing)**. Live canon: **D-49** (name = Moody Meals), **D-53** (cloud-based via CloudKit; whole-household scope; ship-now-cloud-next). Milestone **C** queued (C-1 model pass → C-2 device sync → C-3a sharing spike → C-3b household sharing).
+- **Blocked:** nothing machine-side. Family TestFlight wave deliberately gated on milestone C (D-53). Maria's own install = add herself under ASC Internal Testing.
 - **Needs visual review:** U-2 screenshots (u2-*.png), placeholder app icon.
 - **Test suite:** 109/109 (was 102 — +7 StoreLocationTests).
-- **Next up:** TF-2 the moment her two actions land; then M2-5 (run skip/delay), M2-6 (ingredient retire/merge), U-0/U-3.
+- **Next up:** C-1 (CloudKit model-compatibility pass), C-2 (device sync); then M2-5/M2-6, U-0/U-3. Digest D-50/51/52 still open (visual review / HC-5 home / privacy-policy URL — D-52 now gates the family wave alongside C).
 
 ## 2026-07-09 — [P0+P1] Unification graft (design surface × engine)
 - DONE: MoodyEngine framework target (their MoodyMeals/ sources minus retired UI), MoodyEngineTests scheme; AppState rewritten as facade over the engine (projections, D-35 derived badges, real decide/swap via WeekPlan/Tonight, shopping via explosion→routing→guarantee); D-13 copy pass; cold-start empty tonight card (designed-adjacent, flagged).
@@ -14,6 +14,12 @@
 - NEXT: P2 App Group store move; P3 HC-5 confirm on manual assignment + copy pass; open decisions D-39/D-17/D-18 + Wednesday question for Ria. *[Merge note 2026-07-09: D-39/D-17/D-18 were answered by Ria the same night in the parallel cloud session (github/main) — merged; the Wednesday question dissolved later the same day per D-47 (seed data is disposable). P2–P4 now tracked as BACKLOG U-1..U-3.]*
 
 Newest at top. One block per task; one Session summary per run window.
+
+---
+### [TF-2] — First TestFlight upload: build 58 up (2026-07-12)
+- Outcome: **done**. Maria accepted the PLA + created the "Moody Meals" record (D-49 canon) live. Attempt 1: Apple validation 90474 — the bundle declared iPad support (UIDeviceFamily [1,2]) while portrait-only, because **XcodeGen stamps a target-level `TARGETED_DEVICE_FAMILY="1,2"` default that shadows project-level settings**; pinned `"1"` at the app + widget targets (verified [1] in the built plists). Attempt 1 also exposed that `xcodebuild -exportArchive` can exit 0 on a REJECTED upload — the lane now gates on the "EXPORT SUCCEEDED" marker and fails loudly. Attempt 2: **"Upload succeeded"**, build 58 processing on Apple's side.
+- [D-53 same session] Cloud pivot recorded (see DECISIONS): CloudKit, whole household, ship-now-cloud-next. Milestone C queued; family wave gated on it. The just-shipped local build stays correct for Maria's solo testing; C-1's model pass is the next unit of work.
+- Tests added: none (distribution config). Suite untouched at 109/109.
 
 ---
 ### [TF-1] — TestFlight prep (2026-07-12) — NEEDS-VISUAL-REVIEW (icon)
