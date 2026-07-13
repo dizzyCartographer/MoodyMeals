@@ -5,7 +5,8 @@
 - **Blocked:** nothing machine-side. Family TestFlight wave deliberately gated on milestone C (D-53). Maria's own install = add herself under ASC Internal Testing.
 - **Needs visual review:** U-2 screenshots (u2-*.png), placeholder app icon.
 - **Test suite:** 109/109 (was 102 — +7 StoreLocationTests).
-- **Next up:** C-1 (CloudKit model-compatibility pass), C-2 (device sync); then M2-5/M2-6, U-0/U-3. Digest D-50/51/52 still open (visual review / HC-5 home / privacy-policy URL — D-52 now gates the family wave alongside C).
+- **Next up:** *(reordered by D-54 mid-session)* B-3 (assign any meal + HC-5 confirm), B-4 (shopping checklist + manual add), B-5 (Settings/household), B-6 (calendar surface); then C (cloud). Digest D-50/52 still open (visual review / privacy-policy URL — D-52 gates the family wave alongside C); D-51 dissolves into B-3.
+- **Late addendum (same session):** Ria's build-58 reality check → D-54 pivot (see block below). B-1 (meal library/detail/add/edit/retire) and B-2 (recipe editor) landed the same night; build 59 uploaded with both.
 
 ## 2026-07-09 — [P0+P1] Unification graft (design surface × engine)
 - DONE: MoodyEngine framework target (their MoodyMeals/ sources minus retired UI), MoodyEngineTests scheme; AppState rewritten as facade over the engine (projections, D-35 derived badges, real decide/swap via WeekPlan/Tonight, shopping via explosion→routing→guarantee); D-13 copy pass; cold-start empty tonight card (designed-adjacent, flagged).
