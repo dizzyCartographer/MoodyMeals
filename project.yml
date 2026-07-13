@@ -49,6 +49,13 @@ targets:
   Moody:
     type: application
     platform: iOS
+    settings:
+      base:
+        # Must live at TARGET level: XcodeGen's per-target default ("1,2")
+        # shadows the project-level setting, and an iPad-capable portrait-only
+        # bundle fails App Store validation (error 90474, hit 2026-07-12).
+        # iPhone-only apps still run scaled on iPad, so nobody loses install.
+        TARGETED_DEVICE_FAMILY: "1"
     sources:
       - path: Moody
       # Shared Live Activity attributes + UI (CookModeController starts the
@@ -97,6 +104,8 @@ targets:
       base:
         # Extension bundle id must be prefixed by the app's bundle id.
         PRODUCT_BUNDLE_IDENTIFIER: com.mariayarley.Moody.MoodyWidgets
+        # Same target-level pin as the app (XcodeGen defaults to "1,2").
+        TARGETED_DEVICE_FAMILY: "1"
     sources:
       - path: MoodyWidgets
       - path: Moody/DesignSystem/Theme.swift

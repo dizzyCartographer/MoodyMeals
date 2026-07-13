@@ -30,16 +30,26 @@ xcodebuild archive -project Moody.xcodeproj -scheme Moody \
   CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
   -allowProvisioningUpdates -quiet
 
+# xcodebuild -exportArchive can exit 0 even when App Store validation
+# rejects the upload (seen 2026-07-12, error 90474) — gate on its own
+# success marker instead of the exit code.
+run_export() {
+  local plist="$1" out
+  out=$(xcodebuild -exportArchive -archivePath build/Moody.xcarchive \
+    -exportOptionsPlist "$plist" \
+    -exportPath build/export -allowProvisioningUpdates 2>&1) || true
+  echo "$out"
+  grep -q "EXPORT SUCCEEDED" <<<"$out"
+}
+
 if [[ $UPLOAD == 1 ]]; then
   echo "▸ uploading to App Store Connect"
-  xcodebuild -exportArchive -archivePath build/Moody.xcarchive \
-    -exportOptionsPlist scripts/ExportOptions-upload.plist \
-    -exportPath build/export -allowProvisioningUpdates
+  run_export scripts/ExportOptions-upload.plist \
+    || { echo "✗ upload rejected — Apple's reason is in the output above"; exit 1; }
   echo "✓ uploaded — it appears in TestFlight after Apple's processing (~5–15 min)"
 else
   echo "▸ exporting .ipa (no upload)"
-  xcodebuild -exportArchive -archivePath build/Moody.xcarchive \
-    -exportOptionsPlist scripts/ExportOptions-export.plist \
-    -exportPath build/export -allowProvisioningUpdates
+  run_export scripts/ExportOptions-export.plist \
+    || { echo "✗ export failed — see output above"; exit 1; }
   echo "✓ IPA at build/export/Moody.ipa — drop on Transporter, or rerun with --upload"
 fi
