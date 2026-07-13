@@ -6,7 +6,7 @@
 - **Needs visual review:** U-2 screenshots (u2-*.png), placeholder app icon.
 - **Test suite:** 109/109 (was 102 — +7 StoreLocationTests).
 - **Next up:** *(reordered by D-54 mid-session)* B-3 (assign any meal + HC-5 confirm), B-4 (shopping checklist + manual add), B-5 (Settings/household), B-6 (calendar surface); then C (cloud). Digest D-50/52 still open (visual review / privacy-policy URL — D-52 gates the family wave alongside C); D-51 dissolves into B-3.
-- **Late addendum (same session):** Ria's build-58 reality check → D-54 pivot (see block below). B-1 (meal library/detail/add/edit/retire) and B-2 (recipe editor) landed the same night; build 59 uploaded with both.
+- **Late addendum (same session):** Ria's build-58 reality check → D-54 pivot; her tone reaction → D-55 (the PDA law). Landed same night: B-1+B-2 (build 59), D-55 voice pass (build 60), B-4 shopping checklist/manual-add/real completion + B-5 Settings household/staples + B-6 calendar switch (build 61). Every gap she named now has a door. Remaining in B: B-3 (assign any meal + HC-5 confirm), B-7 (palette editor, split from B-5). Then C (cloud).
 
 ## 2026-07-09 — [P0+P1] Unification graft (design surface × engine)
 - DONE: MoodyEngine framework target (their MoodyMeals/ sources minus retired UI), MoodyEngineTests scheme; AppState rewritten as facade over the engine (projections, D-35 derived badges, real decide/swap via WeekPlan/Tonight, shopping via explosion→routing→guarantee); D-13 copy pass; cold-start empty tonight card (designed-adjacent, flagged).
