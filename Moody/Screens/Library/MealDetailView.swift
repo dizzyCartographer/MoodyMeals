@@ -9,8 +9,12 @@ struct MealDetailView: View {
     @EnvironmentObject var appState: AppState
     let id: UUID
 
+    private struct RecipeSheetTarget: Identifiable { let id: UUID }
+
     @State private var showEdit = false
     @State private var confirmRetire = false
+    @State private var showNewRecipe = false
+    @State private var editingRecipe: RecipeSheetTarget?
 
     private var meal: LibraryMeal? { appState.library.first { $0.id == id } }
 
@@ -55,23 +59,81 @@ struct MealDetailView: View {
                         .inkCard(background: Theme.paper, radius: 16)
                     }
 
+                    // Composition (B-2): real recipes with per-line GF truth,
+                    // editable in place.
+                    ForEach(meal.recipes) { recipe in
+                        VStack(alignment: .leading, spacing: 7) {
+                            HStack(alignment: .firstTextBaseline) {
+                                SectionLabel(text: recipe.title.uppercased())
+                                Text(recipe.kindLabel)
+                                    .font(.nunito(10, .heavy))
+                                    .foregroundStyle(Theme.textSecondary)
+                                Spacer()
+                                Button("edit") { editingRecipe = .init(id: recipe.id) }
+                                    .font(.nunito(11.5, .black))
+                                    .foregroundStyle(Theme.ink)
+                                    .frame(minWidth: 44, minHeight: 40)
+                                    .contentShape(Rectangle())
+                                    .buttonStyle(.plain)
+                            }
+                            if recipe.items.isEmpty {
+                                Text("no ingredient lines yet")
+                                    .font(.nunito(12, .heavy))
+                                    .foregroundStyle(Theme.textSecondary)
+                            }
+                            ForEach(recipe.items) { item in
+                                HStack(spacing: 8) {
+                                    Text(item.name)
+                                        .font(.nunito(12.5, .heavy))
+                                        .foregroundStyle(Theme.ink)
+                                    if !item.amountText.isEmpty {
+                                        Text(item.amountText)
+                                            .font(.nunito(11, .bold))
+                                            .foregroundStyle(Theme.textSecondary)
+                                    }
+                                    Spacer(minLength: 8)
+                                    Text(item.gfLabel)
+                                        .font(.nunito(10, .black))
+                                        .foregroundStyle((item.gfSafe ? Palette.green : Palette.yellow).label)
+                                        .padding(.horizontal, 7).padding(.vertical, 2)
+                                        .background((item.gfSafe ? Palette.green : Palette.yellow).tint,
+                                                    in: Capsule())
+                                }
+                            }
+                            if !recipe.steps.isEmpty {
+                                Text(recipe.steps.enumerated()
+                                    .map { "\($0.offset + 1). \($0.element)" }
+                                    .joined(separator: "\n"))
+                                    .font(.nunito(11.5, .bold))
+                                    .foregroundStyle(Theme.textSecondary)
+                                    .padding(.top, 2)
+                            }
+                        }
+                        .padding(EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .inkCard(background: Theme.paper, radius: 16)
+                    }
+
                     VStack(alignment: .leading, spacing: 7) {
-                        SectionLabel(text: "WHAT'S IN IT")
-                        if meal.compositionLines.isEmpty {
-                            Text("no recipes on file — the recipe editor is the next build")
+                        SectionLabel(text: "EXTRA ITEMS (no recipe)")
+                        if meal.directItems.isEmpty {
+                            Text("none — add one below or attach a recipe")
                                 .font(.nunito(12, .heavy))
                                 .foregroundStyle(Theme.textSecondary)
-                        } else {
-                            ForEach(meal.compositionLines, id: \.self) { line in
-                                Text(line)
-                                    .font(.nunito(12.5, .bold))
-                                    .foregroundStyle(Theme.ink)
-                            }
+                        }
+                        ForEach(meal.directItems) { item in
+                            IngredientLineRow(item: item) { appState.removeItem(item.id) }
                         }
                     }
                     .padding(EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .inkCard(background: Theme.paper, radius: 16)
+
+                    AddItemArea(target: .direct(meal.id))
+
+                    Button("+ ADD A RECIPE") { showNewRecipe = true }
+                        .buttonStyle(PillButtonStyle(background: Palette.green.color))
+                        .frame(height: 48)
 
                     if !meal.notes.isEmpty {
                         VStack(alignment: .leading, spacing: 7) {
@@ -113,6 +175,12 @@ struct MealDetailView: View {
             if let draft = appState.draft(for: id) {
                 MealFormView(mode: .edit(id), initial: draft)
             }
+        }
+        .sheet(isPresented: $showNewRecipe) {
+            RecipeFormView(mealID: id, recipeID: nil)
+        }
+        .sheet(item: $editingRecipe) { target in
+            RecipeFormView(mealID: id, recipeID: target.id)
         }
         .confirmationDialog("Retire this meal?", isPresented: $confirmRetire,
                             titleVisibility: .visible) {

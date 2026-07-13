@@ -115,6 +115,18 @@ struct RootView: View {
             appState.createMeal(from: MealDraft(
                 title: "Debug added meal", notes: "created by MOODY_DEMO=addmeal"))
         }
+        // MOODY_DEMO=addrecipe (B-2): attach a recipe + one known and one NEW
+        // ingredient to the debug meal — verifies composition persistence and
+        // HC-7 (the new ingredient must read "check label").
+        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "addrecipe",
+           let target = appState.library.first(where: { $0.name == "Debug added meal" }),
+           let recipeID = appState.addRecipe(toMeal: target.id,
+                                             title: "Debug sauce", precise: false) {
+            appState.addItem(.recipe(recipeID), name: "rice",
+                             amount: 2, unit: "cups", perishabilityRaw: "pantry")
+            appState.addItem(.recipe(recipeID), name: "debug spice blend",
+                             amount: nil, unit: nil, perishabilityRaw: "pantry")
+        }
         if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "decide" {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                 appState.decideForMe()
@@ -129,6 +141,11 @@ struct RootView: View {
         case "streaks": path = [.streaks]
         case "thread": path = [.thread]
         case "meals": path = [.meals]
+        case "mealdetail":   // richest meal first — screenshots land somewhere real
+            if let meal = appState.library.max(by: {
+                $0.recipes.count + $0.directItems.count
+                    < $1.recipes.count + $1.directItems.count
+            }) { path = [.meals, .meal(meal.id)] }
         case "vent": showVent = true
         case "onboarding": hasOnboarded = false
         default: break

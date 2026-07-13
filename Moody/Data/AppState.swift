@@ -248,6 +248,7 @@ final class AppState: ObservableObject {
     private var engineMembers: [FamilyMember] = []
     private var engineMeals: [MoodyEngine.Meal] = []
     private var engineStaples: [StapleItem] = []
+    private var engineIngredients: [Ingredient] = []
     private var slugForMeal: [UUID: String] = [:]
     private var mealForSlug: [String: UUID] = [:]
     private var fallbackEngineID: UUID?
@@ -306,15 +307,27 @@ final class AppState: ObservableObject {
         }
     }
 
+    private static func libraryItem(_ item: RecipeItem) -> LibraryRecipeItem {
+        let amount: String
+        if let value = item.amount {
+            let number = value.truncatingRemainder(dividingBy: 1) == 0
+                ? String(Int(value)) : String(value)
+            amount = [number, item.unit].compactMap { $0 }.joined(separator: " ")
+        } else {
+            amount = ""
+        }
+        let gf = item.ingredient.isGlutenFreeVerified
+        return LibraryRecipeItem(
+            id: item.id,
+            name: item.ingredient.name,
+            amountText: amount,
+            gfLabel: gf == true ? "GF ✓" : gf == false ? "not GF" : "check label",
+            gfSafe: gf == true)
+    }
+
     private func projectLibrary() {
         library = engineMeals.map { meal in
             let verdict = Self.gfVerdict(meal)
-            var lines = meal.recipes
-                .sorted { $0.title < $1.title }
-                .map { "\($0.title) · \($0.items.count) ingredient\($0.items.count == 1 ? "" : "s")" }
-            if !meal.directItems.isEmpty {
-                lines.append("+ \(meal.directItems.count) direct item\(meal.directItems.count == 1 ? "" : "s")")
-            }
             return LibraryMeal(
                 id: meal.id,
                 name: meal.title,
@@ -331,7 +344,21 @@ final class AppState: ObservableObject {
                     : verdict == .containsGluten ? "not GF" : "GF — check",
                 gfSafe: verdict == .verified,
                 badges: badges(for: meal, attendees: engineMembers),
-                compositionLines: lines)
+                recipes: meal.recipes
+                    .sorted { $0.createdAt < $1.createdAt }
+                    .map { recipe in
+                        LibraryRecipe(
+                            id: recipe.id,
+                            title: recipe.title,
+                            kindLabel: recipe.kind.rawValue,
+                            items: recipe.items
+                                .sorted { $0.createdAt < $1.createdAt }
+                                .map(Self.libraryItem),
+                            steps: recipe.steps)
+                    },
+                directItems: meal.directItems
+                    .sorted { $0.createdAt < $1.createdAt }
+                    .map(Self.libraryItem))
         }
     }
 
@@ -399,6 +426,122 @@ final class AppState: ObservableObject {
         scheduleSave()
     }
 
+    // MARK: - Recipe editing (B-2: composition doors — live edits, no staging)
+
+    enum ItemTarget {
+        case recipe(UUID)   // recipe id
+        case direct(UUID)   // meal id
+    }
+
+    func ingredientSuggestions(for query: String) -> [String] {
+        let q = query.trimmingCharacters(in: .whitespaces)
+        guard !q.isEmpty else { return [] }
+        return Array(engineIngredients
+            .filter { $0.name.localizedCaseInsensitiveContains(q) }
+            .prefix(6).map(\.name))
+    }
+
+    func isKnownIngredient(_ name: String) -> Bool {
+        let n = name.trimmingCharacters(in: .whitespaces)
+        return engineIngredients.contains {
+            $0.name.compare(n, options: .caseInsensitive) == .orderedSame
+        }
+    }
+
+    /// HC-7: reuse the catalog by (case-insensitive) name; a NEW ingredient
+    /// enters UNVERIFIED (nil tri-state = unsafe for GF members until checked).
+    private func resolveIngredient(named raw: String,
+                                   perishability: Perishability) -> Ingredient? {
+        guard let context else { return nil }
+        let name = raw.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return nil }
+        if let existing = engineIngredients.first(where: {
+            $0.name.compare(name, options: .caseInsensitive) == .orderedSame
+        }) { return existing }
+        let fresh = Ingredient(name: name, perishability: perishability)
+        context.insert(fresh)
+        return fresh
+    }
+
+    private func engineRecipe(_ id: UUID) -> MoodyEngine.Recipe? {
+        engineMeals.flatMap(\.recipes).first { $0.id == id }
+    }
+
+    private func engineItem(_ id: UUID) -> RecipeItem? {
+        engineMeals
+            .flatMap { $0.recipes.flatMap(\.items) + $0.directItems }
+            .first { $0.id == id }
+    }
+
+    private func saveAndReproject() {
+        guard let context else { return }
+        try? context.save()
+        projectAll()
+        scheduleSave()
+    }
+
+    @discardableResult
+    func addRecipe(toMeal mealID: UUID, title: String, precise: Bool) -> UUID? {
+        guard let context,
+              let meal = engineMeals.first(where: { $0.id == mealID }) else { return nil }
+        let t = title.trimmingCharacters(in: .whitespaces)
+        guard !t.isEmpty else { return nil }
+        let recipe = MoodyEngine.Recipe(title: t, kind: precise ? .precise : .loose)
+        context.insert(recipe)
+        meal.recipes.append(recipe)
+        meal.updatedAt = .now
+        saveAndReproject()
+        return recipe.id
+    }
+
+    func updateRecipe(_ id: UUID, title: String, precise: Bool, stepsText: String) {
+        guard let recipe = engineRecipe(id) else { return }
+        let t = title.trimmingCharacters(in: .whitespaces)
+        if !t.isEmpty { recipe.title = t }
+        recipe.kind = precise ? .precise : .loose
+        recipe.steps = stepsText
+            .split(separator: "\n")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        recipe.updatedAt = .now
+        saveAndReproject()
+    }
+
+    func deleteRecipe(_ id: UUID) {
+        guard let context, let recipe = engineRecipe(id) else { return }
+        context.delete(recipe)   // items cascade with it; the meal survives
+        saveAndReproject()
+    }
+
+    func addItem(_ target: ItemTarget, name: String,
+                 amount: Double?, unit: String?, perishabilityRaw: String) {
+        guard let context else { return }
+        let perishability = Perishability(rawValue: perishabilityRaw) ?? .pantry
+        guard let ingredient = resolveIngredient(named: name,
+                                                 perishability: perishability) else { return }
+        let cleanUnit = unit?.trimmingCharacters(in: .whitespaces)
+        let item = RecipeItem(ingredient: ingredient, amount: amount,
+                              unit: cleanUnit?.isEmpty == false ? cleanUnit : nil)
+        context.insert(item)
+        switch target {
+        case .recipe(let id):
+            guard let recipe = engineRecipe(id) else { return }
+            recipe.items.append(item)
+            recipe.updatedAt = .now
+        case .direct(let mealID):
+            guard let meal = engineMeals.first(where: { $0.id == mealID }) else { return }
+            meal.directItems.append(item)
+            meal.updatedAt = .now
+        }
+        saveAndReproject()
+    }
+
+    func removeItem(_ id: UUID) {
+        guard let context, let item = engineItem(id) else { return }
+        context.delete(item)
+        saveAndReproject()
+    }
+
     /// Retire, never delete, from the library (D-39's spirit for meals too:
     /// hidden from pickers, history intact). Plan entries keep their D-37
     /// flag-and-refill rails; reactivating is the same one tap.
@@ -419,6 +562,8 @@ final class AppState: ObservableObject {
         engineMeals = (try? context.fetch(FetchDescriptor<MoodyEngine.Meal>(
             sortBy: [SortDescriptor(\.title)]))) ?? []
         engineStaples = (try? context.fetch(FetchDescriptor<StapleItem>(
+            sortBy: [SortDescriptor(\.name)]))) ?? []
+        engineIngredients = (try? context.fetch(FetchDescriptor<Ingredient>(
             sortBy: [SortDescriptor(\.name)]))) ?? []
 
         // Stable slugs from titles; collisions get a numeric suffix.

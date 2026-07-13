@@ -78,8 +78,26 @@ struct LibraryMeal: Identifiable, Equatable {
     var gfLabel: String           // "GF ✓" / "GF — check" / "not GF"
     var gfSafe: Bool
     var badges: [SafetyBadgeInfo]
-    var compositionLines: [String]
+    var recipes: [LibraryRecipe]
+    var directItems: [LibraryRecipeItem]
     var isRetired: Bool { rotation == "retired" }
+    var hasComposition: Bool { !recipes.isEmpty || !directItems.isEmpty }
+}
+
+struct LibraryRecipe: Identifiable, Equatable {
+    let id: UUID
+    var title: String
+    var kindLabel: String         // "loose" / "precise"
+    var items: [LibraryRecipeItem]
+    var steps: [String]
+}
+
+struct LibraryRecipeItem: Identifiable, Equatable {
+    let id: UUID
+    var name: String
+    var amountText: String        // "2 cups" — empty when amount-less (D-36 valid)
+    var gfLabel: String           // "GF ✓" / "not GF" / "check label"
+    var gfSafe: Bool
 }
 
 /// Form state for create/edit — plain types only (views never see engine enums).

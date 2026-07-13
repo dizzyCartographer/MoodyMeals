@@ -47,6 +47,7 @@
 		794826CFB21A883A48F51594 /* GuaranteeCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */; };
 		7CADB1BD767FFF743DDE8DE2 /* CalendarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA1686F12F11EE8947C98373 /* CalendarStore.swift */; };
 		7D0E44B47989A6E814160513 /* ShoppingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E969FA33C177A6442F2E749A /* ShoppingModelTests.swift */; };
+		7D3316EEF5F4A41801B85276 /* RecipeEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FAF8A63E4501DF35C308F7 /* RecipeEditorView.swift */; };
 		7D6793F6F3BA0F6D253667CF /* PlanningModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4DB477DAC71F51B3FAEA90 /* PlanningModelTests.swift */; };
 		7DDEECEFB8402B09766CC80D /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */; };
 		7E73A3D3A7FC4822AD93F81E /* MoodyEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */; };
@@ -157,6 +158,7 @@
 		1757671D9E5D6E4CEED77B29 /* TonightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTests.swift; sourceTree = "<group>"; };
 		1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoodyEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20BD322121F2A369501AAF53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		24FAF8A63E4501DF35C308F7 /* RecipeEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeEditorView.swift; sourceTree = "<group>"; };
 		28526A699ED494899632683E /* GlutenSafety.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlutenSafety.swift; sourceTree = "<group>"; };
 		2CF9E1877843BAAC8F262E81 /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		2FB949E436A065885308EA2F /* WeekPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanTests.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				EC7F3CCC6CBA3CAFDC8BEFC7 /* MealDetailView.swift */,
 				37A16017B8C7D3F6B6B10FA5 /* MealFormView.swift */,
 				9B1B3E7490D56124C224586C /* MealLibraryView.swift */,
+				24FAF8A63E4501DF35C308F7 /* RecipeEditorView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -700,6 +703,7 @@
 				25AE66FB61BCB05CDCB47A79 /* MoodyApp.swift in Sources */,
 				E2DBB8023359341639728518 /* OnboardingView.swift in Sources */,
 				31728AB5EF8831EC28A50934 /* Persistence.swift in Sources */,
+				7D3316EEF5F4A41801B85276 /* RecipeEditorView.swift in Sources */,
 				F3EAF323A9147594D03883FD /* RootView.swift in Sources */,
 				1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */,
 				1D287A4F367E7B3D28518E75 /* StreaksView.swift in Sources */,
