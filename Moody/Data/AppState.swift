@@ -187,7 +187,9 @@ final class AppState: ObservableObject {
     /// Today's noticer for the home sticky (Hannah/Cat alternate slump duty;
     /// Julie owns comebacks). Scripted in v1.
     var homeNote: (author: Persona, text: String, more: String) {
-        (persona("hannah"), "\u{201C}fixings in the fridge. you literally just chop.\u{201D}", "+2 more · open thread →")
+        // D-55: no effort minimizers — "just" tells her the job is beneath
+        // explanation; stating the whole job respects it.
+        (persona("hannah"), "\u{201C}fixings in the fridge. chopping is the whole job.\u{201D}", "+2 more · open thread →")
     }
 
     // MARK: Interactions
@@ -1013,13 +1015,13 @@ enum DemoSeed {
 
     static let thread: [ThreadMessage] = [
         ThreadMessage(author: .persona("hannah"),
-                      text: "fixings in the fridge. you literally just chop.",
+                      text: "fixings in the fridge. chopping is the whole job.",
                       kind: .moment, tapbacks: ["♥ 2", "★ Chuck"]),
         ThreadMessage(author: .persona("cat"),
                       text: "warm the tortillas in a dry pan, 30 sec a side. game changer, I promise.",
                       kind: .aside),
         ThreadMessage(author: .persona("julie"),
-                      text: "day 2 of the rebuild!! task re-initiation costs more dopamine than the task. you paid it. respect."),
+                      text: "day 2 of the rebuild. task re-initiation costs more dopamine than the task. you paid it. respect."),
         ThreadMessage(author: .family("chuck"),
                       text: "I can do pickup if the lime situation is dire"),
         ThreadMessage(author: .persona("hannah"),

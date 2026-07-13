@@ -245,7 +245,8 @@ private struct StreaksReturnCard: View {
                 .padding(.top, 9)
 
             // D-13 framing: dinner has to HAPPEN, not be cooked from scratch.
-            Text("make dinner happen tonight and this app throws you a parade. no pressure. (some pressure.)")
+            // D-55: no demands, no pressure jokes — state what's waiting.
+            Text("one dinner completes the return. the parade is already built.")
                 .font(.nunito(11.5, .heavy))
                 .foregroundStyle(Theme.textDisabled)
                 .padding(.top, 7)

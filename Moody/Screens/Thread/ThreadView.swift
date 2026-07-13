@@ -223,7 +223,7 @@ private struct ThreadHeaderBanner: View {
                 Text("\(persona.name.uppercased()) · Dinner Cabinet")
                     .font(.nunito(12, .black))
                     .foregroundStyle(.white)
-                Text("get in here. it's important.")
+                Text("the cabinet's open whenever.")   // D-55: invite, never summon
                     .font(.nunito(12.5, .bold))
                     .foregroundStyle(.white.opacity(0.75))
             }

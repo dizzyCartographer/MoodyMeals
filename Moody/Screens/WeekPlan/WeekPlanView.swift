@@ -34,7 +34,7 @@ struct WeekPlanView: View {
         // Ref's flex:1 list pins the hint to the viewport bottom — slack lives
         // above the hint, not 12pt under the SUN row.
         .safeAreaInset(edge: .bottom) {
-            Text("tap any day to swap · long-press to lock")
+            Text("tap a day to swap · long-press to pin")   // D-55 vocabulary
                 .font(.nunito(12, .heavy))
                 .foregroundStyle(Theme.textSecondary)
                 .frame(maxWidth: .infinity)
@@ -194,7 +194,10 @@ private struct WeekPlanDayRow: View {
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
         .accessibilityHint("Shows 3 swaps")
-        .accessibilityAction(named: plan.locked ? "Unlock day" : "Lock day") {
+        // D-55: pin vocabulary — a pin holds because YOU placed it; a lock
+        // holds against you. (The persisted field keeps its name for
+        // snapshot compatibility; only surfaced language changes.)
+        .accessibilityAction(named: plan.locked ? "Unpin day" : "Pin day") {
             onLongPress()
         }
     }
@@ -370,14 +373,15 @@ private struct WeekPlanDayRow: View {
             .onTapGesture(perform: onTap)
     }
 
+    // D-55: a pin, not a padlock — held by choice, not clamped by the app.
     private var lockBadge: some View {
-        Image(systemName: "lock.fill")
+        Image(systemName: "pin.fill")
             .font(.system(size: 8, weight: .bold))
             .foregroundStyle(.white)
             .frame(width: 18, height: 18)
             .background(Theme.ink, in: Circle())
             .offset(x: 6, y: -6)
-            .accessibilityLabel("Locked")
+            .accessibilityLabel("Pinned")
     }
 }
 

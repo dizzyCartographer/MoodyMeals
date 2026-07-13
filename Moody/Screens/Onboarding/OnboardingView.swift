@@ -59,7 +59,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 14) {
             OnboardingTitleBlock(
                 title: "The household's in.\nWho has hard rules?",
-                subtitle: "celiac safety comes FIRST — hard rules get solved before taste, effort, or vibes. these three carry guarantees:")
+                subtitle: "celiac safety comes first — hard rules get solved before taste, effort, or vibes. these three carry guarantees:")
 
             VStack(spacing: 9) {
                 OnboardingRequirementRow(
@@ -68,22 +68,25 @@ struct OnboardingView: View {
                     detail: "safety, not a preference. solved first.",
                     badgeText: "Caddie GF ✓", badgeSlot: Palette.green,
                     emphasized: true)
+                // D-35/D-6: the lifeline is a stocked guarantee, never a
+                // "plain dinner" plan — dinners are meant to work for her.
                 OnboardingRequirementRow(
                     member: appState.member("elsie"),
-                    headline: "Elsie — safe foods",
-                    detail: "her plain option always exists.",
-                    badgeText: "Elsie plain ✓", badgeSlot: Palette.blue)
+                    headline: "Elsie — lifeline stocked",
+                    detail: "sandwich basics + garbanzos stay stocked.",
+                    badgeText: "Elsie stocked ✓", badgeSlot: Palette.blue)
                 OnboardingRequirementRow(
                     member: appState.member("chad"),
                     headline: "Chad — volume",
-                    detail: "double batch. growing-boy math.",
-                    badgeText: "Chad ×2 ✓", badgeSlot: Palette.yellow)
+                    detail: "bigger batch. growing-boy math.",
+                    badgeText: "Chad ×1.5 ✓", badgeSlot: Palette.yellow)
             }
 
             Spacer(minLength: 8)
 
             VStack(spacing: 8) {
-                Button("LOCKED IN — SAFETY FIRST") { advance(from: 0) }
+                // D-55: no lock vocabulary, ever — a statement, not a clamp.
+                Button("THESE HOLD") { advance(from: 0) }
                     .buttonStyle(OnboardingPrimaryButtonStyle())
                 Text("adjust anytime — the week re-solves around safety")
                     .font(.nunito(12, .heavy))
@@ -99,7 +102,7 @@ struct OnboardingView: View {
     private var colorsStep: some View {
         VStack(alignment: .leading, spacing: 14) {
             OnboardingTitleBlock(
-                title: "Rules locked.\nWhich colors are yours?",
+                title: "Safety's set.\nWhich colors are yours?",   // D-55: no "locked"
                 subtitle: "your favorites fill 5 slots — confetti, magnets, and celebrations sample them all year.")
 
             HStack(spacing: 8) {
@@ -151,7 +154,7 @@ struct OnboardingView: View {
     private var personaStep: some View {
         VStack(alignment: .leading, spacing: 14) {
             OnboardingTitleBlock(
-                title: "Chuck + the kids are in.\nNow: someone imaginary.",
+                title: "Chuck + the kids are in.\nSomeone imaginary can join too.",   // D-55: invite, don't direct
                 subtitle: "fictional cast members text like people, remember everything, and never get tired of you.")
 
             VStack(spacing: 9) {
