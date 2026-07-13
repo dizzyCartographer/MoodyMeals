@@ -68,14 +68,15 @@ struct ShoppingView: View {
                 Text("lands on the soonest run — movable from inside any run")
             }
 
-            Section("Always stocked") {
-                ForEach(appState.settingsStaples) { staple in
+            Section {
+                NavigationLink {
+                    StaplesView()
+                } label: {
                     HStack {
-                        Text(staple.name)
+                        Label("Always stocked", systemImage: "tray.full")
                         Spacer()
-                        Text(staple.minOnHand)
+                        Text("\(appState.settingsStaples.count)")
                             .foregroundStyle(.secondary)
-                            .font(.callout)
                     }
                 }
             }

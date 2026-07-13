@@ -8,8 +8,6 @@ struct SettingsView: View {
     @EnvironmentObject var appState: AppState
 
     @State private var editingMember: SettingsMember?
-    @State private var newStapleName = ""
-    @State private var newStapleAmount = ""
 
     var body: some View {
         Form {
@@ -40,36 +38,8 @@ struct SettingsView: View {
                 }
             }
 
-            Section {
-                ForEach(appState.settingsStaples) { staple in
-                    HStack {
-                        Text(staple.name)
-                        Spacer()
-                        Text(staple.minOnHand)
-                            .foregroundStyle(.secondary)
-                    }
-                    .swipeActions(edge: .trailing) {
-                        Button("Remove", role: .destructive) {
-                            appState.removeStaple(staple.id)
-                        }
-                    }
-                }
-                HStack {
-                    TextField("staple", text: $newStapleName)
-                        .autocorrectionDisabled()
-                    TextField("how many", text: $newStapleAmount)
-                        .frame(width: 90)
-                    Button("Add") {
-                        appState.addStaple(newStapleName, minOnHand: newStapleAmount)
-                        newStapleName = ""; newStapleAmount = ""
-                    }
-                    .disabled(newStapleName.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-            } header: {
-                Text("Always stocked")
-            } footer: {
-                Text("these ride every run until they're home — the fallback meal cooks from this shelf")
-            }
+            // Always-stocked moved to its own screen under Shopping
+            // (Ria 2026-07-13: "staples should be its own screen").
 
             Section {
                 Toggle("Dinners on your calendar", isOn: Binding(
