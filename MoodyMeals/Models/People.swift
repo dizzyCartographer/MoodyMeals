@@ -62,6 +62,11 @@ final class FamilyMember {
     /// household-generic (forMember == nil) instead of trapping.
     @Relationship(inverse: \StapleItem.forMember)
     var staples: [StapleItem]
+    /// FR-1: the F17 lesson applied on arrival — FoodRule.member gets its
+    /// explicit inverse before implicit inference can corrupt the schema.
+    /// A deleted member's rules die with them (rules are per-member).
+    @Relationship(deleteRule: .cascade, inverse: \FoodRule.member)
+    var foodRules: [FoodRule]
 
     init(
         name: String,
@@ -93,6 +98,7 @@ final class FamilyMember {
         self.attendingEntries = []
         self.cookNights = []
         self.staples = []
+        self.foodRules = []
     }
 }
 

@@ -6,6 +6,26 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-13 (overnight run)
+
+**D-57. ⚠️ SIGN-OFF: the rewritten §1 (safety invariants) for the D-44 band model — old safety tests never die silently, so this needs your yes.** FR-1 shipped the bands tonight (additive — the old conservative gate still guards auto-fill until you approve this). The proposed new §1, complete:
+> **HC-1** Auto-fill (decide, deal-me, scheduler) never selects an UNSAFE-band meal for a night a GF-guaranteed member attends; it also skips NOT-CHECKED-YET (unknown ≠ calm — assessment or your banding resolves it first). SAFE and AWAITING-SUBSTITUTION fill freely — including Caddie nights (your correction stands: the indicator rides as a cook-time reminder, never friction).
+> **HC-2** No score, streak, or optimization ever outranks HC-1.
+> **HC-3** Whole foods (fresh/frozen produce, plain meats) never prompt, flag, or ask — ever.
+> **HC-4** A gluten-carrier line puts a recipe in AWAITING SUBSTITUTION — a calm indicator, not a warning. Recording a per-recipe standard modification (your quiche move) or a preferred brand makes it SAFE: indicator fully gone, zero residual nagging.
+> **HC-5** Manually assigning an UNSAFE meal to a night a GF-guaranteed member attends warns plainly, naming the member, and asks once (override allowed, silent never). Awaiting/not-checked manual assignment is frictionless.
+> **HC-6** Your band overrides are permanent and outrank any re-assessment, forever. The app never silently reclassifies anything you've touched.
+> **HC-7** Every new/edited recipe gets one capture-time assessment (band + per-line suggested subs). Offline or API failure ⇒ NOT CHECKED YET + queued — never silently safe.
+> **HC-8** Editing a recipe in a way that changes its band re-flags any future plan entries it sits on; refill proposed, never silent.
+> **HC-9** THE FLOUR LINE — unchanged, verbatim from today's §1.
+> **HC-10** Inclusion check on special deliciousness — unchanged.
+> **HC-11** The rubric trio is pinned as eval fixtures: homemade bread → UNSAFE; mac & cheese → AWAITING ("which gf pasta?"); a tablespoon of flour in a 20-ingredient soup → AWAITING (calm sub request).
+> **HC-12** Shopping lines from AWAITING recipes carry the substitution/brand qualifier (the RT-6 pipe).
+→ Options: a) approved — activate the band gates at FR-3, retire HC-3/4/6/7-as-written then b) tweak (say which line) c) the one open call inside it: should auto-fill treat NOT-CHECKED-YET as fillable-with-nudges instead of skipped? (recommended: skip until assessed — a, as drafted)
+→ Blocks: FR-3 (live gates + assessment); nothing tonight — FR-1 is additive.
+**Ria:** _
+
+---
 ## Digest — 2026-07-12 (TestFlight-push run)
 
 ⚠️ **One action before any decision matters: accept Apple's updated Program License Agreement** — developer.apple.com → Account/Agreements, ~1 minute, Account Holder only. Verified today: it hard-blocks ALL provisioning (profiles + App Group), so nothing can archive for TestFlight until it's done. Not a decision (there's only one answer), so it's not numbered — it's just first.

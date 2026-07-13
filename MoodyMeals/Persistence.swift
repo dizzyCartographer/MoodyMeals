@@ -40,5 +40,7 @@ enum AppSchema {
         WeeklyReflection.self,
         StapleItem.self,
         FridgeSpec.self,
+        // Food rules (FR-1, D-42/D-45)
+        FoodRule.self,
     ]
 }

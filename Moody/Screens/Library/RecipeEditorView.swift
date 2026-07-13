@@ -16,7 +16,21 @@ struct RecipeFormView: View {
     @State private var title = ""
     @State private var precise = false
     @State private var stepsText = ""
+    @State private var modificationText = ""
     @State private var confirmDelete = false
+
+    private func bandFooter(_ recipe: LibraryRecipe) -> String {
+        var parts: [String] = []
+        switch recipe.bandSourceRaw {
+        case "manualOverride": parts.append("banded by you — holds over any re-check")
+        case "assessment": parts.append("assessed at capture")
+        default: parts.append("read from ingredient labels")
+        }
+        parts.append(recipe.standardModification.isEmpty
+            ? "a documented substitution makes this recipe safe — the indicator clears completely"
+            : "substitution on file: \(recipe.standardModification)")
+        return parts.joined(separator: " · ")
+    }
 
     private var recipe: LibraryRecipe? {
         guard let recipeID else { return nil }
@@ -38,6 +52,44 @@ struct RecipeFormView: View {
                 }
 
                 if let recipe {
+                    // FR-1 (D-44): the band, its provenance, and the quiche
+                    // move. Display truth today; gates arrive with D-57.
+                    Section {
+                        HStack {
+                            Text("Gluten band")
+                            Spacer()
+                            Text(BandStyle.label(recipe.bandRaw))
+                                .font(.callout.weight(.semibold))
+                                .foregroundStyle((BandStyle.isGreen(recipe.bandRaw)
+                                    ? Palette.green : Palette.yellow).label)
+                                .padding(.horizontal, 8).padding(.vertical, 2)
+                                .background((BandStyle.isGreen(recipe.bandRaw)
+                                    ? Palette.green : Palette.yellow).tint, in: Capsule())
+                        }
+                        Menu("Set the band yourself") {
+                            Button("GF safe") { appState.setRecipeBand(recipe.id, bandRaw: "safe") }
+                            Button("Awaiting substitution") {
+                                appState.setRecipeBand(recipe.id, bandRaw: "awaitingSubstitution")
+                            }
+                            Button("Unsafe for GF") { appState.setRecipeBand(recipe.id, bandRaw: "unsafe") }
+                            Button("Not checked yet") {
+                                appState.setRecipeBand(recipe.id, bandRaw: "notCheckedYet")
+                            }
+                        }
+                        HStack {
+                            TextField("standard modification — e.g. King Arthur gf pie crust mix",
+                                      text: $modificationText, axis: .vertical)
+                                .lineLimit(1...2)
+                            Button("Save") {
+                                appState.setStandardModification(recipe.id,
+                                                                 text: modificationText)
+                            }
+                            .disabled(modificationText == recipe.standardModification)
+                        }
+                    } footer: {
+                        Text(bandFooter(recipe))
+                    }
+
                     Section("Ingredients") {
                         if recipe.items.isEmpty {
                             Text("no lines yet — add the first below")
@@ -97,6 +149,7 @@ struct RecipeFormView: View {
                     title = recipe.title
                     precise = recipe.kindLabel == "precise"
                     stepsText = recipe.steps.joined(separator: "\n")
+                    modificationText = recipe.standardModification
                 }
             }
             .confirmationDialog("Remove this recipe?", isPresented: $confirmDelete,

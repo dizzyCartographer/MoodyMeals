@@ -44,6 +44,19 @@ final class Ingredient {
 
 enum RecipeKind: String, Codable { case loose, precise }
 
+/// D-44 risk bands (FR-1). `notCheckedYet` is canon's honest offline state —
+/// every recipe wears it until assessed (FR-3) or banded by Ria.
+enum GFBand: String, Codable {
+    case safe
+    case awaitingSubstitution   // schedulable, calm indicator (D-44 correction)
+    case unsafe                 // structural gluten — the only gating tier
+    case notCheckedYet
+}
+
+/// Who set the band. Manual outranks assessment FOREVER (D-44: "her overrides
+/// persist and outrank any re-score").
+enum GFBandSource: String, Codable { case derived, assessment, manualOverride }
+
 @Model
 final class Recipe {
     var id: UUID
@@ -55,6 +68,23 @@ final class Recipe {
     var steps: [String]               // may be empty for loose
     var sourceURL: URL?
     @Relationship(deleteRule: .cascade) var items: [RecipeItem]
+    // FR-1 (D-44): stored band + provenance. Optionals ⇒ lightweight
+    // migration on existing stores; nil reads as notCheckedYet/derived.
+    var gfBandRaw: String?
+    var gfBandSourceRaw: String?
+    /// The quiche move, canon verbatim: "my quiche recipe now requires King
+    /// Arthur gf pie crust mix." Set ⇒ SAFE, indicator gone, sub rides the
+    /// recipe's shopping lines (RT-6 pipe).
+    var standardModification: String?
+
+    var gfBand: GFBand? {
+        get { gfBandRaw.flatMap(GFBand.init(rawValue:)) }
+        set { gfBandRaw = newValue?.rawValue }
+    }
+    var gfBandSource: GFBandSource {
+        get { gfBandSourceRaw.flatMap(GFBandSource.init(rawValue:)) ?? .derived }
+        set { gfBandSourceRaw = newValue.rawValue }
+    }
 
     init(
         title: String,

@@ -1,5 +1,12 @@
 # RUNLOG.md — autonomous session log
 
+## Session summary — 2026-07-13 (overnight autonomous run, per Ria "review a couple times + keep working the backlog")
+- **Done:** REVIEW-1 (common-sense pass: Choose-tonight added; the phantom-entry writer class deleted — legacy `reconcileWeekEdits` + write-hooks; dark mode = sim quirk, code clean; stale pre-merge app removed), FR-1 (D-44 bands + D-45 FoodRules, engine + UI + backfill — the design-session model is on screen), FR-2 draft (the rewritten §1 sits in the digest as **D-57**, full text, one read to approve).
+- **Builds:** 66 (review fixes) + 67 (FR-1) uploaded overnight; 62–65 from the evening. One transient "Failed to Use Accounts" upload glitch self-resolved on retry.
+- **Test suite:** **124/124** (was 109 — +15 FR-1). Legacy §1 gate test-pinned untouched.
+- **Blocked / for Ria:** D-57 (§1 sign-off — gates FR-3's live band gates + assessment), D-52 (privacy URL — family wave), name reconcile, streaks-mechanic question. REVIEW-2 (second pass) queued next run alongside FR-3 plumbing.
+- **Next up:** FR-3 (MoodyBrain client + capture assessment; prompt work is PROMPT-REVIEW gated), REVIEW-2, then C (cloud).
+
 ## Session summary — 2026-07-12 (TestFlight-push run, live with Maria)
 - **Done:** U-1 (App Group store move, real July-9 store migrated + verified), U-2 (canon voice pass — NEEDS-VISUAL-REVIEW, 5 screenshots), TF-1 (TestFlight prep: signing, placeholder icon, compliance key, lane + runbook), **TF-2 (build 58 UPLOADED — "Upload succeeded", processing)**. Live canon: **D-49** (name = Moody Meals), **D-53** (cloud-based via CloudKit; whole-household scope; ship-now-cloud-next). Milestone **C** queued (C-1 model pass → C-2 device sync → C-3a sharing spike → C-3b household sharing).
 - **Blocked:** nothing machine-side. Family TestFlight wave deliberately gated on milestone C (D-53). Maria's own install = add herself under ASC Internal Testing.
@@ -15,6 +22,14 @@
 - NEXT: P2 App Group store move; P3 HC-5 confirm on manual assignment + copy pass; open decisions D-39/D-17/D-18 + Wednesday question for Ria. *[Merge note 2026-07-09: D-39/D-17/D-18 were answered by Ria the same night in the parallel cloud session (github/main) — merged; the Wednesday question dissolved later the same day per D-47 (seed data is disposable). P2–P4 now tracked as BACKLOG U-1..U-3.]*
 
 Newest at top. One block per task; one Session summary per run window.
+
+---
+### [FR-1] — D-44 bands + D-45 FoodRules, additive (2026-07-13 overnight) — NEEDS-VISUAL-REVIEW
+- Outcome: **done; the design-session model is visible and editable.** Engine: `GFBand` {safe | awaitingSubstitution | unsafe | notCheckedYet} + provenance stored per recipe (optionals ⇒ lightweight migration); `MealBand` derivation — manual override > standard modification (the quiche move ⇒ SAFE, indicator gone) > stored band > legacy tri-state mapping (explicit gluten line ⇒ awaiting, the calm question; unknown ⇒ not-checked; carriers never read as walls); meal wears its worst band; freeform-only meals stay honest. `FoodRule` structured records {member, never/limit/boost, subject, reason, window} with the F17 lesson applied on arrival (explicit inverse). Seeded per D-42 (Chuck limit red meat/pork ≤1×/7d; Ria 3 boosts; Chad boost; Elsie NONE; Caddie = band model) + **AppInfo-marked backfill** so pre-FR stores get the rules once — deliberate deletion never resurrects, renamed members skip quietly.
+- UI: band vocabulary replaces tri-state everywhere (meals list, detail recipe headers, plan chips, picker — "GF safe" green / "awaiting sub" / "not checked yet" / "unsafe for GF" yellow-ceiling); recipe editor gains the band section (current band + provenance line, set-it-yourself menu, and the standard-modification field with honest footer); Settings shows the Food rules truthfully (editor comes with FR-3).
+- **The legacy verified-only gate is UNTOUCHED and test-pinned** (`test_FR1_legacyGFGate_unaffectedByBands`) — auto-fill stays conservative until D-57's sign-off.
+- Debugging saga, recorded so nobody repeats it: a SIGTRAP-in-SwiftData rabbit hole (suspected FoodRule inverse, Recipe fields, @MainActor, unregistered @Model — all exonerated by bisection) turned out to be **M0-2's documented harness rule violated by my new test file**: `makeContainer().mainContext` discards the container, which deallocates under the live context. The answer was in this RUNLOG from July 7. Every new test now holds its container. Also: an invalid "pristine control" (stash doesn't carry untracked files/new tests) cost a false lead — controls must actually contain the failing pattern.
+- Tests: 15 added (derivation matrix incl. override-beats-sub and worst-of, persistence, structure round-trip, seed shape incl. Elsie/Caddie-have-none, idempotence, backfill both ways). Suite **124/124**. Screenshots: fr1-settings2.png, fr1-meals.png.
 
 ---
 ### [REVIEW-1] — Common-sense design review, pass 1 (2026-07-13 overnight, per Ria "review this app a couple times")

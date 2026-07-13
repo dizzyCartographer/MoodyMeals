@@ -342,7 +342,6 @@ final class AppState: ObservableObject {
 
     private func projectLibrary() {
         library = engineMeals.map { meal in
-            let verdict = Self.gfVerdict(meal)
             return LibraryMeal(
                 id: meal.id,
                 name: meal.title,
@@ -355,9 +354,10 @@ final class AppState: ObservableObject {
                 isEatingOut: meal.isEatingOut,
                 requiresCalmDay: meal.requiresCalmDay,
                 rotation: meal.rotationState.rawValue,
-                gfLabel: verdict == .verified ? "GF ✓"
-                    : verdict == .containsGluten ? "not GF" : "GF — check",
-                gfSafe: verdict == .verified,
+                // FR-1: the meal wears its worst band (display truth; the
+                // legacy verified gate still guards auto-fill until D-57).
+                gfLabel: BandStyle.label(MealBand.band(for: meal).rawValue),
+                gfSafe: MealBand.band(for: meal) == .safe,
                 badges: badges(for: meal, attendees: engineMembers),
                 recipes: meal.recipes
                     .sorted { $0.createdAt < $1.createdAt }
@@ -369,7 +369,10 @@ final class AppState: ObservableObject {
                             items: recipe.items
                                 .sorted { $0.createdAt < $1.createdAt }
                                 .map(Self.libraryItem),
-                            steps: recipe.steps)
+                            steps: recipe.steps,
+                            bandRaw: MealBand.band(for: recipe).rawValue,
+                            bandSourceRaw: recipe.gfBandSource.rawValue,
+                            standardModification: recipe.standardModification ?? "")
                     },
                 directItems: meal.directItems
                     .sorted { $0.createdAt < $1.createdAt }
@@ -510,7 +513,32 @@ final class AppState: ObservableObject {
             kindLabel: recipe.kind.rawValue,
             items: recipe.items.sorted { $0.createdAt < $1.createdAt }
                 .map(Self.libraryItem),
-            steps: recipe.steps)
+            steps: recipe.steps,
+            bandRaw: MealBand.band(for: recipe).rawValue,
+            bandSourceRaw: recipe.gfBandSource.rawValue,
+            standardModification: recipe.standardModification ?? "")
+    }
+
+    // MARK: FR-1 band mutations (D-44: her calls are permanent)
+
+    /// Manual banding — outranks any future re-assessment, forever.
+    func setRecipeBand(_ recipeID: UUID, bandRaw: String) {
+        guard let recipe = engineRecipe(recipeID),
+              let band = GFBand(rawValue: bandRaw) else { return }
+        recipe.gfBand = band
+        recipe.gfBandSource = .manualOverride
+        recipe.updatedAt = .now
+        saveAndReproject()
+    }
+
+    /// The quiche move: a documented sub makes the recipe SAFE (indicator
+    /// gone). Clearing the text restores the underlying band.
+    func setStandardModification(_ recipeID: UUID, text: String) {
+        guard let recipe = engineRecipe(recipeID) else { return }
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        recipe.standardModification = trimmed.isEmpty ? nil : trimmed
+        recipe.updatedAt = .now
+        saveAndReproject()
     }
 
     @discardableResult
@@ -1138,14 +1166,12 @@ final class AppState: ObservableObject {
                                 gfBadge: nil, gfSafe: false)
         }
         let celiacHome = engineMembers.contains { $0.hardRequirements.contains(.glutenFree) }
-        let verdict = Self.gfVerdict(meal)
+        let band = MealBand.band(for: meal)
         return PlanSlotInfo(
             mealID: meal.id, name: meal.title,
             pinned: entry.isLocked, needsRefill: false,
-            gfBadge: celiacHome
-                ? (verdict == .verified ? "GF ✓"
-                    : verdict == .containsGluten ? "not GF" : "check") : nil,
-            gfSafe: verdict == .verified)
+            gfBadge: celiacHome ? BandStyle.label(band.rawValue) : nil,
+            gfSafe: band == .safe)
     }
 
     /// HC-5 surface check: nil ⇒ frictionless; names ⇒ the confirm copy
@@ -1187,6 +1213,7 @@ final class AppState: ObservableObject {
 
     @Published private(set) var settingsMembers: [SettingsMember] = []
     @Published private(set) var settingsStaples: [SettingsStaple] = []
+    @Published private(set) var memberRules: [MemberRule] = []
     @Published private(set) var calendarSyncEnabled =
         UserDefaults.standard.bool(forKey: "calendarSyncEnabled")
 
@@ -1208,6 +1235,19 @@ final class AppState: ObservableObject {
         }
         settingsStaples = engineStaples.map {
             SettingsStaple(id: $0.id, name: $0.name, minOnHand: $0.minOnHand)
+        }
+        let rules = (try? context?.fetch(FetchDescriptor<FoodRule>(
+            sortBy: [SortDescriptor(\.createdAt)]))) ?? []
+        memberRules = rules.map { rule in
+            MemberRule(
+                id: rule.id,
+                memberName: rule.member?.name ?? "household",
+                directionLabel: rule.direction.rawValue,
+                subject: rule.subject,
+                reason: rule.reason,
+                windowText: rule.frequencyWindowDays.map { days in
+                    rule.direction == .limit ? "≤1× per \(days) days" : "≥1× per \(days) days"
+                })
         }
     }
 

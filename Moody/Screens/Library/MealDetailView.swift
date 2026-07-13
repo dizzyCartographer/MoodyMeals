@@ -58,6 +58,11 @@ struct MealDetailView: View {
                     } header: {
                         HStack {
                             Text("\(recipe.title) · \(recipe.kindLabel)")
+                            Text(BandStyle.label(recipe.bandRaw))
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle((BandStyle.isGreen(recipe.bandRaw)
+                                    ? Palette.green : Palette.yellow).label)
+                                .textCase(nil)
                             Spacer()
                             Button("Edit") { editingRecipe = .init(id: recipe.id) }
                                 .font(.caption.weight(.semibold))

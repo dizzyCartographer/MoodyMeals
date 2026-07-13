@@ -90,6 +90,24 @@ struct LibraryRecipe: Identifiable, Equatable {
     var kindLabel: String         // "loose" / "precise"
     var items: [LibraryRecipeItem]
     var steps: [String]
+    // FR-1 (D-44): the band this recipe wears + where it came from.
+    var bandRaw: String = "notCheckedYet"
+    var bandSourceRaw: String = "derived"
+    var standardModification: String = ""
+}
+
+/// D-44 band → surface language. Yellow is the ceiling (law 4); unsafe is
+/// words-with-weight, never red.
+enum BandStyle {
+    static func label(_ raw: String) -> String {
+        switch raw {
+        case "safe": "GF safe"
+        case "awaitingSubstitution": "awaiting sub"
+        case "unsafe": "unsafe for GF"
+        default: "not checked yet"
+        }
+    }
+    static func isGreen(_ raw: String) -> Bool { raw == "safe" }
 }
 
 /// First-class recipe browsing (Ria 2026-07-13: "a meal is a collection of
@@ -151,6 +169,16 @@ struct SettingsStaple: Identifiable, Equatable {
     let id: UUID
     var name: String
     var minOnHand: String
+}
+
+/// FR-1: a member's structured rule, surfaced (D-45 — structure everywhere).
+struct MemberRule: Identifiable, Equatable {
+    let id: UUID
+    var memberName: String
+    var directionLabel: String   // "limit" / "boost" / "never"
+    var subject: String
+    var reason: String
+    var windowText: String?      // "≤1× per 7 days"
 }
 
 /// Form state for create/edit — plain types only (views never see engine enums).

@@ -10,11 +10,17 @@ import SwiftData
 /// - No "sheet-pan" tags anywhere (D-4: that framing stresses Ria).
 enum SeedData {
 
+    private static let rulesBackfillKey = "foodRulesBackfilled.v1"
+
     @MainActor
     static func loadIfNeeded(into context: ModelContext) throws {
         // Idempotency: members are the sentinel — any present means seeded.
         let existing = try context.fetchCount(FetchDescriptor<FamilyMember>())
-        guard existing == 0 else { return }
+        guard existing == 0 else {
+            // FR-1 arrived after some stores were seeded — backfill once.
+            try backfillFoodRulesIfNeeded(into: context)
+            return
+        }
 
         // ── The five (requirements doc) ─────────────────────────
         let ria = FamilyMember(
@@ -42,6 +48,9 @@ enum SeedData {
             appetiteBase: 1.5, appetiteFavoriteBoost: 0.5 // §8 defaults (per-member data, D-35)
         )
         [ria, chuck, caddie, elsie, chad].forEach { context.insert($0) }
+
+        try Self.insertSeedRules(ria: ria, chuck: chuck, chad: chad, into: context)
+
 
         // ── Ingredients (verified / unverified / explicitly-gluten mix) ──
         let gfShells = Ingredient(name: "GF taco shells", perishability: .pantry,
@@ -252,5 +261,55 @@ enum SeedData {
         cojack.favoriteOf = [chad, elsie]
 
         try context.save()
+    }
+
+    /// The five D-42 rules, inserted with the seed AND by the backfill.
+    @MainActor
+    private static func insertSeedRules(ria: FamilyMember?, chuck: FamilyMember?,
+                                        chad: FamilyMember?,
+                                        into context: ModelContext) throws {
+        // Caddie: NO rule row — the D-44 band model carries her protection.
+        // Elsie: NO rule — dinners are the objective, staples the net (D-35).
+        var rules: [FoodRule] = []
+        if let chuck {
+            rules.append(FoodRule(member: chuck, direction: .limit,
+                                  subject: "red meat & pork",
+                                  reason: "high cholesterol",
+                                  frequencyWindowDays: 7))
+        }
+        if let ria {
+            rules.append(FoodRule(member: ria, direction: .boost,
+                                  subject: "iron-rich foods", reason: "low iron"))
+            rules.append(FoodRule(member: ria, direction: .boost,
+                                  subject: "fiber", reason: "general health"))
+            rules.append(FoodRule(member: ria, direction: .boost,
+                                  subject: "anti-inflammatory foods",
+                                  reason: "inflammation"))
+        }
+        if let chad {
+            rules.append(FoodRule(member: chad, direction: .boost,
+                                  subject: "calorie-dense meals",
+                                  reason: "14 and growing"))
+        }
+        rules.forEach { context.insert($0) }
+        context.insert(AppInfo(key: rulesBackfillKey, value: "1"))
+        try context.save()
+    }
+
+    /// FR-1 migration: stores seeded before FoodRule existed get the same
+    /// five rules ONCE (AppInfo marker — deliberately deleting rules later
+    /// never resurrects them). Members matched by seed name; a renamed
+    /// member simply doesn't backfill — the rules editor is their path.
+    @MainActor
+    static func backfillFoodRulesIfNeeded(into context: ModelContext) throws {
+        let marked = try context.fetch(FetchDescriptor<AppInfo>())
+            .contains { $0.key == rulesBackfillKey }
+        guard !marked else { return }
+        let members = try context.fetch(FetchDescriptor<FamilyMember>())
+        func member(_ name: String) -> FamilyMember? {
+            members.first { $0.name.compare(name, options: .caseInsensitive) == .orderedSame }
+        }
+        try insertSeedRules(ria: member("Ria"), chuck: member("Chuck"),
+                            chad: member("Chad"), into: context)
     }
 }

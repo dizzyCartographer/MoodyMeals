@@ -16,7 +16,7 @@ struct SettingsView: View {
                     Button { editingMember = member } label: {
                         HStack {
                             Text(member.name)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.primary)
                             Spacer()
                             if member.isGFHard {
                                 Text("GF — guaranteed")
@@ -40,6 +40,41 @@ struct SettingsView: View {
 
             // Always-stocked moved to its own screen under Shopping
             // (Ria 2026-07-13: "staples should be its own screen").
+
+            // FR-1: the structured rules (D-45) — what the scheduler will
+            // honor and the assessment will judge against. Editing arrives
+            // with the rules editor; today they read truthfully.
+            if !appState.memberRules.isEmpty {
+                Section {
+                    ForEach(appState.memberRules) { rule in
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack {
+                                Text(rule.memberName)
+                                    .font(.body.weight(.medium))
+                                Text(rule.directionLabel)
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(Palette.blue.label)
+                                    .padding(.horizontal, 7).padding(.vertical, 2)
+                                    .background(Palette.blue.tint, in: Capsule())
+                                Spacer()
+                                if let window = rule.windowText {
+                                    Text(window)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            Text("\(rule.subject) · \(rule.reason)")
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                } header: {
+                    Text("Food rules")
+                } footer: {
+                    Text("structured rules the week gets built around — Caddie's protection is the gluten guarantee above, and Elsie needs no rule: her dinners are the point, the shelf is the net")
+                }
+            }
 
             Section {
                 Toggle("Dinners on your calendar", isOn: Binding(
