@@ -171,14 +171,16 @@ struct SettingsStaple: Identifiable, Equatable {
     var minOnHand: String
 }
 
-/// FR-1: a member's structured rule, surfaced (D-45 — structure everywhere).
+/// D-58: a member's restriction record, surfaced. Levels wear Ria's words.
 struct MemberRule: Identifiable, Equatable {
     let id: UUID
+    let memberID: UUID
     var memberName: String
-    var directionLabel: String   // "limit" / "boost" / "never"
-    var subject: String
+    var directionLabel: String   // "never" / "infrequent" / "increased"
+    var subject: String          // category display name (legacy: subject text)
     var reason: String
     var windowText: String?      // "≤1× per 7 days"
+    var isGluten: Bool           // removal carries deliberate weight
 }
 
 /// Form state for create/edit — plain types only (views never see engine enums).

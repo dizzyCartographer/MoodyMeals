@@ -768,7 +768,7 @@ final class AppState: ObservableObject {
     }
 
     private static func need(of member: FamilyMember) -> DietaryNeed? {
-        if member.hardRequirements.contains(.glutenFree) { return .celiac }
+        if member.isGFGuaranteed { return .celiac }
         if !member.staples.isEmpty { return .safeFoodsOnly }   // lifeline on file (D-6)
         if member.appetiteBase > 1 { return .doubleVolume }
         return nil
@@ -831,7 +831,7 @@ final class AppState: ObservableObject {
         let ordered = engineMembers.filter { attending.contains($0.id) }
         var out: [SafetyBadgeInfo] = []
         for member in (ordered.isEmpty ? attendees : ordered) {
-            if member.hardRequirements.contains(.glutenFree) {
+            if member.isGFGuaranteed {
                 switch MealBand.band(for: meal) {   // D-57: band vocabulary
                 case .safe:
                     out.append(SafetyBadgeInfo(text: "\(member.name) GF ✓", slot: Palette.green))
@@ -865,7 +865,7 @@ final class AppState: ObservableObject {
     /// freely — the awaiting badge rides as a cook-time reminder.
     private func decidePool() -> [MoodyEngine.Meal] {
         let now = Date()
-        let celiacAttending = engineMembers.contains { $0.hardRequirements.contains(.glutenFree) }
+        let celiacAttending = engineMembers.contains(where: \.isGFGuaranteed)
         return engineMeals.filter { meal in
             guard !meal.isEatingOut,
                   meal.slots.contains(.dinner),
@@ -1158,7 +1158,7 @@ final class AppState: ObservableObject {
                                 pinned: entry.isLocked, needsRefill: true,
                                 gfBadge: nil, gfSafe: false)
         }
-        let celiacHome = engineMembers.contains { $0.hardRequirements.contains(.glutenFree) }
+        let celiacHome = engineMembers.contains(where: \.isGFGuaranteed)
         let band = MealBand.band(for: meal)
         return PlanSlotInfo(
             mealID: meal.id, name: meal.title,
@@ -1223,7 +1223,7 @@ final class AppState: ObservableObject {
     private func projectSettings() {
         settingsMembers = engineMembers.map { member in
             SettingsMember(id: member.id, name: member.name, isAdult: member.isAdult,
-                           isGFHard: member.hardRequirements.contains(.glutenFree),
+                           isGFHard: member.isGFGuaranteed,
                            appetiteBase: member.appetiteBase)
         }
         settingsStaples = engineStaples.map {
@@ -1234,31 +1234,76 @@ final class AppState: ObservableObject {
         memberRules = rules.map { rule in
             MemberRule(
                 id: rule.id,
+                memberID: rule.member?.id ?? UUID(),
                 memberName: rule.member?.name ?? "household",
-                directionLabel: rule.direction.rawValue,
-                subject: rule.subject,
+                directionLabel: rule.direction.levelLabel,   // D-58: her words
+                subject: rule.displaySubject,
                 reason: rule.reason,
                 windowText: rule.frequencyWindowDays.map { days in
                     rule.direction == .limit ? "≤1× per \(days) days" : "≥1× per \(days) days"
-                })
+                },
+                isGluten: rule.category == .gluten)
         }
     }
 
-    func updateMember(_ id: UUID, name: String, appetiteBase: Double, isGFHard: Bool) {
+    func updateMember(_ id: UUID, name: String, appetiteBase: Double) {
         guard let member = engineMembers.first(where: { $0.id == id }) else { return }
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         if !trimmed.isEmpty { member.name = trimmed }
         member.appetiteBase = appetiteBase
-        let has = member.hardRequirements.contains(.glutenFree)
-        if isGFHard != has {
-            if isGFHard {
-                member.hardRequirements.append(.glutenFree)
-            } else {
-                member.hardRequirements.removeAll { $0 == .glutenFree }
-            }
+        member.updatedAt = .now
+        saveAndReproject()
+    }
+
+    // MARK: D-58 restriction records — the one record type, GF included
+
+    /// Category picker options for views (engine enum stays behind the facade).
+    static let ruleCategories: [(raw: String, name: String)] =
+        RuleCategory.allCases.map { ($0.rawValue, $0.displayName) }
+    /// Levels in Ria's words (stored raws stay stable).
+    static let ruleLevels: [(raw: String, name: String)] = [
+        ("never", "never"), ("limit", "infrequent"), ("boost", "increased"),
+    ]
+
+    func addRule(memberID: UUID, categoryRaw: String, levelRaw: String) {
+        guard let context,
+              let member = engineMembers.first(where: { $0.id == memberID }),
+              let category = RuleCategory(rawValue: categoryRaw),
+              let level = RuleDirection(rawValue: levelRaw) else { return }
+        // One record per (member, category): re-adding replaces the level.
+        if let existing = member.foodRules.first(where: { $0.category == category }) {
+            existing.direction = level
+            existing.frequencyWindowDays = level == .limit ? 7 : nil
+            existing.updatedAt = .now
+        } else {
+            context.insert(FoodRule(
+                member: member, direction: level,
+                subject: category.displayName.lowercased(), reason: "",
+                frequencyWindowDays: level == .limit ? 7 : nil,
+                category: category))
+        }
+        // D-58: a Gluten·never record IS the guarantee — retire the legacy
+        // flag so record-removal genuinely removes protection (no zombie).
+        if category == .gluten {
+            member.hardRequirements.removeAll { $0 == .glutenFree }
         }
         member.updatedAt = .now
-        saveAndReproject()   // badges, pools, and pickers re-derive everywhere
+        saveAndReproject()   // badges, pools, pickers re-derive everywhere
+    }
+
+    /// Removal is a decision (the gluten confirm lives UI-side, once).
+    func removeRule(_ id: UUID) {
+        guard let context,
+              let rule = engineMembers.flatMap(\.foodRules).first(where: { $0.id == id })
+        else { return }
+        if rule.category == .gluten, let member = rule.member {
+            // Removing the record removes the guarantee — the legacy flag
+            // must not silently resurrect it.
+            member.hardRequirements.removeAll { $0 == .glutenFree }
+            member.updatedAt = .now
+        }
+        context.delete(rule)
+        saveAndReproject()
     }
 
     func addStaple(_ name: String, minOnHand: String) {

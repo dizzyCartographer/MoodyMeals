@@ -107,8 +107,12 @@ private struct MemberEditorSheet: View {
     let member: SettingsMember
     @State private var name = ""
     @State private var appetite = 1.0
-    @State private var gfHard = false
-    @State private var confirmGFRemoval = false
+    @State private var showAddRule = false
+    @State private var pendingGlutenRemoval: MemberRule?
+
+    private var rules: [MemberRule] {
+        appState.memberRules.filter { $0.memberID == member.id }
+    }
 
     var body: some View {
         NavigationStack {
@@ -122,18 +126,48 @@ private struct MemberEditorSheet: View {
                     Slider(value: $appetite, in: 1.0...2.0, step: 0.25)
                 }
 
+                // D-58: restriction/requirement records — one type for
+                // everything, gluten included.
                 Section {
-                    Toggle("Gluten-free — guaranteed", isOn: Binding(
-                        get: { gfHard },
-                        set: { newValue in
-                            if !newValue && member.isGFHard {
-                                confirmGFRemoval = true   // removal asks once, plainly
-                            } else {
-                                gfHard = newValue
+                    if rules.isEmpty {
+                        Text("no restrictions on file")
+                            .foregroundStyle(.secondary)
+                            .font(.callout)
+                    }
+                    ForEach(rules) { rule in
+                        HStack {
+                            Text(rule.subject)
+                            Text(rule.directionLabel)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(Palette.blue.label)
+                                .padding(.horizontal, 7).padding(.vertical, 2)
+                                .background(Palette.blue.tint, in: Capsule())
+                            Spacer()
+                            if let window = rule.windowText {
+                                Text(window)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                             }
-                        }))
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button("Remove", role: .destructive) {
+                                if rule.isGluten {
+                                    pendingGlutenRemoval = rule   // asks once, plainly
+                                } else {
+                                    appState.removeRule(rule.id)
+                                }
+                            }
+                        }
+                    }
+                    Button {
+                        showAddRule = true
+                    } label: {
+                        Label("Add restriction", systemImage: "plus")
+                    }
+                } header: {
+                    Text("Restrictions & requirements")
                 } footer: {
-                    Text("a hard rule: meals that aren't verified safe never auto-fill for nights \(member.name) is home")
+                    Text("never = filtered out · infrequent = capped · increased = the week leans toward it")
                 }
             }
             .navigationTitle("Edit \(member.name)")
@@ -145,7 +179,7 @@ private struct MemberEditorSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         appState.updateMember(member.id, name: name,
-                                              appetiteBase: appetite, isGFHard: gfHard)
+                                              appetiteBase: appetite)
                         dismiss()
                     }
                 }
@@ -153,15 +187,69 @@ private struct MemberEditorSheet: View {
             .onAppear {
                 name = member.name
                 appetite = member.appetiteBase
-                gfHard = member.isGFHard
+            }
+            .sheet(isPresented: $showAddRule) {
+                AddRuleSheet(memberID: member.id, memberName: member.name)
             }
             .confirmationDialog(
                 "Remove the gluten guarantee for \(member.name)?",
-                isPresented: $confirmGFRemoval, titleVisibility: .visible) {
+                isPresented: Binding(get: { pendingGlutenRemoval != nil },
+                                     set: { if !$0 { pendingGlutenRemoval = nil } }),
+                titleVisibility: .visible) {
                 Button("Remove — meals stop filtering for \(member.name)",
-                       role: .destructive) { gfHard = false }
-                Button("Keep the guarantee", role: .cancel) {}
+                       role: .destructive) {
+                    if let rule = pendingGlutenRemoval { appState.removeRule(rule.id) }
+                    pendingGlutenRemoval = nil
+                }
+                Button("Keep the guarantee", role: .cancel) { pendingGlutenRemoval = nil }
             }
         }
+    }
+}
+
+// MARK: - Add restriction (D-58: category picker + level picker)
+
+private struct AddRuleSheet: View {
+    @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) private var dismiss
+
+    let memberID: UUID
+    let memberName: String
+
+    @State private var categoryRaw = AppState.ruleCategories.first?.raw ?? "gluten"
+    @State private var levelRaw = "never"
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Picker("Category", selection: $categoryRaw) {
+                    ForEach(AppState.ruleCategories, id: \.raw) { category in
+                        Text(category.name).tag(category.raw)
+                    }
+                }
+                Picker("Level", selection: $levelRaw) {
+                    ForEach(AppState.ruleLevels, id: \.raw) { level in
+                        Text(level.name).tag(level.raw)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+            .navigationTitle("Restriction for \(memberName)")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        appState.addRule(memberID: memberID,
+                                         categoryRaw: categoryRaw,
+                                         levelRaw: levelRaw)
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }

@@ -261,13 +261,18 @@ final class FoodRuleBandTests: XCTestCase {
         let context = container.mainContext
         try SeedData.loadIfNeeded(into: context)
         let rules = try context.fetch(FetchDescriptor<FoodRule>())
-        XCTAssertEqual(rules.count, 5)
+        XCTAssertEqual(rules.count, 6)
         let byMember = Dictionary(grouping: rules, by: { $0.member?.name ?? "?" })
         XCTAssertEqual(byMember["Chuck"]?.count, 1)
         XCTAssertEqual(byMember["Ria"]?.count, 3)
         XCTAssertEqual(byMember["Chad"]?.count, 1)
         XCTAssertNil(byMember["Elsie"], "Elsie has NO rule (D-35/D-44)")
-        XCTAssertNil(byMember["Caddie"], "Caddie = the band model, not a rule row")
+        // D-58: Caddie's protection is a VISIBLE record now.
+        XCTAssertEqual(byMember["Caddie"]?.count, 1)
+        XCTAssertEqual(byMember["Caddie"]?.first?.category, .gluten)
+        XCTAssertEqual(byMember["Caddie"]?.first?.direction, .never)
+        XCTAssertTrue(rules.allSatisfy { $0.category != nil },
+                      "every seeded rule carries its picker category")
     }
 
     @MainActor
@@ -276,7 +281,7 @@ final class FoodRuleBandTests: XCTestCase {
         let context = container.mainContext
         try SeedData.loadIfNeeded(into: context)
         try SeedData.loadIfNeeded(into: context)
-        XCTAssertEqual(try context.fetch(FetchDescriptor<FoodRule>()).count, 5)
+        XCTAssertEqual(try context.fetch(FetchDescriptor<FoodRule>()).count, 6)
     }
 
     @MainActor
@@ -310,5 +315,78 @@ final class FoodRuleBandTests: XCTestCase {
                        "no name match ⇒ no backfill; the rules editor is their path")
         try SeedData.loadIfNeeded(into: context)   // marker set — never retries
         XCTAssertEqual(try context.fetch(FetchDescriptor<FoodRule>()).count, 0)
+    }
+
+    // MARK: D-58 — the gluten record IS the guarantee
+
+    @MainActor
+    func test_D58_glutenRecord_drivesTheGuarantee_noLegacyFlagNeeded() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let kid = FamilyMember(name: "Kid", isAdult: false)   // NO hardRequirements
+        context.insert(kid)
+        context.insert(FoodRule(member: kid, direction: .never,
+                                subject: "gluten", reason: "celiac",
+                                category: .gluten))
+        try context.save()
+        XCTAssertTrue(kid.isGFGuaranteed)
+
+        let flour = Ingredient(name: "flour", perishability: .pantry,
+                               isGlutenFreeVerified: false)
+        context.insert(flour)
+        let bread = Meal(title: "bread")
+        context.insert(bread)
+        let r = Recipe(title: "b", kind: .loose)
+        context.insert(r)
+        r.items = [RecipeItem(ingredient: flour)]
+        r.gfBand = .unsafe
+        r.gfBandSource = .manualOverride
+        bread.recipes = [r]
+        try context.save()
+        XCTAssertTrue(WeekPlan.requiresGFConfirmation(bread, attendees: [kid]),
+                      "the record alone powers the D-57 gates")
+    }
+
+    @MainActor
+    func test_D58_legacyHardRequirement_fallbackStillProtects() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let member = FamilyMember(name: "PreMigration", isAdult: false,
+                                  hardRequirements: [.glutenFree])
+        context.insert(member)
+        try context.save()
+        XCTAssertTrue(member.isGFGuaranteed,
+                      "pre-backfill stores over-protect, never under")
+    }
+
+    @MainActor
+    func test_D58_backfillV2_assignsCategories_andCreatesGlutenRecord() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        // A v1-era store: GF via legacy flag, rules without categories.
+        let caddie = FamilyMember(name: "Caddie", isAdult: false,
+                                  hardRequirements: [.glutenFree])
+        let chuck = FamilyMember(name: "Chuck", isAdult: true)
+        context.insert(caddie)
+        context.insert(chuck)
+        context.insert(FoodRule(member: chuck, direction: .limit,
+                                subject: "red meat & pork",
+                                reason: "high cholesterol",
+                                frequencyWindowDays: 7))
+        context.insert(AppInfo(key: "foodRulesBackfilled.v1", value: "1"))
+        try context.save()
+
+        try SeedData.loadIfNeeded(into: context)   // members exist → backfills
+
+        let rules = try context.fetch(FetchDescriptor<FoodRule>())
+        XCTAssertEqual(rules.count, 2)
+        XCTAssertEqual(rules.first { $0.member?.name == "Chuck" }?.category,
+                       .redMeatPork, "legacy subjects gain their categories")
+        let caddieRule = try XCTUnwrap(rules.first { $0.member?.name == "Caddie" })
+        XCTAssertEqual(caddieRule.category, .gluten)
+        XCTAssertEqual(caddieRule.direction, .never)
+
+        try SeedData.loadIfNeeded(into: context)   // marker holds
+        XCTAssertEqual(try context.fetch(FetchDescriptor<FoodRule>()).count, 2)
     }
 }

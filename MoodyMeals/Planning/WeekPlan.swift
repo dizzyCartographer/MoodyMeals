@@ -30,13 +30,13 @@ enum WeekPlan {
     /// reminder, never friction).
     @MainActor
     static func requiresGFConfirmation(_ meal: Meal, attendees: [FamilyMember]) -> Bool {
-        let gfMembers = attendees.filter { $0.hardRequirements.contains(.glutenFree) }
+        let gfMembers = attendees.filter(\.isGFGuaranteed)   // D-58: rule-driven
         return !gfMembers.isEmpty && MealBand.band(for: meal) == .unsafe
     }
 
     /// Names of attending GF-hard members, for warning copy (no one hardcoded — D-35).
     static func gfAttendeeNames(_ attendees: [FamilyMember]) -> [String] {
-        attendees.filter { $0.hardRequirements.contains(.glutenFree) }.map(\.name)
+        attendees.filter(\.isGFGuaranteed).map(\.name)
     }
 
     /// The entry occupying (day, slot), if any — one entry per day+slot.

@@ -15,7 +15,7 @@ enum Tonight {
     /// constraint outranks it (§1 spirit, band vocabulary).
     @MainActor
     static func isSafe(_ meal: Meal, for member: FamilyMember, at date: Date = .now) -> Bool {
-        if member.hardRequirements.contains(.glutenFree),
+        if member.isGFGuaranteed,   // D-58: the Gluten·never record
            MealBand.band(for: meal) != .safe {
             return false
         }

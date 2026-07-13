@@ -11,6 +11,7 @@ import SwiftData
 enum SeedData {
 
     private static let rulesBackfillKey = "foodRulesBackfilled.v1"
+    private static let rulesBackfillV2Key = "foodRulesBackfilled.v2"   // D-58 categories + gluten records
 
     @MainActor
     static func loadIfNeeded(into context: ModelContext) throws {
@@ -19,6 +20,8 @@ enum SeedData {
         guard existing == 0 else {
             // FR-1 arrived after some stores were seeded — backfill once.
             try backfillFoodRulesIfNeeded(into: context)
+            // D-58 arrived after FR-1 — categories + gluten records, once.
+            try backfillRuleCategoriesIfNeeded(into: context)
             return
         }
 
@@ -49,7 +52,7 @@ enum SeedData {
         )
         [ria, chuck, caddie, elsie, chad].forEach { context.insert($0) }
 
-        try Self.insertSeedRules(ria: ria, chuck: chuck, chad: chad, into: context)
+        try Self.insertSeedRules(ria: ria, chuck: chuck, chad: chad, caddie: caddie, into: context)
 
 
         // ── Ingredients (verified / unverified / explicitly-gluten mix) ──
@@ -266,33 +269,80 @@ enum SeedData {
     /// The five D-42 rules, inserted with the seed AND by the backfill.
     @MainActor
     private static func insertSeedRules(ria: FamilyMember?, chuck: FamilyMember?,
-                                        chad: FamilyMember?,
+                                        chad: FamilyMember?, caddie: FamilyMember? = nil,
                                         into context: ModelContext) throws {
-        // Caddie: NO rule row — the D-44 band model carries her protection.
+        // D-58: ONE record type for everything — Caddie's protection is a
+        // visible {Gluten · never} record, enforced by the band gates.
         // Elsie: NO rule — dinners are the objective, staples the net (D-35).
         var rules: [FoodRule] = []
+        if let caddie {
+            rules.append(FoodRule(member: caddie, direction: .never,
+                                  subject: "gluten", reason: "celiac",
+                                  category: .gluten))
+        }
         if let chuck {
             rules.append(FoodRule(member: chuck, direction: .limit,
                                   subject: "red meat & pork",
                                   reason: "high cholesterol",
-                                  frequencyWindowDays: 7))
+                                  frequencyWindowDays: 7,
+                                  category: .redMeatPork))
         }
         if let ria {
             rules.append(FoodRule(member: ria, direction: .boost,
-                                  subject: "iron-rich foods", reason: "low iron"))
+                                  subject: "iron-rich foods", reason: "low iron",
+                                  category: .iron))
             rules.append(FoodRule(member: ria, direction: .boost,
-                                  subject: "fiber", reason: "general health"))
+                                  subject: "fiber", reason: "general health",
+                                  category: .fiber))
             rules.append(FoodRule(member: ria, direction: .boost,
                                   subject: "anti-inflammatory foods",
-                                  reason: "inflammation"))
+                                  reason: "inflammation",
+                                  category: .antiInflammatory))
         }
         if let chad {
             rules.append(FoodRule(member: chad, direction: .boost,
                                   subject: "calorie-dense meals",
-                                  reason: "14 and growing"))
+                                  reason: "14 and growing",
+                                  category: .calorieDense))
         }
         rules.forEach { context.insert($0) }
         context.insert(AppInfo(key: rulesBackfillKey, value: "1"))
+        context.insert(AppInfo(key: rulesBackfillV2Key, value: "1"))
+        try context.save()
+    }
+
+    /// D-58 migration: existing rules gain categories (subject-matched) and
+    /// every legacy GF-hard member gains the visible {Gluten · never} record.
+    /// Marker-guarded — user edits after this never get overridden.
+    @MainActor
+    static func backfillRuleCategoriesIfNeeded(into context: ModelContext) throws {
+        let marked = try context.fetch(FetchDescriptor<AppInfo>())
+            .contains { $0.key == rulesBackfillV2Key }
+        guard !marked else { return }
+        let rules = try context.fetch(FetchDescriptor<FoodRule>())
+        let subjectMap: [String: RuleCategory] = [
+            "red meat & pork": .redMeatPork,
+            "iron-rich foods": .iron,
+            "fiber": .fiber,
+            "anti-inflammatory foods": .antiInflammatory,
+            "calorie-dense meals": .calorieDense,
+            "gluten": .gluten,
+        ]
+        for rule in rules where rule.category == nil {
+            if let match = subjectMap[rule.subject.lowercased()] {
+                rule.category = match
+                rule.updatedAt = .now
+            }
+        }
+        let members = try context.fetch(FetchDescriptor<FamilyMember>())
+        for member in members
+        where member.hardRequirements.contains(.glutenFree)
+            && !member.foodRules.contains(where: { $0.category == .gluten }) {
+            context.insert(FoodRule(member: member, direction: .never,
+                                    subject: "gluten", reason: "celiac",
+                                    category: .gluten))
+        }
+        context.insert(AppInfo(key: rulesBackfillV2Key, value: "1"))
         try context.save()
     }
 
