@@ -261,6 +261,7 @@ final class AppState: ObservableObject {
     private var engineStaples: [StapleItem] = []
     private var engineIngredients: [Ingredient] = []
     private var engineDoneRuns: [MoodyEngine.ShoppingRun] = []
+    private var engineRecipes: [MoodyEngine.Recipe] = []
     private var slugForMeal: [UUID: String] = [:]
     private var mealForSlug: [String: UUID] = [:]
     private var fallbackEngineID: UUID?
@@ -305,6 +306,7 @@ final class AppState: ObservableObject {
         projectLibrary()
         projectSettings()
         projectPlan()
+        projectRecipes()
     }
 
     // MARK: - Meal library (B-1: browse/detail/add/edit/retire — the doors
@@ -477,8 +479,60 @@ final class AppState: ObservableObject {
         return fresh
     }
 
+    /// All recipes — attached or standalone (the cache covers orphans too).
     private func engineRecipe(_ id: UUID) -> MoodyEngine.Recipe? {
-        engineMeals.flatMap(\.recipes).first { $0.id == id }
+        engineRecipes.first { $0.id == id }
+    }
+
+    // MARK: Recipes as first-class citizens (Ria 2026-07-13)
+
+    @Published private(set) var recipesAll: [RecipeSummary] = []
+
+    private func projectRecipes() {
+        var usedIn: [UUID: [String]] = [:]
+        for meal in engineMeals {
+            for recipe in meal.recipes {
+                usedIn[recipe.id, default: []].append(meal.title)
+            }
+        }
+        recipesAll = engineRecipes.map { recipe in
+            RecipeSummary(id: recipe.id, title: recipe.title,
+                          kindLabel: recipe.kind.rawValue,
+                          itemCount: recipe.items.count,
+                          usedIn: (usedIn[recipe.id] ?? []).sorted())
+        }
+    }
+
+    /// Editor projection for any recipe, attached or standalone.
+    func libraryRecipe(_ id: UUID) -> LibraryRecipe? {
+        guard let recipe = engineRecipe(id) else { return nil }
+        return LibraryRecipe(
+            id: recipe.id, title: recipe.title,
+            kindLabel: recipe.kind.rawValue,
+            items: recipe.items.sorted { $0.createdAt < $1.createdAt }
+                .map(Self.libraryItem),
+            steps: recipe.steps)
+    }
+
+    @discardableResult
+    func createStandaloneRecipe(title: String, precise: Bool) -> UUID? {
+        guard let context else { return nil }
+        let trimmed = title.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return nil }
+        let recipe = MoodyEngine.Recipe(title: trimmed,
+                                        kind: precise ? .precise : .loose)
+        context.insert(recipe)
+        saveAndReproject()
+        return recipe.id
+    }
+
+    func attachRecipe(_ recipeID: UUID, toMeal mealID: UUID) {
+        guard let recipe = engineRecipe(recipeID),
+              let meal = engineMeals.first(where: { $0.id == mealID }),
+              !meal.recipes.contains(where: { $0.id == recipeID }) else { return }
+        meal.recipes.append(recipe)
+        meal.updatedAt = .now
+        saveAndReproject()
     }
 
     private func engineItem(_ id: UUID) -> RecipeItem? {
@@ -582,6 +636,8 @@ final class AppState: ObservableObject {
         engineDoneRuns = ((try? context.fetch(FetchDescriptor<MoodyEngine.ShoppingRun>(
             sortBy: [SortDescriptor(\.plannedDate)]))) ?? [])
             .filter { $0.status == .done }
+        engineRecipes = (try? context.fetch(FetchDescriptor<MoodyEngine.Recipe>(
+            sortBy: [SortDescriptor(\.title)]))) ?? []
 
         // Stable slugs from titles; collisions get a numeric suffix.
         slugForMeal = [:]

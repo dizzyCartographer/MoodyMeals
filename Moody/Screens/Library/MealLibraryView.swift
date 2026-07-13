@@ -1,17 +1,64 @@
 import SwiftUI
 
-// MEAL LIBRARY (D-56 native) — every engine meal, searchable, editable.
+// MEALS | RECIPES (Ria 2026-07-13: "a meal is a collection of recipes,
+// even if they are loose recipes") — one tab, two first-class lists.
 
 struct MealLibraryView: View {
+    enum Segment: String, CaseIterable, Identifiable {
+        case meals = "Meals", recipes = "Recipes"
+        var id: String { rawValue }
+    }
+
     @EnvironmentObject var appState: AppState
-
+    @State private var segment: Segment = .meals
     @State private var search = ""
-    @State private var showNew = false
+    @State private var showNewMeal = false
+    @State private var newRecipeSheet = false
 
-    private var active: [LibraryMeal] { filtered.filter { !$0.isRetired } }
-    private var retired: [LibraryMeal] { filtered.filter(\.isRetired) }
+    var body: some View {
+        Group {
+            switch segment {
+            case .meals: mealsList
+            case .recipes: recipesList
+            }
+        }
+        .searchable(text: $search, prompt: segment == .meals
+            ? "search meals or tags" : "search recipes")
+        .navigationTitle(segment.rawValue)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Picker("Kind", selection: $segment) {
+                    ForEach(Segment.allCases) { segment in
+                        Text(segment.rawValue).tag(segment)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: 200)
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    if segment == .meals { showNewMeal = true }
+                    else { newRecipeSheet = true }
+                } label: {
+                    Label(segment == .meals ? "New meal" : "New recipe",
+                          systemImage: "plus")
+                }
+            }
+        }
+        .sheet(isPresented: $showNewMeal) {
+            MealFormView(mode: .create)
+        }
+        .sheet(isPresented: $newRecipeSheet) {
+            RecipeFormView(mealID: nil, recipeID: nil)   // standalone
+        }
+    }
 
-    private var filtered: [LibraryMeal] {
+    // MARK: Meals
+
+    private var activeMeals: [LibraryMeal] { filteredMeals.filter { !$0.isRetired } }
+    private var retiredMeals: [LibraryMeal] { filteredMeals.filter(\.isRetired) }
+
+    private var filteredMeals: [LibraryMeal] {
         let all = appState.library.sorted {
             $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
         }
@@ -22,20 +69,20 @@ struct MealLibraryView: View {
         }
     }
 
-    var body: some View {
+    private var mealsList: some View {
         List {
-            if active.isEmpty && retired.isEmpty {
+            if activeMeals.isEmpty && retiredMeals.isEmpty {
                 Text(search.isEmpty ? "no meals on file" : "nothing matches “\(search)”")
                     .foregroundStyle(.secondary)
             }
             Section {
-                ForEach(active) { meal in
+                ForEach(activeMeals) { meal in
                     NavigationLink(value: meal.id) { MealRow(meal: meal) }
                 }
             }
-            if !retired.isEmpty {
+            if !retiredMeals.isEmpty {
                 Section("Retired") {
-                    ForEach(retired) { meal in
+                    ForEach(retiredMeals) { meal in
                         NavigationLink(value: meal.id) {
                             MealRow(meal: meal).opacity(0.6)
                         }
@@ -43,17 +90,58 @@ struct MealLibraryView: View {
                 }
             }
         }
-        .searchable(text: $search, prompt: "search meals or tags")
-        .navigationTitle("Meals")
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button { showNew = true } label: {
-                    Label("New meal", systemImage: "plus")
-                }
+    }
+
+    // MARK: Recipes
+
+    private var filteredRecipes: [RecipeSummary] {
+        guard !search.isEmpty else { return appState.recipesAll }
+        return appState.recipesAll.filter {
+            $0.title.localizedCaseInsensitiveContains(search)
+        }
+    }
+
+    private var recipesList: some View {
+        List {
+            if filteredRecipes.isEmpty {
+                Text(search.isEmpty
+                     ? "no recipes yet — they also appear here when added to a meal"
+                     : "nothing matches “\(search)”")
+                    .foregroundStyle(.secondary)
+            }
+            ForEach(filteredRecipes) { recipe in
+                RecipeSummaryRow(recipe: recipe)
             }
         }
-        .sheet(isPresented: $showNew) {
-            MealFormView(mode: .create)
+    }
+}
+
+private struct RecipeSummaryRow: View {
+    var recipe: RecipeSummary
+    @State private var editing = false
+
+    var body: some View {
+        Button {
+            editing = true
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(recipe.title).foregroundStyle(.primary)
+                    Spacer()
+                    Text("\(recipe.itemCount) ingredient\(recipe.itemCount == 1 ? "" : "s")")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Text(recipe.usedIn.isEmpty
+                     ? "\(recipe.kindLabel) · not in a meal yet"
+                     : "\(recipe.kindLabel) · in \(recipe.usedIn.joined(separator: ", "))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+        }
+        .sheet(isPresented: $editing) {
+            RecipeFormView(mealID: nil, recipeID: recipe.id)
         }
     }
 }

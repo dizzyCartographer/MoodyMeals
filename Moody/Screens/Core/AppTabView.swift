@@ -10,7 +10,6 @@ struct AppTabView: View {
     enum Tab: String { case today, plan, meals, shopping, settings }
     @State private var tab: Tab = .today
     @State private var mealsPath: [UUID] = []
-    @State private var shoppingPath: [String] = []
 
     var body: some View {
         TabView(selection: $tab) {
@@ -26,12 +25,9 @@ struct AppTabView: View {
             }
             .tabItem { Label("Meals", systemImage: "book") }
             .tag(Tab.meals)
-            NavigationStack(path: $shoppingPath) {
-                ShoppingView()
-                    .navigationDestination(for: String.self) { ShoppingRunDetailView(runID: $0) }
-            }
-            .tabItem { Label("Shopping", systemImage: "cart") }
-            .tag(Tab.shopping)
+            NavigationStack { ShoppingView() }
+                .tabItem { Label("Shopping", systemImage: "cart") }
+                .tag(Tab.shopping)
             NavigationStack { SettingsView() }
                 .tabItem { Label("Settings", systemImage: "gearshape") }
                 .tag(Tab.settings)
@@ -103,9 +99,7 @@ struct AppTabView: View {
                 $0.recipes.count + $0.directItems.count
                     < $1.recipes.count + $1.directItems.count
             }) { mealsPath = [meal.id] }
-        case "run":
-            tab = .shopping
-            if let first = appState.runs.first { shoppingPath = [first.id] }
+        case "run": tab = .shopping   // the root IS the checklist now
         default: break
         }
     }

@@ -17,6 +17,12 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [NB-4] — Reminders-ish shopping + first-class recipes (2026-07-13) — NEEDS-VISUAL-REVIEW
+- Outcome: **done**. Shopping root is now the checklist itself — no detail hop: round check circles toggle in place (strikethrough + dim on check), a pink ⊕ quick-add row inside every run section (submit keeps the keyboard for chain-adding, Reminders-style), "Finish · N of M" appears in the section header once anything's checked and fires the SAME engine completion as before (done run + purchase records + guarantee recompute + bought lines leave the lists). Run-detail screen deleted (git history keeps it). Guarantee + Always-stocked pinned at top.
+- Recipes are first-class: the Meals tab segments **Meals | Recipes**. The Recipes list shows every recipe in the box with kind, ingredient count, and which meals use it ("not in a meal yet" for standalones); + creates a standalone recipe (same editor, no meal required); meal detail's "Add a recipe" is now a menu — New recipe / Attach an existing recipe (attach sheet lists unattached-to-this-meal recipes; recipes are shareable across meals, engine relationship already allowed it). Editor lookups go through `libraryRecipe(id)`/`engineRecipes` so orphans edit the same as attached.
+- Verified on-sim: shopping renders the new list (screenshot nb-shopping-reminders.png); meals segment control renders (nb-meals-segment.png). Suite **109/109**. Ships as build 65.
+
+---
 ### [NB-2] — The actual calendar (2026-07-13) — NEEDS-VISUAL-REVIEW
 - Outcome: **done**. Plan's default is now a real month grid: weekday columns (locale first-weekday), today ringed in the accent, past days dimmed, **dinner/lunch dots on every planned day** (unbounded `planByDay` projection — Jul 28's assignment shows from the July view) with a small legend, chevron month navigation both directions. Tap any date → **day plan sheet** (medium/large detents): Dinner + Lunch sections with choose/change (shared HC-5 picker), pin/unpin, clear. The Week segment keeps the multi-day list ("add multiple meals from the same screen"). A11y: each day cell reads its date + what's planned.
 - Verified on-sim: July grid renders with dots on 9/10/11/12 (history) and 28 (the future assignment); screenshot nb-plan-month.png. Suite **109/109**.

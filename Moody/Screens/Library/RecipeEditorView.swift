@@ -8,7 +8,8 @@ struct RecipeFormView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) private var dismiss
 
-    let mealID: UUID
+    /// nil = a standalone recipe (first-class, not attached to a meal yet).
+    let mealID: UUID?
     /// nil = creating; set once saved (the form transitions to item editing).
     @State var recipeID: UUID?
 
@@ -19,8 +20,7 @@ struct RecipeFormView: View {
 
     private var recipe: LibraryRecipe? {
         guard let recipeID else { return nil }
-        return appState.library.first { $0.id == mealID }?
-            .recipes.first { $0.id == recipeID }
+        return appState.libraryRecipe(recipeID)   // attached or standalone
     }
     private var canSave: Bool { !title.trimmingCharacters(in: .whitespaces).isEmpty }
 
@@ -61,7 +61,9 @@ struct RecipeFormView: View {
                     }
 
                     Section {
-                        Button("Remove this recipe from the meal", role: .destructive) {
+                        Button(mealID == nil ? "Delete this recipe"
+                               : "Remove this recipe from the meal",
+                               role: .destructive) {
                             confirmDelete = true
                         }
                     }
@@ -79,9 +81,12 @@ struct RecipeFormView: View {
                             appState.updateRecipe(recipeID, title: title,
                                                   precise: precise, stepsText: stepsText)
                             dismiss()
-                        } else {
+                        } else if let mealID {
                             recipeID = appState.addRecipe(toMeal: mealID,
                                                           title: title, precise: precise)
+                        } else {
+                            recipeID = appState.createStandaloneRecipe(
+                                title: title, precise: precise)
                         }
                     }
                     .disabled(!canSave)

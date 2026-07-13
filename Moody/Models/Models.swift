@@ -92,6 +92,16 @@ struct LibraryRecipe: Identifiable, Equatable {
     var steps: [String]
 }
 
+/// First-class recipe browsing (Ria 2026-07-13: "a meal is a collection of
+/// recipes") — every recipe in the box, attached or standalone.
+struct RecipeSummary: Identifiable, Equatable {
+    let id: UUID
+    var title: String
+    var kindLabel: String
+    var itemCount: Int
+    var usedIn: [String]          // meal names; empty = standalone
+}
+
 struct LibraryRecipeItem: Identifiable, Equatable {
     let id: UUID
     var name: String

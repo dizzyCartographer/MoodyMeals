@@ -1,74 +1,27 @@
 import SwiftUI
 
-// SHOPPING (D-56 native) — the guarantee verdict, tiered runs as plain
-// navigation, add-your-own items, and the always-stocked shelf.
+// SHOPPING (reminders-ish per Ria 2026-07-13) — one flat checklist: every
+// run is a section, every item checks off IN PLACE with a round toggle,
+// quick-add lives in each section, and "finish" sits in the section header
+// once anything's checked. The engine completion (done run + purchase
+// records + guarantee recompute) rides that finish, same as before.
 
 struct ShoppingView: View {
     @EnvironmentObject var appState: AppState
 
-    @State private var newItemName = ""
+    private var atRiskAnywhere: Bool {
+        appState.runs.contains { $0.atRisk != nil }
+    }
 
     var body: some View {
         List {
             Section {
                 Label(appState.guaranteeLine,
-                      systemImage: appState.runs.compactMap(\.atRisk).first == nil
-                        ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                    .foregroundStyle(appState.runs.compactMap(\.atRisk).first == nil
-                        ? Palette.green.label : Palette.yellow.label)
+                      systemImage: atRiskAnywhere
+                        ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
+                    .foregroundStyle(atRiskAnywhere
+                        ? Palette.yellow.label : Palette.green.label)
                     .font(.callout.weight(.medium))
-            }
-
-            if appState.runs.isEmpty {
-                Section {
-                    Text("no runs on the board — planned dinners create them")
-                        .foregroundStyle(.secondary)
-                        .font(.callout)
-                }
-            } else {
-                Section("Runs") {
-                    ForEach(appState.runs) { run in
-                        NavigationLink(value: run.id) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                HStack {
-                                    Text(shoppingRunDisplayTitle(run.title))
-                                        .font(.body.weight(.medium))
-                                    Spacer()
-                                    Text("\(run.items.count)")
-                                        .font(.footnote.weight(.semibold))
-                                        .foregroundStyle(.secondary)
-                                }
-                                Text(run.protects)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
-                                if let atRisk = run.atRisk {
-                                    Text(atRisk)
-                                        .font(.caption)
-                                        .foregroundStyle(Palette.yellow.label)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Section {
-                HStack {
-                    TextField("add an item", text: $newItemName)
-                        .autocorrectionDisabled()
-                    Button("Add") {
-                        appState.addManualItem(newItemName,
-                                               toRun: appState.runs.first?.id ?? "topup")
-                        newItemName = ""
-                    }
-                    .disabled(newItemName.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-            } footer: {
-                Text("lands on the soonest run — movable from inside any run")
-            }
-
-            Section {
                 NavigationLink {
                     StaplesView()
                 } label: {
@@ -80,8 +33,121 @@ struct ShoppingView: View {
                     }
                 }
             }
+
+            if appState.runs.isEmpty {
+                Section {
+                    QuickAddRow(runID: "topup")
+                } footer: {
+                    Text("planned dinners create runs — anything you add here rides the next top-up")
+                }
+            }
+
+            ForEach(appState.runs) { run in
+                ShoppingRunSection(run: run)
+            }
         }
         .navigationTitle("Shopping")
+    }
+}
+
+private struct ShoppingRunSection: View {
+    @EnvironmentObject var appState: AppState
+    var run: ShoppingRun
+
+    private var checkedCount: Int {
+        run.items.filter { appState.isChecked(run.id, $0.name) }.count
+    }
+
+    var body: some View {
+        Section {
+            ForEach(run.items) { item in
+                CheckItemRow(runID: run.id, item: item)
+            }
+            QuickAddRow(runID: run.id)
+        } header: {
+            HStack {
+                Text(shoppingRunDisplayTitle(run.title))
+                Spacer()
+                if checkedCount > 0 {
+                    Button("Finish · \(checkedCount) of \(run.items.count)") {
+                        appState.completeRun(run.id)
+                    }
+                    .font(.caption.weight(.semibold))
+                    .textCase(nil)
+                }
+            }
+        } footer: {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(run.protects)
+                if let atRisk = run.atRisk {
+                    Text(atRisk).foregroundStyle(Palette.yellow.label)
+                }
+            }
+        }
+    }
+}
+
+private struct CheckItemRow: View {
+    @EnvironmentObject var appState: AppState
+    let runID: String
+    var item: ShoppingItem
+
+    private var checked: Bool { appState.isChecked(runID, item.name) }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button {
+                appState.toggleChecked(runID, item.name)
+            } label: {
+                Image(systemName: checked ? "largecircle.fill.circle" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(checked ? Palette.pink.color : Color.secondary)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("\(item.name), \(checked ? "checked" : "unchecked")")
+            Text(item.name)
+                .strikethrough(checked, color: .secondary)
+                .foregroundStyle(checked ? .secondary : .primary)
+            Spacer()
+            Text(item.category)
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { appState.toggleChecked(runID, item.name) }
+        .swipeActions(edge: .trailing) {
+            if appState.isManual(runID, item.name) {
+                Button("Remove", role: .destructive) {
+                    appState.removeManualItem(named: item.name, runID: runID)
+                }
+            }
+        }
+    }
+}
+
+private struct QuickAddRow: View {
+    @EnvironmentObject var appState: AppState
+    let runID: String
+
+    @State private var text = ""
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "plus.circle.fill")
+                .font(.title3)
+                .foregroundStyle(Palette.pink.color)
+            TextField("add an item", text: $text)
+                .autocorrectionDisabled()
+                .focused($focused)
+                .onSubmit {
+                    appState.addManualItem(text, toRun: runID)
+                    text = ""
+                    focused = true   // Reminders-style: keep adding
+                }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { focused = true }
     }
 }
 

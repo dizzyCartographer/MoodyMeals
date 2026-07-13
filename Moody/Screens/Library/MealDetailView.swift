@@ -13,6 +13,7 @@ struct MealDetailView: View {
     @State private var showEdit = false
     @State private var confirmRetire = false
     @State private var showNewRecipe = false
+    @State private var showAttach = false
     @State private var editingRecipe: RecipeSheetTarget?
 
     private var meal: LibraryMeal? { appState.library.first { $0.id == id } }
@@ -89,8 +90,9 @@ struct MealDetailView: View {
                 }
 
                 Section {
-                    Button {
-                        showNewRecipe = true
+                    Menu {
+                        Button("New recipe") { showNewRecipe = true }
+                        Button("Attach an existing recipe") { showAttach = true }
                     } label: {
                         Label("Add a recipe", systemImage: "plus")
                     }
@@ -119,6 +121,10 @@ struct MealDetailView: View {
             .sheet(isPresented: $showNewRecipe) {
                 RecipeFormView(mealID: id, recipeID: nil)
             }
+            .sheet(isPresented: $showAttach) {
+                AttachRecipeSheet(mealID: id,
+                                  attachedIDs: Set(meal.recipes.map(\.id)))
+            }
             .sheet(item: $editingRecipe) { target in
                 RecipeFormView(mealID: id, recipeID: target.id)
             }
@@ -132,6 +138,51 @@ struct MealDetailView: View {
         } else {
             Text("this meal isn't on file anymore")
                 .foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// Attach an existing first-class recipe to this meal.
+private struct AttachRecipeSheet: View {
+    @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) private var dismiss
+    let mealID: UUID
+    let attachedIDs: Set<UUID>
+
+    private var candidates: [RecipeSummary] {
+        appState.recipesAll.filter { !attachedIDs.contains($0.id) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if candidates.isEmpty {
+                    Text("every recipe on file is already in this meal")
+                        .foregroundStyle(.secondary)
+                }
+                ForEach(candidates) { recipe in
+                    Button {
+                        appState.attachRecipe(recipe.id, toMeal: mealID)
+                        dismiss()
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(recipe.title).foregroundStyle(.primary)
+                            Text(recipe.usedIn.isEmpty
+                                 ? "\(recipe.kindLabel) · not in a meal yet"
+                                 : "\(recipe.kindLabel) · in \(recipe.usedIn.joined(separator: ", "))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Attach a recipe")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
         }
     }
 }
