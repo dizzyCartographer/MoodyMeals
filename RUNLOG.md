@@ -17,6 +17,17 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [REVIEW-1] — Common-sense design review, pass 1 (2026-07-13 overnight, per Ria "review this app a couple times")
+- **Fixed now (ships as build 66):**
+  1. *Today had no "I know what I want" door* — decide-for-me was the only path onto tonight. Added "Choose tonight's dinner" (opens the same picker, HC-5 confirm included).
+  2. *Phantom plan entries* (the real find): the store grew dinners nobody planned — Sat Jul 11 and Tue Jul 14, each an EXACT `weekDates` hit for its moment's week. Root: the legacy `reconcileWeekEdits` write-back (old sticker week-view's edit path) mapping weekday-keyed diffs onto dates, still live after its writer views were atticed; plus the write-flavored debug hooks (one demonstrably double-fired across launches, 1.2s signature). **Deleted the entire write-back path** (`week` is a pure private(set) projection now; all plan writes go through assignMeal/clearPlan/togglePin) **and removed every write-class debug hook** (MOODY_SCREEN navigation hooks stay). TestFlight builds were never affected (Release ignores these env vars); the sim store was.
+  3. *Self-inflicted lesson, recorded:* purging the phantom rows via raw sqlite left dangling attendee join rows → white-screen crash at launch — the exact D-37/F14 crash class, recreated by hand. Dev store reset via the app's own wipe path; **rule: never raw-DELETE a SwiftData store with relationships.**
+  4. Stale pre-merge "MoodyMeals" app uninstalled from the sim (sat beside "Moody" on the springboard).
+- **Environment finding:** the iOS 26.5 sim's `simctl ui appearance dark` half-applies (reports dark, renders light) — dark mode is unverifiable here. Code audit: zero style overrides, pure system colors — native components adapt by construction. One-glance check on Ria's phone recommended.
+- **Queued (pass 2 / digest):** widgets still wear the sticker kit inside a native app (→ NB-5); month grid could use a "back to today" affordance; app icon still sticker-style (digest — keep or match the native look?).
+- Suite **109/109** after all removals.
+
+---
 ### [NB-4] — Reminders-ish shopping + first-class recipes (2026-07-13) — NEEDS-VISUAL-REVIEW
 - Outcome: **done**. Shopping root is now the checklist itself — no detail hop: round check circles toggle in place (strikethrough + dim on check), a pink ⊕ quick-add row inside every run section (submit keeps the keyboard for chain-adding, Reminders-style), "Finish · N of M" appears in the section header once anything's checked and fires the SAME engine completion as before (done run + purchase records + guarantee recompute + bought lines leave the lists). Run-detail screen deleted (git history keeps it). Guarantee + Always-stocked pinned at top.
 - Recipes are first-class: the Meals tab segments **Meals | Recipes**. The Recipes list shows every recipe in the box with kind, ingredient count, and which meals use it ("not in a meal yet" for standalones); + creates a standalone recipe (same editor, no meal required); meal detail's "Add a recipe" is now a menu — New recipe / Attach an existing recipe (attach sheet lists unattached-to-this-meal recipes; recipes are shareable across meals, engine relationship already allowed it). Editor lookups go through `libraryRecipe(id)`/`engineRecipes` so orphans edit the same as attached.

@@ -54,38 +54,11 @@ struct AppTabView: View {
     }
 
     /// SIMCTL_CHILD_MOODY_SCREEN=<today|plan|meals|shopping|settings|mealdetail|run>
+    /// Navigation only. The WRITE-flavored demo hooks (decide/addmeal/addrecipe/
+    /// completerun/assignfuture) are gone: they verified their features, then
+    /// one demonstrably double-fired across launches and seeded phantom data.
+    /// Verification writes go through targeted debug builds from now on.
     private func applyDebugRoute() {
-        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "addmeal" {
-            appState.createMeal(from: MealDraft(
-                title: "Debug added meal", notes: "created by MOODY_DEMO=addmeal"))
-        }
-        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "addrecipe",
-           let target = appState.library.first(where: { $0.name == "Debug added meal" }),
-           let recipeID = appState.addRecipe(toMeal: target.id,
-                                             title: "Debug sauce", precise: false) {
-            appState.addItem(.recipe(recipeID), name: "rice",
-                             amount: 2, unit: "cups", perishabilityRaw: "pantry")
-            appState.addItem(.recipe(recipeID), name: "debug spice blend",
-                             amount: nil, unit: nil, perishabilityRaw: "pantry")
-        }
-        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "completerun",
-           let run = appState.runs.first {
-            for item in run.items where !appState.isChecked(run.id, item.name) {
-                appState.toggleChecked(run.id, item.name)
-            }
-            appState.completeRun(run.id)
-        }
-        // NB verification: a real assignment 16 days out — past any single week.
-        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "assignfuture",
-           let meal = appState.library.first(where: { !$0.isRetired && !$0.isEatingOut }),
-           let date = Calendar.current.date(byAdding: .day, value: 16, to: .now) {
-            appState.assignMeal(meal.id, on: date, slotRaw: "dinner")
-        }
-        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "decide" {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                appState.decideForMe()
-            }
-        }
         guard let screen = ProcessInfo.processInfo.environment["MOODY_SCREEN"] else { return }
         switch screen {
         case "today": tab = .today

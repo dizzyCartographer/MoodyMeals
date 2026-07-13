@@ -5,6 +5,7 @@ import SwiftUI
 
 struct TodayView: View {
     @EnvironmentObject var appState: AppState
+    @State private var showPicker = false
 
     private var tonight: DayPlan { appState.tonight }
 
@@ -30,6 +31,15 @@ struct TodayView: View {
                 } label: {
                     Label("Decide for me", systemImage: "sparkles")
                         .font(.body.weight(.semibold))
+                }
+
+                // Review pass 1: "I know what I want" needs a door too —
+                // decide-for-me can't be the only way onto tonight.
+                Button {
+                    showPicker = true
+                } label: {
+                    Label(tonight.meal == nil ? "Choose tonight's dinner" : "Choose different",
+                          systemImage: "list.bullet")
                 }
 
                 if tonight.meal != nil {
@@ -67,6 +77,9 @@ struct TodayView: View {
             }
         }
         .navigationTitle("Today")
+        .sheet(isPresented: $showPicker) {
+            MealPickerSheet(date: .now, slotRaw: "dinner")
+        }
     }
 }
 

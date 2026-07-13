@@ -127,13 +127,12 @@ final class AppState: ObservableObject {
 
     // MARK: Plan (projection of this week's dinner PlanEntries)
 
-    @Published var week: [DayPlan] = [] {
-        didSet {
-            guard !isProjecting else { return }
-            reconcileWeekEdits(old: oldValue)   // direct view edits → engine
-            scheduleSave()
-        }
-    }
+    /// Pure projection now (widget snapshot + Today). The legacy write-back
+    /// (`reconcileWeekEdits`) is GONE: its weekday→date diff mapping produced
+    /// phantom entries (Sat Jul 11 / Tue Jul 14 — exact weekDates hits) after
+    /// its writer views moved to the attic. Plan mutations go through
+    /// assignMeal/clearPlan/togglePin exclusively.
+    @Published private(set) var week: [DayPlan] = []
 
     /// Today's row. Cold start is canon (PT-1): no entry ⇒ `meal == nil` and
     /// the home door renders the honest empty state — never fallback-as-plan.
@@ -880,32 +879,6 @@ final class AppState: ObservableObject {
         }
         projectAll()
         scheduleSave()
-    }
-
-    /// Direct view edits on `week` (WeekPlanView writes `week[i].meal` /
-    /// `.locked` in place) flow through to the engine, then the canonical
-    /// projection wins. Locks on entry-less days stay view-local (there is
-    /// nothing to lock yet) until the next projection.
-    private func reconcileWeekEdits(old: [DayPlan]) {
-        guard let context else { return }
-        var engineChanged = false
-        for plan in week {
-            guard let before = old.first(where: { $0.day == plan.day }),
-                  let date = weekDates.first(where: { Self.weekday(of: $0) == plan.day })
-            else { continue }
-            if plan.meal?.id != before.meal?.id, let slug = plan.meal?.id,
-               let engineMeal = engineMeal(forSlug: slug) {
-                _ = try? WeekPlan.assign(engineMeal, on: date, slot: .dinner,
-                                         attendees: engineMembers, in: context)
-                engineChanged = true
-            }
-            if plan.locked != before.locked,
-               let entry = try? WeekPlan.entry(on: date, slot: .dinner, in: context) {
-                try? WeekPlan.setLocked(plan.locked, entry: entry, in: context)
-                engineChanged = true
-            }
-        }
-        if engineChanged { projectAll() }
     }
 
     // MARK: - Shopping projection (their pure pipeline, presentation-mapped)
