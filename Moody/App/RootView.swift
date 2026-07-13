@@ -5,6 +5,8 @@ import SwiftUI
 
 enum Route: Hashable {
     case week, shopping, streaks, thread
+    case meals            // B-1 library
+    case meal(UUID)       // B-1 detail — the "tap a meal" destination
 }
 
 struct RootView: View {
@@ -21,6 +23,7 @@ struct RootView: View {
                 onOpenStreaks: { path.append(.streaks) },
                 onOpenWeek: { path.append(.week) },
                 onOpenShopping: { path.append(.shopping) },
+                onOpenMeals: { path.append(.meals) },
                 onOpenVent: { showVent = true },
                 onWin: { celebrations.celebrate(.everyday(message: "decided. done.")) }
             )
@@ -35,6 +38,10 @@ struct RootView: View {
                         StreaksView()
                     case .thread:
                         ThreadView()
+                    case .meals:
+                        MealLibraryView(onOpenMeal: { path.append(.meal($0)) })
+                    case .meal(let id):
+                        MealDetailView(id: id)
                     }
                 }
                 // The mockups have no top bar, and system/toolbar chrome is
@@ -102,6 +109,12 @@ struct RootView: View {
         // MOODY_DEMO=decide performs a real decide-for-me on launch (commit +
         // celebration) so both the confetti overlay and persistence can be
         // exercised headlessly. Independent of MOODY_SCREEN — works standalone.
+        // MOODY_DEMO=addmeal exercises the real create path headlessly
+        // (B-1 verification: create → relaunch → still in the library).
+        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "addmeal" {
+            appState.createMeal(from: MealDraft(
+                title: "Debug added meal", notes: "created by MOODY_DEMO=addmeal"))
+        }
         if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "decide" {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                 appState.decideForMe()
@@ -115,6 +128,7 @@ struct RootView: View {
         case "shopping": path = [.shopping]
         case "streaks": path = [.streaks]
         case "thread": path = [.thread]
+        case "meals": path = [.meals]
         case "vent": showVent = true
         case "onboarding": hasOnboarded = false
         default: break

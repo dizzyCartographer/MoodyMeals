@@ -12,7 +12,13 @@ final class GuaranteeCheckTests: XCTestCase {
         return try ModelContainer(for: schema, configurations: [config])
     }
 
-    private let now = Date.now
+    /// Pinned to today 10:00, not wall-clock: "later today" scenarios must not
+    /// cross midnight when the suite runs in the evening (found 2026-07-12 at
+    /// 22:07 — a now+2h run day-anchored to TOMORROW, so same-day coverage
+    /// correctly failed). Day-granularity behavior under test is unchanged.
+    private let now = Calendar.current.date(
+        byAdding: .hour, value: 10,
+        to: Calendar.current.startOfDay(for: .now))!
     private func days(_ n: Int) -> Date {
         Calendar.current.date(byAdding: .day, value: n, to: now)!
     }

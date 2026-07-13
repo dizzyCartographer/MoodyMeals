@@ -16,6 +16,13 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [B-1] — Meal library + detail (2026-07-12) — NEEDS-VISUAL-REVIEW
+- Outcome: **done, shipped-surface verified**. Three screens in the plain-but-kit register: library (search by name/tag, effort dots, derived GF chip per meal, all-timer star, retired sink dimmed to the bottom, "+ NEW MEAL"), detail (meta chips, per-member badges via the same D-35 derivation the Tonight card uses, composition read-only until B-2, notes, edit sheet, retire/bring-back — retire never deletes, D-39 spirit), and the create/edit form (engine-truthful: four effort levels, three slots, tags, all-timer/eating-out/calm-day). Facade grows a `library` projection + `createMeal/updateMeal/setMealRetired` mutations; views never see engine types (MealDraft is plain). Entry: "meals" chip on the fridge-door header; `MOODY_SCREEN=meals` + `MOODY_DEMO=addmeal` debug hooks.
+- Verified on-sim (D-54's reporting rule — the SURFACE, not just the engine): 19 meals render (16 seed + 2 lunch + debug row); GF chips truthful (regular-soy stir-fry "not GF" yellow, Chipotle freeform "GF — check" per D-38, chicken & rice "GF ✓" green); **create → plain relaunch → still in the library** (docs/screenshots/b1-library.png, b1-library-after-add.png).
+- En-route fix: `GuaranteeCheckTests` floated on wall-clock `Date.now` — at 22:07 its "run in two hours" crossed midnight and correctly failed same-day coverage (latent since M2-3, only reproducible within 2h of midnight). Pinned the class clock to today-10:00; scenario intent unchanged. Other test files audited: no other same-day hour arithmetic rides wall-clock.
+- Tests added: none in-engine (mutations are thin context writes through the proven facade path; UI is review-gated). Suite **109/109**.
+
+---
 ### [D-54] — Surface-reality audit + Basics pivot (2026-07-12, live on build 58)
 - Trigger: Ria's first real use — "none of the basics are even close." She's right; recorded without varnish.
 - **What's real:** the engine (18 models, GF safety, explosion→routing→guarantee, EventKit sync, exports) and its 109 tests; 7 demo-grade designed screens (home/week/shopping-summary/streaks/vent/thread/onboarding) wired to real projections (U-1/U-2 work is genuine).

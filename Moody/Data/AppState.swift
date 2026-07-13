@@ -289,6 +289,127 @@ final class AppState: ObservableObject {
         refreshEngineCaches()
         projectWeekAndHousehold()
         projectShopping()
+        projectLibrary()
+    }
+
+    // MARK: - Meal library (B-1: browse/detail/add/edit/retire — the doors
+    // to the engine's meals that the graft retired with the old UI)
+
+    @Published private(set) var library: [LibraryMeal] = []
+
+    private static func effortLabel(_ e: EffortLevel) -> String {
+        switch e {
+        case .noCook: "no cook"
+        case .assembly: "assembly"
+        case .simple: "simple"
+        case .involved: "involved"
+        }
+    }
+
+    private func projectLibrary() {
+        library = engineMeals.map { meal in
+            let verdict = Self.gfVerdict(meal)
+            var lines = meal.recipes
+                .sorted { $0.title < $1.title }
+                .map { "\($0.title) · \($0.items.count) ingredient\($0.items.count == 1 ? "" : "s")" }
+            if !meal.directItems.isEmpty {
+                lines.append("+ \(meal.directItems.count) direct item\(meal.directItems.count == 1 ? "" : "s")")
+            }
+            return LibraryMeal(
+                id: meal.id,
+                name: meal.title,
+                notes: meal.freeformNotes,
+                effortLabel: Self.effortLabel(meal.effort),
+                effortDots: Self.mappedEffort(meal.effort),
+                slots: meal.slots.map(\.rawValue),
+                tags: meal.themeTags,
+                isAllTimer: meal.isAllTimeFavorite,
+                isEatingOut: meal.isEatingOut,
+                requiresCalmDay: meal.requiresCalmDay,
+                rotation: meal.rotationState.rawValue,
+                gfLabel: verdict == .verified ? "GF ✓"
+                    : verdict == .containsGluten ? "not GF" : "GF — check",
+                gfSafe: verdict == .verified,
+                badges: badges(for: meal, attendees: engineMembers),
+                compositionLines: lines)
+        }
+    }
+
+    func draft(for id: UUID) -> MealDraft? {
+        guard let meal = engineMeals.first(where: { $0.id == id }) else { return nil }
+        return MealDraft(
+            title: meal.title,
+            notes: meal.freeformNotes,
+            effortRaw: meal.effort.rawValue,
+            slots: Set(meal.slots.map(\.rawValue)),
+            tagsText: meal.themeTags.joined(separator: ", "),
+            isAllTimer: meal.isAllTimeFavorite,
+            isEatingOut: meal.isEatingOut,
+            requiresCalmDay: meal.requiresCalmDay)
+    }
+
+    /// dinner-first stable order; an empty selection degrades to dinner —
+    /// a slotless meal would be silently unschedulable.
+    private static func slots(from raw: Set<String>) -> [SlotKind] {
+        let ordered: [SlotKind] = [.dinner, .breakfast, .lunch]
+        let picked = ordered.filter { raw.contains($0.rawValue) }
+        return picked.isEmpty ? [.dinner] : picked
+    }
+
+    private static func parseTags(_ text: String) -> [String] {
+        text.split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+    }
+
+    func createMeal(from draft: MealDraft) {
+        guard let context else { return }
+        let title = draft.title.trimmingCharacters(in: .whitespaces)
+        guard !title.isEmpty else { return }
+        context.insert(MoodyEngine.Meal(
+            title: title,
+            freeformNotes: draft.notes,
+            effort: EffortLevel(rawValue: draft.effortRaw) ?? .simple,
+            themeTags: Self.parseTags(draft.tagsText),
+            slots: Self.slots(from: draft.slots),
+            requiresCalmDay: draft.requiresCalmDay,
+            isEatingOut: draft.isEatingOut,
+            isAllTimeFavorite: draft.isAllTimer))
+        try? context.save()
+        projectAll()
+        scheduleSave()
+    }
+
+    func updateMeal(_ id: UUID, from draft: MealDraft) {
+        guard let context,
+              let meal = engineMeals.first(where: { $0.id == id }) else { return }
+        let title = draft.title.trimmingCharacters(in: .whitespaces)
+        guard !title.isEmpty else { return }
+        meal.title = title
+        meal.freeformNotes = draft.notes
+        meal.effort = EffortLevel(rawValue: draft.effortRaw) ?? meal.effort
+        meal.themeTags = Self.parseTags(draft.tagsText)
+        meal.slots = Self.slots(from: draft.slots)
+        meal.requiresCalmDay = draft.requiresCalmDay
+        meal.isEatingOut = draft.isEatingOut
+        meal.isAllTimeFavorite = draft.isAllTimer
+        meal.updatedAt = .now   // F15 interim: touch on edit
+        try? context.save()
+        projectAll()
+        scheduleSave()
+    }
+
+    /// Retire, never delete, from the library (D-39's spirit for meals too:
+    /// hidden from pickers, history intact). Plan entries keep their D-37
+    /// flag-and-refill rails; reactivating is the same one tap.
+    func setMealRetired(_ id: UUID, _ retired: Bool) {
+        guard let context,
+              let meal = engineMeals.first(where: { $0.id == id }) else { return }
+        meal.rotationState = retired ? .retired : .active
+        meal.updatedAt = .now
+        try? context.save()
+        projectAll()
+        scheduleSave()
     }
 
     private func refreshEngineCaches() {

@@ -60,6 +60,40 @@ struct SafetyBadgeInfo: Identifiable, Equatable {
     var id: String { text }
 }
 
+// MARK: - Meal library (B-1: the full-truth browse/detail projection —
+// engine identity, engine vocabulary; the card-sized `Meal` stays for widgets)
+
+struct LibraryMeal: Identifiable, Equatable {
+    let id: UUID                  // engine identity — mutations round-trip on it
+    var name: String
+    var notes: String
+    var effortLabel: String       // engine terms: no cook / assembly / simple / involved
+    var effortDots: Int           // 1–3 card mapping
+    var slots: [String]
+    var tags: [String]
+    var isAllTimer: Bool
+    var isEatingOut: Bool
+    var requiresCalmDay: Bool
+    var rotation: String          // active / resting / retired
+    var gfLabel: String           // "GF ✓" / "GF — check" / "not GF"
+    var gfSafe: Bool
+    var badges: [SafetyBadgeInfo]
+    var compositionLines: [String]
+    var isRetired: Bool { rotation == "retired" }
+}
+
+/// Form state for create/edit — plain types only (views never see engine enums).
+struct MealDraft: Equatable {
+    var title = ""
+    var notes = ""
+    var effortRaw = 2             // EffortLevel rawValue; 2 = simple
+    var slots: Set<String> = ["dinner"]
+    var tagsText = ""
+    var isAllTimer = false
+    var isEatingOut = false
+    var requiresCalmDay = false
+}
+
 // Codable via the slot's stable id ("her-1"…): PaletteSlot itself is design
 // system (not persisted); decode re-binds to the live palette so badge tints
 // follow palette swaps (law 6). Unknown ids degrade to green, never crash.

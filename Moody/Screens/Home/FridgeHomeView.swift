@@ -17,6 +17,7 @@ struct FridgeHomeView: View {
     var onOpenStreaks: (() -> Void)? = nil
     var onOpenWeek: (() -> Void)? = nil
     var onOpenShopping: (() -> Void)? = nil
+    var onOpenMeals: (() -> Void)? = nil   // B-1: the library door
     var onOpenVent: (() -> Void)? = nil
     /// Fired after decide-for-me commits — the everyday win (celebration wiring).
     var onWin: (() -> Void)? = nil
@@ -60,6 +61,21 @@ struct FridgeHomeView: View {
                 .font(.baloo(26, .heavy))
                 .foregroundStyle(Theme.ink)
             Spacer()
+            // B-1: the meal library door — quiet chip, kit register.
+            Button { onOpenMeals?() } label: {
+                Text("meals")
+                    .font(.nunito(11.5, .black))
+                    .foregroundStyle(Theme.ink)
+                    .padding(.horizontal, 11)
+                    .padding(.vertical, 5)
+                    .background(Theme.paper, in: Capsule())
+                    .overlay(Capsule().strokeBorder(Theme.ink, lineWidth: Theme.borderWidth))
+                    .hardShadow(Theme.ink, x: 2, y: 2)
+                    .frame(minHeight: 48)   // law 1: full-size hit target
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Meal library")
             HStack(spacing: 6) {
                 ForEach([Palette.pink, Palette.yellow, Palette.green]) { slot in
                     MagnetDot(color: slot.color)
