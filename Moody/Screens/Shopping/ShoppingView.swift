@@ -12,6 +12,10 @@ struct ShoppingView: View {
     /// Escalation actions — wiring happens later (AGENT_BRIEF §Navigation).
     var onRunAccepted: ((ShoppingRun) -> Void)? = nil
     var onSwapEscalation: ((ShoppingRun) -> Void)? = nil
+    /// B-4: run cards open their in-store checklist.
+    var onOpenRun: ((String) -> Void)? = nil
+
+    @State private var newItemName = ""
 
     private var topUp: ShoppingRun? { appState.runs.first { $0.tier == .tonightTopUp } }
     private var weekly: ShoppingRun? { appState.runs.first { $0.tier == .weekly } }
@@ -39,14 +43,40 @@ struct ShoppingView: View {
 
             if let topUp {
                 ShoppingTopUpCard(run: topUp,
-                                  onAccept: { onRunAccepted?(topUp) },
+                                  onAccept: { onOpenRun?(topUp.id) },
                                   onSwap: { onSwapEscalation?(topUp) })
+                    .onTapGesture { onOpenRun?(topUp.id) }
             }
             if let weekly {
                 ShoppingWeeklyCard(run: weekly)
+                    .onTapGesture { onOpenRun?(weekly.id) }
             }
             if let bulk {
                 ShoppingBulkCard(run: bulk)
+                    .onTapGesture { onOpenRun?(bulk.id) }
+            }
+
+            // B-4: add your own item from the root — it lands on the soonest
+            // run (moving it is a tap inside that run's checklist).
+            HStack(spacing: 6) {
+                TextField("add an item", text: $newItemName)
+                    .font(.nunito(13, .bold))
+                    .foregroundStyle(Theme.ink)
+                    .autocorrectionDisabled()
+                    .padding(.horizontal, 13)
+                    .frame(height: 48)
+                    .background(Theme.paper)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(Theme.ink, lineWidth: Theme.borderWidth))
+                Button("ADD") {
+                    appState.addManualItem(newItemName,
+                                           toRun: appState.runs.first?.id ?? "topup")
+                    newItemName = ""
+                }
+                .buttonStyle(PillButtonStyle(background: Palette.green.color))
+                .disabled(newItemName.trimmingCharacters(in: .whitespaces).isEmpty)
+                .opacity(newItemName.trimmingCharacters(in: .whitespaces).isEmpty ? 0.45 : 1)
             }
 
             Spacer(minLength: 0)
@@ -111,7 +141,7 @@ struct ShoppingTopUpCard: View {
                     .foregroundStyle(Theme.ink)
                 Spacer(minLength: 8)
                 // The single sticker moment on this screen (design law: max one).
-                Text("\(run.items.count) ITEMS")
+                Text("\(run.items.count) ITEM\(run.items.count == 1 ? "" : "S")")
                     .font(.nunito(10.5, .black))
                     .foregroundStyle(Theme.ink)
                     .padding(.horizontal, 8)
@@ -280,7 +310,7 @@ struct ShoppingStapleChip: View {
 // MARK: - Helpers
 
 /// "Tonight top-up" → "Tonight · top-up" (mockup titles use a middot after the day).
-private func shoppingRunDisplayTitle(_ title: String) -> String {
+func shoppingRunDisplayTitle(_ title: String) -> String {   // shared with run detail (B-4)
     guard let space = title.firstIndex(of: " ") else { return title }
     return title.replacingCharacters(in: space...space, with: " · ")
 }

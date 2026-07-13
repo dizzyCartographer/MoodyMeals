@@ -56,6 +56,7 @@
 		855973BE2D57077AA612E9FE /* SeedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37FB2E98E25BF494F1C32A88 /* SeedDataTests.swift */; };
 		8610279534AA52A1C65EC4AB /* People.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61CAE00CA5179E9AF844492 /* People.swift */; };
 		8D162E87CBC343A03FBA1E5E /* ShoppingExplosionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B7F3733EA2A0B2F8CBAAC8 /* ShoppingExplosionTests.swift */; };
+		8E1A7B86AC8EDEF09F864930 /* ShoppingRunDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5AC8B01A8581E77ABB63DF /* ShoppingRunDetailView.swift */; };
 		94CD0D79BB50F9F323829CBB /* MealDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7F3CCC6CBA3CAFDC8BEFC7 /* MealDetailView.swift */; };
 		9661BCA7ECA43FDB4C69628E /* WeekPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB949E436A065885308EA2F /* WeekPlanTests.swift */; };
 		996D382C3C0E203D0F7D3372 /* Quicksand-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 645E1EF658A22099828C7F40 /* Quicksand-SemiBold.ttf */; };
@@ -194,6 +195,7 @@
 		9AD54F3923E73B079932AED2 /* Shopping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shopping.swift; sourceTree = "<group>"; };
 		9B1B3E7490D56124C224586C /* MealLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealLibraryView.swift; sourceTree = "<group>"; };
 		9CF0CB8F29EC30D8BE14208C /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		9F5AC8B01A8581E77ABB63DF /* ShoppingRunDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRunDetailView.swift; sourceTree = "<group>"; };
 		A1ACF9801BB1E035CF260EC2 /* Tonight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tonight.swift; sourceTree = "<group>"; };
 		A2D2CC8F87F1418118F290C2 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		A2E68CEB05397E2F06B0E2F4 /* CalendarSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSyncService.swift; sourceTree = "<group>"; };
@@ -449,6 +451,7 @@
 		C102F43CA03B8C711B45414E /* Shopping */ = {
 			isa = PBXGroup;
 			children = (
+				9F5AC8B01A8581E77ABB63DF /* ShoppingRunDetailView.swift */,
 				B3562FB76F8DEE2EB61EF356 /* ShoppingView.swift */,
 			);
 			path = Shopping;
@@ -705,6 +708,7 @@
 				31728AB5EF8831EC28A50934 /* Persistence.swift in Sources */,
 				7D3316EEF5F4A41801B85276 /* RecipeEditorView.swift in Sources */,
 				F3EAF323A9147594D03883FD /* RootView.swift in Sources */,
+				8E1A7B86AC8EDEF09F864930 /* ShoppingRunDetailView.swift in Sources */,
 				1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */,
 				1D287A4F367E7B3D28518E75 /* StreaksView.swift in Sources */,
 				6217E4AB988272D64A1C08DB /* Theme.swift in Sources */,

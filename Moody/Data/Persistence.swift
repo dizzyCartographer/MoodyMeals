@@ -18,6 +18,53 @@ struct MoodySnapshot: Codable {
     var thread: [ThreadMessage]
     var sassLevel: Double
     var savedAt: Date
+    // B-4 additions — decodeIfPresent below keeps v2 snapshots loading (a
+    // missing key must never cost streak/thread state). Widgets ignore both.
+    var checkedItems: Set<String> = []          // "runID|itemName"
+    var manualItems: [ManualShoppingItem] = []
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, week, streak, tank, runs, thread, sassLevel,
+             savedAt, checkedItems, manualItems
+    }
+
+    init(schemaVersion: Int = Persistence.schemaVersion, week: [DayPlan],
+         streak: Streak, tank: Tank, runs: [ShoppingRun],
+         thread: [ThreadMessage], sassLevel: Double, savedAt: Date,
+         checkedItems: Set<String> = [], manualItems: [ManualShoppingItem] = []) {
+        self.schemaVersion = schemaVersion
+        self.week = week
+        self.streak = streak
+        self.tank = tank
+        self.runs = runs
+        self.thread = thread
+        self.sassLevel = sassLevel
+        self.savedAt = savedAt
+        self.checkedItems = checkedItems
+        self.manualItems = manualItems
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        schemaVersion = try c.decode(Int.self, forKey: .schemaVersion)
+        week = try c.decode([DayPlan].self, forKey: .week)
+        streak = try c.decode(Streak.self, forKey: .streak)
+        tank = try c.decode(Tank.self, forKey: .tank)
+        runs = try c.decode([ShoppingRun].self, forKey: .runs)
+        thread = try c.decode([ThreadMessage].self, forKey: .thread)
+        sassLevel = try c.decode(Double.self, forKey: .sassLevel)
+        savedAt = try c.decode(Date.self, forKey: .savedAt)
+        checkedItems = try c.decodeIfPresent(Set<String>.self, forKey: .checkedItems) ?? []
+        manualItems = try c.decodeIfPresent([ManualShoppingItem].self, forKey: .manualItems) ?? []
+    }
+}
+
+/// An item Ria added herself — not meal-driven, rides the chosen run's list
+/// and becomes a real PurchaseRecord if checked when the run completes.
+struct ManualShoppingItem: Codable, Identifiable, Equatable {
+    var id: UUID = UUID()
+    var name: String
+    var runID: String            // presentation run id: topup / weekly / bulk
 }
 
 enum Persistence {

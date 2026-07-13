@@ -7,6 +7,7 @@ enum Route: Hashable {
     case week, shopping, streaks, thread
     case meals            // B-1 library
     case meal(UUID)       // B-1 detail — the "tap a meal" destination
+    case run(String)      // B-4 in-store checklist ("topup"/"weekly"/"bulk")
 }
 
 struct RootView: View {
@@ -33,7 +34,7 @@ struct RootView: View {
                     case .week:
                         WeekPlanView(onOpenShopping: { path.append(.shopping) })
                     case .shopping:
-                        ShoppingView()
+                        ShoppingView(onOpenRun: { path.append(.run($0)) })
                     case .streaks:
                         StreaksView()
                     case .thread:
@@ -42,6 +43,8 @@ struct RootView: View {
                         MealLibraryView(onOpenMeal: { path.append(.meal($0)) })
                     case .meal(let id):
                         MealDetailView(id: id)
+                    case .run(let id):
+                        ShoppingRunDetailView(runID: id)
                     }
                 }
                 // The mockups have no top bar, and system/toolbar chrome is
@@ -127,6 +130,15 @@ struct RootView: View {
             appState.addItem(.recipe(recipeID), name: "debug spice blend",
                              amount: nil, unit: nil, perishabilityRaw: "pantry")
         }
+        // MOODY_DEMO=completerun (B-4): check every line of the first run and
+        // finish it — verifies purchase records + guarantee recompute headlessly.
+        if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "completerun",
+           let run = appState.runs.first {
+            for item in run.items where !appState.isChecked(run.id, item.name) {
+                appState.toggleChecked(run.id, item.name)
+            }
+            appState.completeRun(run.id)
+        }
         if ProcessInfo.processInfo.environment["MOODY_DEMO"] == "decide" {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                 appState.decideForMe()
@@ -141,6 +153,8 @@ struct RootView: View {
         case "streaks": path = [.streaks]
         case "thread": path = [.thread]
         case "meals": path = [.meals]
+        case "run":          // first run's checklist (B-4 screenshots)
+            if let first = appState.runs.first { path = [.shopping, .run(first.id)] }
         case "mealdetail":   // richest meal first — screenshots land somewhere real
             if let meal = appState.library.max(by: {
                 $0.recipes.count + $0.directItems.count

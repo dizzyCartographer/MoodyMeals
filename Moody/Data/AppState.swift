@@ -178,6 +178,15 @@ final class AppState: ObservableObject {
         }
     }
 
+    /// B-4 in-store state: checked lines (keys "runID|display name") and
+    /// Ria's own additions. Persisted in the snapshot; the ENGINE only ever
+    /// sees completions (done runs + purchase records).
+    @Published private(set) var checkedItems: Set<String> = []
+    @Published private(set) var manualItems: [ManualShoppingItem] = []
+    /// display name → raw ingredient name, rebuilt each projection — purchase
+    /// records must carry the raw name or the guarantee never matches them.
+    private var rawNameByRunItem: [String: String] = [:]
+
     private(set) var alwaysStocked: [ShoppingItem] = []
 
     // MARK: Thread (scripted v1 — swap MessageBank for a live generator later)
@@ -251,6 +260,7 @@ final class AppState: ObservableObject {
     private var engineMeals: [MoodyEngine.Meal] = []
     private var engineStaples: [StapleItem] = []
     private var engineIngredients: [Ingredient] = []
+    private var engineDoneRuns: [MoodyEngine.ShoppingRun] = []
     private var slugForMeal: [UUID: String] = [:]
     private var mealForSlug: [String: UUID] = [:]
     private var fallbackEngineID: UUID?
@@ -567,6 +577,9 @@ final class AppState: ObservableObject {
             sortBy: [SortDescriptor(\.name)]))) ?? []
         engineIngredients = (try? context.fetch(FetchDescriptor<Ingredient>(
             sortBy: [SortDescriptor(\.name)]))) ?? []
+        engineDoneRuns = ((try? context.fetch(FetchDescriptor<MoodyEngine.ShoppingRun>(
+            sortBy: [SortDescriptor(\.plannedDate)]))) ?? [])
+            .filter { $0.status == .done }
 
         // Stable slugs from titles; collisions get a numeric suffix.
         slugForMeal = [:]
@@ -854,6 +867,23 @@ final class AppState: ObservableObject {
         }
     }
 
+    /// Presentation run ids are stable ("topup"/"weekly"/"bulk") — check-off
+    /// keys, manual items, and routes all hang off them.
+    private static func runID(for tier: RunTier) -> String {
+        switch tier {
+        case .midweek: "topup"
+        case .weekly: "weekly"
+        case .bulk: "bulk"
+        }
+    }
+    static func engineTier(forRunID id: String) -> RunTier {
+        switch id {
+        case "topup": .midweek
+        case "weekly": .weekly
+        default: .bulk
+        }
+    }
+
     private func projectShopping() {
         guard let context, let weekEnd = weekDates.last,
               let horizon = Calendar.current.date(byAdding: .day, value: 1, to: weekEnd)
@@ -862,6 +892,7 @@ final class AppState: ObservableObject {
         let now = Date()
         let today = WeekPlan.dayAnchor(for: now)
         let entries = (try? ShoppingExplosion.entries(from: today, to: horizon, in: context)) ?? []
+        rawNameByRunItem = [:]
 
         // Three proposed runs: top-up today, weekly Wednesday, bulk Saturday
         // (run cadence is a placeholder until real run scheduling lands —
@@ -872,6 +903,34 @@ final class AppState: ObservableObject {
             (.bulk, Self.nextDate(calendarWeekday: 7, onOrAfter: today)),
         ]
 
+        // Completed runs cover their cycle window (mirrors GuaranteeCheck's
+        // doneWindows) — a bought item leaves the LISTS too, not just the
+        // violation math. B-4.
+        let doneSnapshots: [GuaranteeCheck.RunSnapshot] = engineDoneRuns.map { run in
+            GuaranteeCheck.RunSnapshot(
+                tier: run.tier, plannedDate: run.plannedDate, status: .done,
+                purchasedNames: Set(run.purchaseRecords.map { $0.itemName.lowercased() }))
+        }
+        let allRunDays = (candidateRuns.map { WeekPlan.dayAnchor(for: $0.plannedDate) }
+            + engineDoneRuns.map { WeekPlan.dayAnchor(for: $0.plannedDate) })
+            .sorted()
+        let doneWindows: [(names: Set<String>, start: Date, end: Date)] = doneSnapshots.map {
+            let start = WeekPlan.dayAnchor(for: $0.plannedDate)
+            let end = allRunDays.first { $0 > start } ?? .distantFuture
+            return ($0.purchasedNames, start, end)
+        }
+        func purchasedCovers(_ name: String, mealDay: Date,
+                             perishability: Perishability) -> Bool {
+            doneWindows.contains { window in
+                guard window.names.contains(name),
+                      mealDay >= window.start, mealDay <= window.end else { return false }
+                guard perishability == .freshShort else { return true }
+                let age = Calendar.current.dateComponents(
+                    [.day], from: window.start, to: mealDay).day ?? .max
+                return age <= TuningDefaults.freshShortShelfDays
+            }
+        }
+
         struct Bucket {
             var items: [ShoppingItem] = []
             var protects: [String] = []
@@ -881,6 +940,9 @@ final class AppState: ObservableObject {
         for entry in entries {
             guard let title = entry.meal?.title else { continue }
             for line in ShoppingExplosion.explode([entry]) {
+                if purchasedCovers(line.ingredientName.lowercased(),
+                                   mealDay: WeekPlan.dayAnchor(for: entry.date),
+                                   perishability: line.perishability) { continue }
                 guard case .routed(let index) = RunRouting.route(
                     perishability: line.perishability,
                     neededBy: entry.date,
@@ -889,25 +951,26 @@ final class AppState: ObservableObject {
                     now: now) else { continue }   // violations surface via the guarantee
                 let tier = candidateRuns[index].tier
                 var bucket = buckets[tier] ?? Bucket()
+                let display = RunRouting.exportText(for: line)
                 if bucket.seen.insert(line.ingredientName.lowercased()).inserted {
                     bucket.items.append(ShoppingItem(
-                        name: RunRouting.exportText(for: line),
+                        name: display,
                         category: Self.category(for: line.perishability)))
+                    rawNameByRunItem["\(Self.runID(for: tier))|\(display)"] = line.ingredientName
                 }
                 if !bucket.protects.contains(title) { bucket.protects.append(title) }
                 buckets[tier] = bucket
             }
         }
 
-        // The guarantee, from their check. The proposed trio doubles as the
-        // horizon: "covered thru X" = shop per these runs and every planned
-        // dinner through X is cookable.
+        // The guarantee, from their check: the proposed trio + every DONE run
+        // (purchases cover inside their windows).
         let result = GuaranteeCheck.check(
             entries: entries,
             runs: candidateRuns.map {
                 GuaranteeCheck.RunSnapshot(tier: $0.tier, plannedDate: $0.plannedDate,
                                            status: .confirmed)
-            },
+            } + doneSnapshots,
             now: now)
 
         // A violation's missing items ride the top-up card (GT-2's addMiniRun
@@ -949,6 +1012,27 @@ final class AppState: ObservableObject {
                 items: bucket.items,
                 protects: "covers \(bucket.protects.joined(separator: " + "))"))
         }
+
+        // Ria's own items ride their chosen run; a run that exists only
+        // because of her additions still gets a card. B-4.
+        for manual in manualItems {
+            let item = ShoppingItem(name: manual.name, category: "yours")
+            rawNameByRunItem["\(manual.runID)|\(manual.name)"] = manual.name
+            if let index = projected.firstIndex(where: { $0.id == manual.runID }) {
+                projected[index].items.append(item)
+            } else {
+                let (title, tier): (String, ShoppingRun.Tier) = switch manual.runID {
+                case "topup": ("Tonight top-up", .tonightTopUp)
+                case "weekly": ("\(Self.weekday(of: candidateRuns[1].plannedDate).long) weekly", .weekly)
+                default: ("\(Self.weekday(of: candidateRuns[2].plannedDate).long) bulk", .bulk)
+                }
+                projected.append(ShoppingRun(id: manual.runID, title: title,
+                                             tier: tier, items: [item],
+                                             protects: "your additions"))
+            }
+        }
+        let order = ["topup": 0, "weekly": 1, "bulk": 2]
+        projected.sort { order[$0.id, default: 3] < order[$1.id, default: 3] }
         runs = projected
 
         if let violation = result.violations.first {
@@ -965,6 +1049,65 @@ final class AppState: ObservableObject {
         } else {
             guaranteeLine = "every planned dinner is covered ✓"
         }
+    }
+
+    // MARK: - Shopping interactions (B-4)
+
+    func isChecked(_ runID: String, _ itemName: String) -> Bool {
+        checkedItems.contains("\(runID)|\(itemName)")
+    }
+
+    func toggleChecked(_ runID: String, _ itemName: String) {
+        checkedItems.formSymmetricDifference(["\(runID)|\(itemName)"])
+        scheduleSave()
+    }
+
+    func addManualItem(_ name: String, toRun runID: String) {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        manualItems.append(ManualShoppingItem(name: trimmed, runID: runID))
+        projectAll()
+        scheduleSave()
+    }
+
+    func removeManualItem(named name: String, runID: String) {
+        manualItems.removeAll { $0.runID == runID && $0.name == name }
+        checkedItems.remove("\(runID)|\(name)")
+        projectAll()
+        scheduleSave()
+    }
+
+    func isManual(_ runID: String, _ itemName: String) -> Bool {
+        manualItems.contains { $0.runID == runID && $0.name == itemName }
+    }
+
+    /// Finishing a run is the engine-true moment: a DONE ShoppingRun with a
+    /// PurchaseRecord per checked line lands in the store, the guarantee
+    /// recomputes over the new coverage window, and bought lines leave the
+    /// remaining lists. Unchecked lines simply stay for a later run.
+    func completeRun(_ runID: String) {
+        guard let context,
+              let run = runs.first(where: { $0.id == runID }) else { return }
+        let checkedNames = run.items.map(\.name).filter { isChecked(runID, $0) }
+        guard !checkedNames.isEmpty else { return }
+
+        let now = Date()
+        let engineRun = MoodyEngine.ShoppingRun(
+            tier: Self.engineTier(forRunID: runID), plannedDate: now, status: .done)
+        context.insert(engineRun)
+        for display in checkedNames {
+            let raw = rawNameByRunItem["\(runID)|\(display)"] ?? display
+            context.insert(PurchaseRecord(
+                itemName: raw, purchasedAt: now,
+                ingredient: engineIngredients.first {
+                    $0.name.compare(raw, options: .caseInsensitive) == .orderedSame
+                },
+                sourceRun: engineRun))
+        }
+        // Bought manual items leave the list; unchecked ones stay put.
+        manualItems.removeAll { $0.runID == runID && checkedNames.contains($0.name) }
+        checkedItems = checkedItems.filter { !$0.hasPrefix("\(runID)|") }
+        saveAndReproject()
     }
 
     // MARK: - Persistence (App Group snapshot: widget contract + local state)
@@ -988,7 +1131,9 @@ final class AppState: ObservableObject {
             guard let self, !Task.isCancelled else { return }
             Persistence.save(MoodySnapshot(week: week, streak: streak, tank: tank,
                                            runs: runs, thread: thread,
-                                           sassLevel: sassLevel, savedAt: Date()))
+                                           sassLevel: sassLevel, savedAt: Date(),
+                                           checkedItems: checkedItems,
+                                           manualItems: manualItems))
         }
     }
 
@@ -1001,6 +1146,8 @@ final class AppState: ObservableObject {
         tank = snapshot.tank
         thread = snapshot.thread
         sassLevel = snapshot.sassLevel
+        checkedItems = snapshot.checkedItems
+        manualItems = snapshot.manualItems
     }
 }
 
