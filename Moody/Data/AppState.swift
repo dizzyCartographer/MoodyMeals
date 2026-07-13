@@ -1056,16 +1056,27 @@ final class AppState: ObservableObject {
     // MARK: - Plan calendar (NB: the in-app calendar — assign any future date)
 
     @Published private(set) var planDays: [PlanDay] = []
+    /// Every planned day, unbounded — the month grid looks days up here.
+    @Published private(set) var planByDay: [Date: PlanCell] = [:]
     private static let planHorizonDays = 28
 
     private func projectPlan() {
-        guard let context else { planDays = []; return }
+        guard let context else { planDays = []; planByDay = [:]; return }
         let calendar = Calendar.current
         let today = WeekPlan.dayAnchor(for: .now)
         guard let end = calendar.date(byAdding: .day, value: Self.planHorizonDays,
                                       to: today) else { planDays = []; return }
-        let entries = ((try? context.fetch(FetchDescriptor<PlanEntry>())) ?? [])
-            .filter { $0.date >= today && $0.date < end }
+        let allEntries = (try? context.fetch(FetchDescriptor<PlanEntry>())) ?? []
+
+        var byDayAll: [Date: [SlotKind: PlanEntry]] = [:]
+        for entry in allEntries {
+            byDayAll[WeekPlan.dayAnchor(for: entry.date), default: [:]][entry.slot] = entry
+        }
+        planByDay = byDayAll.mapValues {
+            PlanCell(dinner: planSlotInfo($0[.dinner]), lunch: planSlotInfo($0[.lunch]))
+        }
+
+        let entries = allEntries.filter { $0.date >= today && $0.date < end }
         var bySlot: [Date: [SlotKind: PlanEntry]] = [:]
         for entry in entries {
             bySlot[WeekPlan.dayAnchor(for: entry.date), default: [:]][entry.slot] = entry

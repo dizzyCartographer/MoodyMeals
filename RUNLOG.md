@@ -17,6 +17,12 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [NB-2] — The actual calendar (2026-07-13) — NEEDS-VISUAL-REVIEW
+- Outcome: **done**. Plan's default is now a real month grid: weekday columns (locale first-weekday), today ringed in the accent, past days dimmed, **dinner/lunch dots on every planned day** (unbounded `planByDay` projection — Jul 28's assignment shows from the July view) with a small legend, chevron month navigation both directions. Tap any date → **day plan sheet** (medium/large detents): Dinner + Lunch sections with choose/change (shared HC-5 picker), pin/unpin, clear. The Week segment keeps the multi-day list ("add multiple meals from the same screen"). A11y: each day cell reads its date + what's planned.
+- Verified on-sim: July grid renders with dots on 9/10/11/12 (history) and 28 (the future assignment); screenshot nb-plan-month.png. Suite **109/109**.
+- Ships as build 63.
+
+---
 ### [NB-1] — The native basics reset (2026-07-13, D-56) — NEEDS-VISUAL-REVIEW
 - Outcome: **done, one pass, engine untouched**. New shell `AppTabView` (Today · Plan · Meals · Shopping · Settings, palette-pink tint); **PlanView is the in-app calendar that was missing** — 28 rolling days from today, dinner + optional lunch per day (D-40 honored), searchable meal picker on every slot, pin/unpin + clear as swipes (D-55 vocabulary), and **HC-5's warn-confirm finally reachable**: picking a non-verified meal while a GF-guaranteed member is home states it plainly with named members and asks once (engine `requiresGFConfirmation`/`gfAttendeeNames`, test-pinned since M1-1). TodayView: tonight + badges, decide/swap, capacity, guarantee line. Library/Detail/Forms/Recipe editor/Shopping/Run detail/Settings all re-dressed native (system type, Lists/Forms; palette survives as accent + truthful badge tints). Facade gained `planDays` projection + assign/clear/togglePin any-date mutations + `gfConfirmationNames`.
 - **Removed from the app per D-56** (parked in `Attic/StickerAisle/`, out of target; full look tagged `sticker-aisle-v1`): fridge home, sticker week plan, group thread, streaks screens, the Vent, celebrations, persona-cast onboarding (app now opens straight into Today). Streak/thread DATA stays in the snapshot — widgets keep working, revival stays cheap. Dead mockup buttons ("on it"/swap-escalation) died with the old shopping cards.

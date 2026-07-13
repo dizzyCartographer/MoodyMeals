@@ -112,6 +112,12 @@ struct PlanDay: Identifiable, Equatable {
     var lunch: PlanSlotInfo?
 }
 
+/// Month-grid lookup: what's on a given day (any date, not just the window).
+struct PlanCell: Equatable {
+    var dinner: PlanSlotInfo?
+    var lunch: PlanSlotInfo?
+}
+
 struct PlanSlotInfo: Equatable {
     var mealID: UUID?             // nil = D-37 needs-refill flag state
     var name: String
