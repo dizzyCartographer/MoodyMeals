@@ -20,3 +20,6 @@ Secrets.plist
 
 # Note: Moody.xcodeproj is committed for convenience, but it is GENERATED —
 # project.yml is the source of truth; run `xcodegen generate` after file changes.
+
+# XcodeGen collision artifacts (concurrent generate while the project is open)
+Moody [0-9]*.xcodeproj/
