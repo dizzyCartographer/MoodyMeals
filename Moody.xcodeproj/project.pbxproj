@@ -36,6 +36,7 @@
 		4925DAC6F29A52AF33C9CFDE /* MoodyEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		52344761A9FEAD87AFD2251B /* PeopleModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */; };
 		54FA9E8E1EA55C402680D0AE /* MoodyWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		59C62FD1607E110C0737C002 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C088FCB7F3C23005388293D /* SettingsView.swift */; };
 		5E9F487BD05FFE95D779C7FF /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A1A60E4527E5234B155866 /* SeedData.swift */; };
 		5F8650E01CAD7C25FCA284A8 /* WeekPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF41D1A8B45D8A6A3202846 /* WeekPlan.swift */; };
 		6217E4AB988272D64A1C08DB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4789DA996D85611488552513 /* Theme.swift */; };
@@ -156,6 +157,7 @@
 		057D46143F898B85C50403E4 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
 		09A3C8D635A57A293CF7D233 /* CRUDPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRUDPersistenceTests.swift; sourceTree = "<group>"; };
 		09CBEEE8D1801A22915919BC /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		0C088FCB7F3C23005388293D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1757671D9E5D6E4CEED77B29 /* TonightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTests.swift; sourceTree = "<group>"; };
 		1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoodyEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20BD322121F2A369501AAF53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -247,6 +249,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00CCA9DE80124C1BC473A6D3 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				0C088FCB7F3C23005388293D /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		00ECCF194C4036EEA4A4F5FD /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -507,6 +517,7 @@
 				5BD082B819DB7325D5320138 /* Home */,
 				081B1E3CB4237DAD1010C115 /* Library */,
 				A334E783EF36A8A88EC46AE9 /* Onboarding */,
+				00CCA9DE80124C1BC473A6D3 /* Settings */,
 				C102F43CA03B8C711B45414E /* Shopping */,
 				E2EB273D1CD5A2317E9828A7 /* Streaks */,
 				DD89A41D0679CF5D738750CC /* Thread */,
@@ -708,6 +719,7 @@
 				31728AB5EF8831EC28A50934 /* Persistence.swift in Sources */,
 				7D3316EEF5F4A41801B85276 /* RecipeEditorView.swift in Sources */,
 				F3EAF323A9147594D03883FD /* RootView.swift in Sources */,
+				59C62FD1607E110C0737C002 /* SettingsView.swift in Sources */,
 				8E1A7B86AC8EDEF09F864930 /* ShoppingRunDetailView.swift in Sources */,
 				1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */,
 				1D287A4F367E7B3D28518E75 /* StreaksView.swift in Sources */,

@@ -100,6 +100,22 @@ struct LibraryRecipeItem: Identifiable, Equatable {
     var gfSafe: Bool
 }
 
+// MARK: - Settings (B-5: household/profile doors)
+
+struct SettingsMember: Identifiable, Equatable {
+    let id: UUID
+    var name: String
+    var isAdult: Bool
+    var isGFHard: Bool          // the celiac hard requirement — deliberate weight
+    var appetiteBase: Double    // servings multiplier
+}
+
+struct SettingsStaple: Identifiable, Equatable {
+    let id: UUID
+    var name: String
+    var minOnHand: String
+}
+
 /// Form state for create/edit — plain types only (views never see engine enums).
 struct MealDraft: Equatable {
     var title = ""

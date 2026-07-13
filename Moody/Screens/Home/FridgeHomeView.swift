@@ -18,6 +18,7 @@ struct FridgeHomeView: View {
     var onOpenWeek: (() -> Void)? = nil
     var onOpenShopping: (() -> Void)? = nil
     var onOpenMeals: (() -> Void)? = nil   // B-1: the library door
+    var onOpenSettings: (() -> Void)? = nil   // B-5: household · staples · calendar
     var onOpenVent: (() -> Void)? = nil
     /// Fired after decide-for-me commits — the everyday win (celebration wiring).
     var onWin: (() -> Void)? = nil
@@ -61,6 +62,20 @@ struct FridgeHomeView: View {
                 .font(.baloo(26, .heavy))
                 .foregroundStyle(Theme.ink)
             Spacer()
+            // B-5: settings door — same quiet register as the meals chip.
+            Button { onOpenSettings?() } label: {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 13, weight: .heavy))
+                    .foregroundStyle(Theme.ink)
+                    .frame(width: 30, height: 30)
+                    .background(Theme.paper, in: Circle())
+                    .overlay(Circle().strokeBorder(Theme.ink, lineWidth: Theme.borderWidth))
+                    .hardShadow(Theme.ink, x: 2, y: 2)
+                    .frame(minWidth: 44, minHeight: 48)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Settings")
             // B-1: the meal library door — quiet chip, kit register.
             Button { onOpenMeals?() } label: {
                 Text("meals")

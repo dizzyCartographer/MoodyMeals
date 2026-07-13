@@ -303,6 +303,7 @@ final class AppState: ObservableObject {
         projectWeekAndHousehold()
         projectShopping()
         projectLibrary()
+        projectSettings()
     }
 
     // MARK: - Meal library (B-1: browse/detail/add/edit/retire — the doors
@@ -1051,6 +1052,86 @@ final class AppState: ObservableObject {
         }
     }
 
+    // MARK: - Settings (B-5 household/staples + B-6 calendar sync)
+
+    @Published private(set) var settingsMembers: [SettingsMember] = []
+    @Published private(set) var settingsStaples: [SettingsStaple] = []
+    @Published private(set) var calendarSyncEnabled =
+        UserDefaults.standard.bool(forKey: "calendarSyncEnabled")
+
+    private lazy var calendarSync = CalendarSyncService(store: EventKitCalendarStore())
+
+    /// Status line under the toggle — CAL-3: denial is visible, never silent.
+    var calendarSyncStatus: String {
+        if !calendarSyncEnabled { return "off — dinners stay in the app only" }
+        calendarSync.refreshAvailability()
+        if let reason = calendarSync.unavailableReason { return reason }
+        return "planned dinners appear on the Moody calendar"
+    }
+
+    private func projectSettings() {
+        settingsMembers = engineMembers.map { member in
+            SettingsMember(id: member.id, name: member.name, isAdult: member.isAdult,
+                           isGFHard: member.hardRequirements.contains(.glutenFree),
+                           appetiteBase: member.appetiteBase)
+        }
+        settingsStaples = engineStaples.map {
+            SettingsStaple(id: $0.id, name: $0.name, minOnHand: $0.minOnHand)
+        }
+    }
+
+    func updateMember(_ id: UUID, name: String, appetiteBase: Double, isGFHard: Bool) {
+        guard let member = engineMembers.first(where: { $0.id == id }) else { return }
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty { member.name = trimmed }
+        member.appetiteBase = appetiteBase
+        let has = member.hardRequirements.contains(.glutenFree)
+        if isGFHard != has {
+            if isGFHard {
+                member.hardRequirements.append(.glutenFree)
+            } else {
+                member.hardRequirements.removeAll { $0 == .glutenFree }
+            }
+        }
+        member.updatedAt = .now
+        saveAndReproject()   // badges, pools, and pickers re-derive everywhere
+    }
+
+    func addStaple(_ name: String, minOnHand: String) {
+        guard let context else { return }
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        let amount = minOnHand.trimmingCharacters(in: .whitespaces)
+        context.insert(StapleItem(name: trimmed,
+                                  minOnHand: amount.isEmpty ? "1" : amount))
+        saveAndReproject()
+    }
+
+    func removeStaple(_ id: UUID) {
+        guard let context,
+              let staple = engineStaples.first(where: { $0.id == id }) else { return }
+        context.delete(staple)   // a list row, not the ingredient catalog (D-39 intact)
+        saveAndReproject()
+    }
+
+    func setCalendarSync(_ enabled: Bool) {
+        calendarSyncEnabled = enabled
+        UserDefaults.standard.set(enabled, forKey: "calendarSyncEnabled")
+        guard enabled, let context else { return }
+        Task { @MainActor in
+            await calendarSync.requestAccessIfNeeded()
+            if calendarSync.isAvailable { calendarSync.syncAll(in: context) }
+            objectWillChange.send()   // status line refresh either way
+        }
+    }
+
+    /// Keeps the device calendar current after any plan mutation (debounced
+    /// alongside the snapshot save; a no-op when off or unavailable).
+    private func syncCalendarIfEnabled() {
+        guard calendarSyncEnabled, calendarSync.isAvailable, let context else { return }
+        calendarSync.syncAll(in: context)
+    }
+
     // MARK: - Shopping interactions (B-4)
 
     func isChecked(_ runID: String, _ itemName: String) -> Bool {
@@ -1134,6 +1215,7 @@ final class AppState: ObservableObject {
                                            sassLevel: sassLevel, savedAt: Date(),
                                            checkedItems: checkedItems,
                                            manualItems: manualItems))
+            syncCalendarIfEnabled()   // B-6: the device calendar follows the plan
         }
     }
 

@@ -17,6 +17,13 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [B-5/B-6] — Settings: household · staples · calendar (2026-07-13) — NEEDS-VISUAL-REVIEW
+- Outcome: **done**. Gear door on the fridge header → Settings: HOUSEHOLD (all five members, derived chips — Caddie "GF — guaranteed", Chad "×1.5"; tap → editor with name, servings slider ×1–×2, and the GF guarantee toggle where REMOVAL asks once in plain declarative words — deliberate weight per the design brief, D-55 register, adding is frictionless), ALWAYS STOCKED (the D-6 lifeline shelf: real engine staples listed with amounts, add/remove — rows, not the ingredient catalog, D-39 intact), CALENDAR (B-6: "dinners on your calendar" toggle → permission request → syncAll; CAL-3's honest status line shows off/denied/on states; syncAll rides the debounced save so the device calendar follows every plan mutation), About (version/build).
+- Palette editing deliberately split to B-7 — the 5 slots are static design-system constants; real editing needs the store refactor + tint derivation, not a midnight bolt-on. Settings ships without a fake door.
+- Verified on-sim: all five members with truthful chips, Elsie's actual seeded lifeline (garbanzo beans ×2 cans, sandwich bread ×1 loaf) editable, calendar status honest while off. Screenshot: b5-settings.png. On-device calendar verification rides Ria's next build (simulator EventKit ≠ her Calendar).
+- Tests added: none in-engine (CalendarSyncService is CAL-1..4 test-pinned already; settings mutations are thin context writes). Suite **109/109**.
+
+---
 ### [B-4] — Shopping checklist + manual add + real completion (2026-07-13) — NEEDS-VISUAL-REVIEW
 - Outcome: **done, engine-true end to end**. Run cards open an in-store checklist (48pt check rows, persisted in the snapshot via backward-compatible decodeIfPresent fields — a v2 snapshot missing them never costs streak/thread state). "Add an item" exists on the shopping root (rides the soonest run) and inside every run; your items carry a "yours" category, removable, and a run that exists only because of your additions still gets a card. **Completing a run is the engine moment:** "N OF M CAME HOME" inserts a DONE `ShoppingRun` + one `PurchaseRecord` per checked line — mapped back to RAW ingredient names (display names carry export qualifiers the guarantee would never match), unchecked lines stay for a later run, and purchased manual items leave the list.
 - Coverage math: projection now feeds DONE runs into `GuaranteeCheck` as RunSnapshots with purchasedNames AND mirrors its cycle-window logic when bucketing, so a bought item leaves the remaining lists inside its window (fresh items respect `freshShortShelfDays`).

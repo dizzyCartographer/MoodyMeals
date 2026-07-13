@@ -8,6 +8,7 @@ enum Route: Hashable {
     case meals            // B-1 library
     case meal(UUID)       // B-1 detail — the "tap a meal" destination
     case run(String)      // B-4 in-store checklist ("topup"/"weekly"/"bulk")
+    case settings         // B-5/B-6 household · staples · calendar
 }
 
 struct RootView: View {
@@ -25,6 +26,7 @@ struct RootView: View {
                 onOpenWeek: { path.append(.week) },
                 onOpenShopping: { path.append(.shopping) },
                 onOpenMeals: { path.append(.meals) },
+                onOpenSettings: { path.append(.settings) },
                 onOpenVent: { showVent = true },
                 onWin: { celebrations.celebrate(.everyday(message: "decided. done.")) }
             )
@@ -45,6 +47,8 @@ struct RootView: View {
                         MealDetailView(id: id)
                     case .run(let id):
                         ShoppingRunDetailView(runID: id)
+                    case .settings:
+                        SettingsView()
                     }
                 }
                 // The mockups have no top bar, and system/toolbar chrome is
@@ -153,6 +157,7 @@ struct RootView: View {
         case "streaks": path = [.streaks]
         case "thread": path = [.thread]
         case "meals": path = [.meals]
+        case "settings": path = [.settings]
         case "run":          // first run's checklist (B-4 screenshots)
             if let first = appState.runs.first { path = [.shopping, .run(first.id)] }
         case "mealdetail":   // richest meal first — screenshots land somewhere real
