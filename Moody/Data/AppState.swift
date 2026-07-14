@@ -1340,6 +1340,84 @@ final class AppState: ObservableObject {
         saveAndReproject()
     }
 
+    // MARK: SHOP-3 — the Reminders mirror (watch / family sharing / Siri)
+
+    @Published private(set) var remindersSyncEnabled =
+        UserDefaults.standard.bool(forKey: "remindersSyncEnabled")
+
+    private lazy var remindersStore = EventKitRemindersStore()
+    /// Titles the mirror pushed — only these may ever be removed from
+    /// Reminders (anything else there is the user's own). Persisted.
+    private var managedReminderTitles: Set<String> = []
+    private var isSyncingReminders = false
+
+    /// Status line under the toggle — CAL-3: denial is visible, never silent.
+    var remindersSyncStatus: String {
+        if !remindersSyncEnabled { return "off — the list stays in the app only" }
+        if remindersStore.authorization == .denied {
+            return "Reminders access is off — the list here keeps working; access lives in iOS Settings"
+        }
+        return "the list mirrors to \u{201C}\(RemindersSync.listName)\u{201D} in Reminders — watch, family sharing, and Siri all reach it there"
+    }
+
+    func setRemindersSync(_ enabled: Bool) {
+        remindersSyncEnabled = enabled
+        UserDefaults.standard.set(enabled, forKey: "remindersSyncEnabled")
+        guard enabled else { return }
+        Task { @MainActor in
+            await syncReminders()
+            objectWillChange.send()   // status line refresh either way
+        }
+    }
+
+    /// ShoppingView calls this on appear — completions made on the watch or
+    /// by family land in the app without waiting for a local mutation.
+    func refreshRemindersFromOutside() {
+        guard remindersSyncEnabled else { return }
+        Task { @MainActor in await syncReminders() }
+    }
+
+    /// The mirror's view of the list: every line with its checked state,
+    /// titled exactly as displayed (and as check-off keys them).
+    private var reminderLines: [RemindersSync.AppLine] {
+        runs.flatMap { run in
+            run.items.map {
+                RemindersSync.AppLine(title: $0.name,
+                                      isChecked: isChecked(run.id, $0.name))
+            }
+        }
+    }
+
+    @MainActor
+    private func syncReminders() async {
+        guard remindersSyncEnabled, !isSyncingReminders else { return }
+        isSyncingReminders = true
+        defer { isSyncingReminders = false }
+        let outcome = await RemindersSync.sync(
+            lines: reminderLines,
+            managedTitles: managedReminderTitles,
+            store: remindersStore)
+        guard case .synced(let changes) = outcome else { return }
+        managedReminderTitles = changes.managedTitles
+        var mutated = false
+        // Completed out there → checked here (keyed to whichever run shows it).
+        for title in changes.checkedTitles {
+            for run in runs where run.items.contains(where: { $0.name == title }) {
+                if checkedItems.insert("\(run.id)|\(title)").inserted { mutated = true }
+            }
+        }
+        // Added out there (Siri/watch/family) → the user's own items here.
+        for title in changes.importedTitles
+        where !manualItems.contains(where: { $0.name == title }) {
+            manualItems.append(ManualShoppingItem(name: title, runID: "topup"))
+            mutated = true
+        }
+        if mutated {
+            projectAll()      // imported items enter the list surface
+            scheduleSave()
+        }
+    }
+
     func setCalendarSync(_ enabled: Bool) {
         calendarSyncEnabled = enabled
         UserDefaults.standard.set(enabled, forKey: "calendarSyncEnabled")
@@ -1440,8 +1518,10 @@ final class AppState: ObservableObject {
                                            runs: runs, thread: thread,
                                            sassLevel: sassLevel, savedAt: Date(),
                                            checkedItems: checkedItems,
-                                           manualItems: manualItems))
+                                           manualItems: manualItems,
+                                           managedReminderTitles: managedReminderTitles))
             syncCalendarIfEnabled()   // B-6: the device calendar follows the plan
+            await syncReminders()     // SHOP-3: the Reminders list follows too
         }
     }
 
@@ -1456,6 +1536,7 @@ final class AppState: ObservableObject {
         sassLevel = snapshot.sassLevel
         checkedItems = snapshot.checkedItems
         manualItems = snapshot.manualItems
+        managedReminderTitles = snapshot.managedReminderTitles
     }
 }
 

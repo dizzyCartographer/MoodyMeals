@@ -181,6 +181,10 @@ protocol RemindersStore {
     func requestAccess() async -> Bool
     /// Adds an item to the named list (creating the list if needed).
     func addItem(_ title: String, toList listName: String) throws
+    /// Every reminder currently in the named list ([] if the list is absent).
+    func items(inList listName: String) async throws -> [ReminderItem]
+    func setCompleted(_ completed: Bool, itemID: String) throws
+    func removeItem(itemID: String) throws
 }
 
 @MainActor

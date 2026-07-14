@@ -224,6 +224,11 @@ final class ShoppingListBuilderTests: XCTestCase {
         func addItem(_ title: String, toList listName: String) throws {
             added.append((title, listName))
         }
+        // Sync-seam members (unused by the one-shot export under test —
+        // RemindersSyncTests exercises them against its own mock).
+        func items(inList listName: String) async throws -> [ReminderItem] { [] }
+        func setCompleted(_ completed: Bool, itemID: String) throws {}
+        func removeItem(itemID: String) throws {}
     }
 
     @MainActor

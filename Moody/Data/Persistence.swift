@@ -18,20 +18,23 @@ struct MoodySnapshot: Codable {
     var thread: [ThreadMessage]
     var sassLevel: Double
     var savedAt: Date
-    // B-4 additions — decodeIfPresent below keeps v2 snapshots loading (a
-    // missing key must never cost streak/thread state). Widgets ignore both.
+    // B-4/SHOP-3 additions — decodeIfPresent below keeps older snapshots
+    // loading (a missing key must never cost streak/thread state). Widgets
+    // ignore all three.
     var checkedItems: Set<String> = []          // "runID|itemName"
     var manualItems: [ManualShoppingItem] = []
+    var managedReminderTitles: Set<String> = [] // titles the Reminders mirror owns
 
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, week, streak, tank, runs, thread, sassLevel,
-             savedAt, checkedItems, manualItems
+             savedAt, checkedItems, manualItems, managedReminderTitles
     }
 
     init(schemaVersion: Int = Persistence.schemaVersion, week: [DayPlan],
          streak: Streak, tank: Tank, runs: [ShoppingRun],
          thread: [ThreadMessage], sassLevel: Double, savedAt: Date,
-         checkedItems: Set<String> = [], manualItems: [ManualShoppingItem] = []) {
+         checkedItems: Set<String> = [], manualItems: [ManualShoppingItem] = [],
+         managedReminderTitles: Set<String> = []) {
         self.schemaVersion = schemaVersion
         self.week = week
         self.streak = streak
@@ -42,6 +45,7 @@ struct MoodySnapshot: Codable {
         self.savedAt = savedAt
         self.checkedItems = checkedItems
         self.manualItems = manualItems
+        self.managedReminderTitles = managedReminderTitles
     }
 
     init(from decoder: Decoder) throws {
@@ -56,6 +60,8 @@ struct MoodySnapshot: Codable {
         savedAt = try c.decode(Date.self, forKey: .savedAt)
         checkedItems = try c.decodeIfPresent(Set<String>.self, forKey: .checkedItems) ?? []
         manualItems = try c.decodeIfPresent([ManualShoppingItem].self, forKey: .manualItems) ?? []
+        managedReminderTitles = try c.decodeIfPresent(
+            Set<String>.self, forKey: .managedReminderTitles) ?? []
     }
 }
 

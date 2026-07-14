@@ -32,6 +32,13 @@ struct ShoppingView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                Toggle(isOn: Binding(
+                    get: { appState.remindersSyncEnabled },
+                    set: { appState.setRemindersSync($0) })) {
+                    Label("Also in Reminders", systemImage: "checklist")
+                }
+            } footer: {
+                Text(appState.remindersSyncStatus)
             }
 
             if appState.runs.isEmpty {
@@ -47,6 +54,8 @@ struct ShoppingView: View {
             }
         }
         .navigationTitle("Shopping")
+        // Watch/family/Siri edits land without waiting for a local change.
+        .onAppear { appState.refreshRemindersFromOutside() }
     }
 }
 

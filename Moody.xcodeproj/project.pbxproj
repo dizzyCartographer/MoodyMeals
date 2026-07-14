@@ -10,6 +10,7 @@
 		070A1A648AD17FB88A46441F /* MealFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A16017B8C7D3F6B6B10FA5 /* MealFormView.swift */; };
 		086B4CD310657D61615F206C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4789DA996D85611488552513 /* Theme.swift */; };
 		0A6454DFC5CB62457CB1926A /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57FC396EF114A79A3EF7500F /* Components.swift */; };
+		0AAC54B9C87D921F775FE058 /* RemindersSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5FD27A4D6E10ABF41F0BA6C /* RemindersSyncTests.swift */; };
 		15A9EC13122C36933232D90A /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAAE73984372337D692E7F50 /* SmokeTests.swift */; };
 		1A4A799E17C96A4241BC33EC /* MealLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1B3E7490D56124C224586C /* MealLibraryView.swift */; };
 		1A662F05DF2A09B00C3220E6 /* ShoppingExplosion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD0D45B77432602A3CA3ED /* ShoppingExplosion.swift */; };
@@ -62,6 +63,7 @@
 		A9F35774EFDCDC22153E6D8C /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6EDE89B37C08B378A3133BF /* Meal.swift */; };
 		AAE592CFE2919C23F224D56B /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E209741B886ABFBD266A525 /* PlanView.swift */; };
 		AAF93ECBEB22211EBFBEAD7E /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */; };
+		AE815E2AF8707CE93C47C554 /* RemindersSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798AFAD8211BC405F729A099 /* RemindersSync.swift */; };
 		B424E5A98E462B20AF54BD2F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4A33BB197E62150F230D71 /* Models.swift */; };
 		BC26AB76B536322BD63DD85F /* Tonight.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1ACF9801BB1E035CF260EC2 /* Tonight.swift */; };
 		BC2A611402BA7A4F25C67A90 /* Baloo2-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */; };
@@ -184,6 +186,7 @@
 		716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-ExtraBold.ttf"; sourceTree = "<group>"; };
 		754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-ExtraBold.ttf"; sourceTree = "<group>"; };
 		772CB32273BEE48FCB298C9F /* FoodModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodModelTests.swift; sourceTree = "<group>"; };
+		798AFAD8211BC405F729A099 /* RemindersSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersSync.swift; sourceTree = "<group>"; };
 		7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleModelTests.swift; sourceTree = "<group>"; };
 		89CA4ECA95E721D890E544EA /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		8A8AF1F846C0E13C1040E6D2 /* RunRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunRoutingTests.swift; sourceTree = "<group>"; };
@@ -211,6 +214,7 @@
 		E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MoodyWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Black.ttf"; sourceTree = "<group>"; };
 		E5A1A60E4527E5234B155866 /* SeedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedData.swift; sourceTree = "<group>"; };
+		E5FD27A4D6E10ABF41F0BA6C /* RemindersSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersSyncTests.swift; sourceTree = "<group>"; };
 		E969FA33C177A6442F2E749A /* ShoppingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingModelTests.swift; sourceTree = "<group>"; };
 		EC7F3CCC6CBA3CAFDC8BEFC7 /* MealDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetailView.swift; sourceTree = "<group>"; };
 		F397399471949619A0069929 /* AppTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabView.swift; sourceTree = "<group>"; };
@@ -279,6 +283,7 @@
 				6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */,
 				7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */,
 				3F4DB477DAC71F51B3FAEA90 /* PlanningModelTests.swift */,
+				E5FD27A4D6E10ABF41F0BA6C /* RemindersSyncTests.swift */,
 				8A8AF1F846C0E13C1040E6D2 /* RunRoutingTests.swift */,
 				37FB2E98E25BF494F1C32A88 /* SeedDataTests.swift */,
 				C3B7F3733EA2A0B2F8CBAAC8 /* ShoppingExplosionTests.swift */,
@@ -402,6 +407,7 @@
 			isa = PBXGroup;
 			children = (
 				6373EDBE71B41C809AA5EDC6 /* GuaranteeCheck.swift */,
+				798AFAD8211BC405F729A099 /* RemindersSync.swift */,
 				A965F2E2F2523B268E891509 /* RunRouting.swift */,
 				6ABD0D45B77432602A3CA3ED /* ShoppingExplosion.swift */,
 				402B1DBECF88ED0E36B48E90 /* ShoppingListBuilder.swift */,
@@ -675,6 +681,7 @@
 				794826CFB21A883A48F51594 /* GuaranteeCheckTests.swift in Sources */,
 				52344761A9FEAD87AFD2251B /* PeopleModelTests.swift in Sources */,
 				7D6793F6F3BA0F6D253667CF /* PlanningModelTests.swift in Sources */,
+				0AAC54B9C87D921F775FE058 /* RemindersSyncTests.swift in Sources */,
 				CEC1013640313BE436438F77 /* RunRoutingTests.swift in Sources */,
 				855973BE2D57077AA612E9FE /* SeedDataTests.swift in Sources */,
 				8D162E87CBC343A03FBA1E5E /* ShoppingExplosionTests.swift in Sources */,
@@ -714,6 +721,7 @@
 				8610279534AA52A1C65EC4AB /* People.swift in Sources */,
 				F8386CE2E9A07F4612F4BF00 /* Persistence.swift in Sources */,
 				ED2DBB60147214F92D44E81E /* Planning.swift in Sources */,
+				AE815E2AF8707CE93C47C554 /* RemindersSync.swift in Sources */,
 				E0F6D525A822B04EEE9D09F3 /* RunRouting.swift in Sources */,
 				5E9F487BD05FFE95D779C7FF /* SeedData.swift in Sources */,
 				31AAE75D5EC4440DE67EFFFA /* Shopping.swift in Sources */,

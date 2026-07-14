@@ -84,6 +84,16 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         NSSupportsLiveActivities: true
+        # SHOP-3: the shopping list can mirror to a Reminders list — watch,
+        # family sharing, and Siri all reach it there. Only its own list.
+        NSRemindersFullAccessUsageDescription: >-
+          The shopping list can appear in Reminders too — on a watch, shared
+          with family, and reachable by Siri. Moody only touches its own
+          "Moody Groceries" list.
+        NSRemindersUsageDescription: >-
+          The shopping list can appear in Reminders too — on a watch, shared
+          with family, and reachable by Siri. Moody only touches its own
+          "Moody Groceries" list.
         CFBundleURLTypes:
           - CFBundleURLName: com.mariayarley.Moody
             CFBundleURLSchemes:

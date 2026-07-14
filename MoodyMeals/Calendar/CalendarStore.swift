@@ -137,4 +137,36 @@ final class EventKitRemindersStore: RemindersStore {
         reminder.calendar = calendar
         try store.save(reminder, commit: true)
     }
+
+    func items(inList listName: String) async throws -> [ReminderItem] {
+        guard authorization == .authorized else { throw CalendarStoreError.notAuthorized }
+        guard let calendar = store.calendars(for: .reminder)
+            .first(where: { $0.title == listName }) else { return [] }
+        let predicate = store.predicateForReminders(in: [calendar])
+        let reminders: [EKReminder] = await withCheckedContinuation { continuation in
+            store.fetchReminders(matching: predicate) {
+                continuation.resume(returning: $0 ?? [])
+            }
+        }
+        return reminders.map {
+            ReminderItem(id: $0.calendarItemIdentifier,
+                         title: $0.title ?? "",
+                         isCompleted: $0.isCompleted)
+        }
+    }
+
+    func setCompleted(_ completed: Bool, itemID: String) throws {
+        guard authorization == .authorized else { throw CalendarStoreError.notAuthorized }
+        guard let reminder = store.calendarItem(withIdentifier: itemID) as? EKReminder
+        else { return }   // already gone
+        reminder.isCompleted = completed
+        try store.save(reminder, commit: true)
+    }
+
+    func removeItem(itemID: String) throws {
+        guard authorization == .authorized else { throw CalendarStoreError.notAuthorized }
+        guard let reminder = store.calendarItem(withIdentifier: itemID) as? EKReminder
+        else { return }   // already gone
+        try store.remove(reminder, commit: true)
+    }
 }
