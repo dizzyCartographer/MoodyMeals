@@ -32,7 +32,7 @@ struct StaplesView: View {
                     }
                 }
             } footer: {
-                Text("these ride every run until they're home — the fallback meal cooks from this shelf")
+                Text("these come along on every list until they're home — the fallback meal cooks from this shelf")
             }
 
             Section("Add") {

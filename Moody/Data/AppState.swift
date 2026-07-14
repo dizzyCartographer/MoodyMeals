@@ -186,8 +186,6 @@ final class AppState: ObservableObject {
     /// records must carry the raw name or the guarantee never matches them.
     private var rawNameByRunItem: [String: String] = [:]
 
-    private(set) var alwaysStocked: [ShoppingItem] = []
-
     // MARK: Thread (scripted v1 — swap MessageBank for a live generator later)
 
     @Published var thread: [ThreadMessage] = DemoSeed.thread { didSet { scheduleSaveUnlessProjecting() } }
@@ -701,8 +699,6 @@ final class AppState: ObservableObject {
                     < (b.slots.contains(.dinner) ? 0 : 1, Self.mappedEffort(b.effort), b.title)
             }
             .map { presentationMeal($0, attendees: engineMembers) }
-
-        alwaysStocked = engineStaples.map { ShoppingItem(name: $0.name, category: "staple") }
     }
 
     private func projectWeekAndHousehold() {
@@ -990,6 +986,14 @@ final class AppState: ObservableObject {
         // an ingredient silently dropped the second dinner's amount.)
         let built = ShoppingListBuilder.build(
             entries: entries,
+            // Always-on (Ria 2026-07-13): every staple rides every list
+            // unless this cycle already brought it home — the check happens
+            // at the pantry, not the store; unneeded ones ride as a net.
+            staples: engineStaples.map {
+                ShoppingListBuilder.Staple(
+                    name: $0.name, minOnHand: $0.minOnHand,
+                    perishability: $0.ingredient?.perishability ?? .pantry)
+            },
             runs: candidateRuns,
             covered: { name, perishability, mealDate in
                 purchasedCovers(name, mealDay: WeekPlan.dayAnchor(for: mealDate),
@@ -1010,7 +1014,8 @@ final class AppState: ObservableObject {
                 else { continue }
                 bucket.items.append(ShoppingItem(
                     name: line.text,
-                    category: Self.category(for: line.perishability)))
+                    category: line.source == .staple
+                        ? "always stocked" : Self.category(for: line.perishability)))
                 rawNameByRunItem["\(Self.runID(for: group.tier))|\(line.text)"] =
                     line.ingredientName
                 for title in line.mealTitles where !bucket.protects.contains(title) {
@@ -1047,12 +1052,19 @@ final class AppState: ObservableObject {
             atRisk = "\(violation.mealTitle) needs \(count) item\(count == 1 ? "" : "s") — on the top-up"
         }
 
+        // A run holding only staples still earns its card — the footer says
+        // what it's for instead of listing meals.
+        func protectsText(_ bucket: Bucket, verb: String) -> String {
+            bucket.protects.isEmpty
+                ? "keeps the always-stocked shelf full"
+                : "\(verb) \(bucket.protects.joined(separator: " + "))"
+        }
         var projected: [ShoppingRun] = []
         if let bucket = buckets[.midweek], !bucket.items.isEmpty {
             projected.append(ShoppingRun(
                 id: "topup", title: "Tonight top-up", tier: .tonightTopUp,
                 items: bucket.items,
-                protects: "protects \(bucket.protects.joined(separator: " + "))",
+                protects: protectsText(bucket, verb: "protects"),
                 atRisk: atRisk))
         }
         if let bucket = buckets[.weekly], !bucket.items.isEmpty {
@@ -1060,14 +1072,14 @@ final class AppState: ObservableObject {
             projected.append(ShoppingRun(
                 id: "weekly", title: "\(day) weekly", tier: .weekly,
                 items: bucket.items,
-                protects: "covers \(bucket.protects.joined(separator: " + "))"))
+                protects: protectsText(bucket, verb: "covers")))
         }
         if let bucket = buckets[.bulk], !bucket.items.isEmpty {
             let day = Self.weekday(of: candidateRuns[2].plannedDate).long
             projected.append(ShoppingRun(
                 id: "bulk", title: "\(day) bulk", tier: .bulk,
                 items: bucket.items,
-                protects: "covers \(bucket.protects.joined(separator: " + "))"))
+                protects: protectsText(bucket, verb: "covers")))
         }
 
         // Ria's own items ride their chosen run; a run that exists only

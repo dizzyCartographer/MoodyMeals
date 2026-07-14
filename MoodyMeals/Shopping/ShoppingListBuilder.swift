@@ -14,6 +14,9 @@ struct BuiltShoppingList: Equatable {
         var perishability: Perishability = .pantry
         var neededBy: Date? = nil              // strictest across its meals
         var mealTitles: [String] = []          // the meals this line keeps cookable
+        /// D-34 provenance: `.staple` when the always-stocked shelf put it
+        /// here (alone or merged into a meal's line — PT-7).
+        var source: ItemSource = .meal
     }
     struct RunGroup: Equatable {
         var tier: RunTier
@@ -27,15 +30,27 @@ struct BuiltShoppingList: Equatable {
 
 enum ShoppingListBuilder {
 
+    /// A staple as the list sees it (D-6 always-stocked shelf, per Ria
+    /// 2026-07-13): always ON — it rides every list unless the current
+    /// cycle already brought it home. The pantry check happens at home,
+    /// not at the store; an unneeded staple rides along as a safety net.
+    struct Staple: Equatable {
+        var name: String
+        var minOnHand: String = ""
+        var perishability: Perishability = .pantry
+    }
+
     /// Explode a date range per entry (so need-by dates survive), merge to
     /// one line per ingredient with the STRICTEST need-by (PT-7 spirit),
-    /// route each line, and group by run.
+    /// route each line, and group by run. Staples join the merge (PT-7:
+    /// meal + staple floor = ONE line) or ride alone on the soonest run.
     /// - `covered`: purchase-coverage hook — (lowercased name, perishability,
     ///   the meal's date) → already shopped for that meal. A covered entry
     ///   leaves the merge entirely, so the re-sum stays honest: the line's
     ///   amount is exactly what the REMAINING meals still need.
     static func build(
         entries: [PlanEntry],
+        staples: [Staple] = [],
         runs: [(tier: RunTier, plannedDate: Date)],
         pantryExclusions: Set<String> = TuningDefaults.pantryStapleExclusions,
         outOfStock: Set<String> = [],
@@ -62,20 +77,35 @@ enum ShoppingListBuilder {
             }
         }
 
+        // Staples still standing after coverage: an item bought this cycle
+        // stays home; everything else is on, every list, by default.
+        var stapleByKey: [String: Staple] = [:]
+        for staple in staples {
+            let key = staple.name.lowercased()
+            guard stapleByKey[key] == nil,
+                  !covered(key, staple.perishability, now) else { continue }
+            stapleByKey[key] = staple
+        }
+
         var groupsByRun: [Int: [BuiltShoppingList.Line]] = [:]
         var atRisk: [BuiltShoppingList.Line] = []
         for (key, itsEntries) in byName.sorted(by: { $0.key < $1.key }) {
             // One line per ingredient across the whole range (SL-1/SL-6).
-            guard let line = ShoppingExplosion.explode(itsEntries,
+            guard var line = ShoppingExplosion.explode(itsEntries,
                                                        pantryExclusions: pantryExclusions,
                                                        outOfStock: outOfStock)
                 .first(where: { $0.ingredientName.lowercased() == key }) else { continue }
+            // PT-7: a staple floor merges INTO the meal's line — one item,
+            // meal amounts summed, the floor riding as "plus extra".
+            let isStaple = stapleByKey[key] != nil
+            if isStaple { line.plusExtra = true }
             let built = BuiltShoppingList.Line(
                 ingredientName: line.ingredientName,
                 text: RunRouting.exportText(for: line),
                 perishability: line.perishability,
                 neededBy: neededBy[key],
-                mealTitles: titles[key] ?? [])
+                mealTitles: titles[key] ?? [],
+                source: isStaple ? .staple : .meal)
             let result = RunRouting.route(perishability: line.perishability,
                                           neededBy: neededBy[key],
                                           preferredTier: line.preferredRunTier,
@@ -86,6 +116,26 @@ enum ShoppingListBuilder {
             case .violation:
                 atRisk.append(built)
             }
+        }
+
+        // Staple-only lines: no meal deadline — they ride the SOONEST run
+        // that can carry them (SCH-13's "very next run"). An explicit staple
+        // beats the SL-4 assumed-on-hand list: the shelf is deliberate.
+        let today = WeekPlan.dayAnchor(for: now)
+        for (key, staple) in stapleByKey.sorted(by: { $0.key < $1.key })
+        where byName[key] == nil {
+            let line = BuiltShoppingList.Line(
+                ingredientName: staple.name,
+                text: staple.name,
+                perishability: staple.perishability,
+                source: .staple)
+            let eligible = RunRouting.eligibleTiers(for: staple.perishability)
+            let soonest = runs.indices
+                .filter { eligible.contains(runs[$0].tier)
+                    && WeekPlan.dayAnchor(for: runs[$0].plannedDate) >= today }
+                .min { runs[$0].plannedDate < runs[$1].plannedDate }
+            if let soonest { groupsByRun[soonest, default: []].append(line) }
+            else { atRisk.append(line) }   // visible, never silent (RT-4 spirit)
         }
 
         let groups = groupsByRun

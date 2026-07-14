@@ -135,6 +135,82 @@ final class ShoppingListBuilderTests: XCTestCase {
             .contains { $0.ingredientName == "ground beef" })
     }
 
+    /// SCH-13 + Ria 2026-07-13 (always-on): staples ride every list — on the
+    /// soonest run that can carry them — and an EXPLICIT staple beats the
+    /// SL-4 assumed-on-hand exclusions (the shelf is deliberate).
+    @MainActor
+    func test_SCH13_staples_alwaysOn_rideTheSoonestEligibleRun() throws {
+        let runs: [(tier: RunTier, plannedDate: Date)] = [
+            (.bulk, days(3)),
+            (.weekly, days(1)),
+        ]
+        let list = ShoppingListBuilder.build(
+            entries: [],
+            staples: [.init(name: "garbanzo beans", minOnHand: "2 cans"),
+                      .init(name: "oil", minOnHand: "1 bottle")],  // SL-4-excluded name
+            runs: runs, now: now)
+
+        let weekly = try XCTUnwrap(list.groups.first { $0.tier == .weekly },
+                                   "staples land on the SOONEST run, not bulk")
+        XCTAssertEqual(weekly.lines.map(\.text), ["garbanzo beans", "oil"])
+        XCTAssertTrue(weekly.lines.allSatisfy { $0.source == .staple },
+                      "D-34 provenance rides the line")
+        XCTAssertNil(list.groups.first { $0.tier == .bulk })
+        XCTAssertTrue(list.atRisk.isEmpty)
+    }
+
+    /// PT-7: an ingredient required by a meal AND on the staples floor is
+    /// ONE line — meal amounts summed, the floor riding as "plus extra",
+    /// staple provenance kept, strictest (meal) need-by.
+    @MainActor
+    func test_PT7_stapleAndMeal_mergeToOneLine() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let ria = FamilyMember(name: "Ria", isAdult: true)
+        context.insert(ria)
+        let beans = Ingredient(name: "garbanzo beans", perishability: .pantry)
+        context.insert(beans)
+        let curry = Meal(title: "Chickpea curry")
+        context.insert(curry)
+        curry.directItems = [RecipeItem(ingredient: beans, amount: 2, unit: "can")]
+
+        let entries = [
+            try WeekPlan.assign(curry, on: days(2), slot: .dinner, attendees: [ria], in: context),
+        ]
+        let list = ShoppingListBuilder.build(
+            entries: entries,
+            staples: [.init(name: "garbanzo beans", minOnHand: "2 cans")],
+            runs: [(.weekly, days(1))], now: now)
+
+        let lines = list.groups.flatMap(\.lines)
+            .filter { $0.ingredientName.lowercased() == "garbanzo beans" }
+        XCTAssertEqual(lines.count, 1, "PT-7: one line, never two")
+        XCTAssertEqual(lines.first?.text, "garbanzo beans — 2 can, plus extra")
+        XCTAssertEqual(lines.first?.source, .staple)
+        XCTAssertEqual(lines.first?.neededBy, entries[0].date)
+        XCTAssertEqual(lines.first?.mealTitles, ["Chickpea curry"])
+    }
+
+    /// A staple bought this cycle stays home (coverage keeps it off the
+    /// list); the next cycle it rides again — that's the safety net.
+    @MainActor
+    func test_staple_coveredThisCycle_staysOff() {
+        let staples: [ShoppingListBuilder.Staple] =
+            [.init(name: "garbanzo beans", minOnHand: "2 cans")]
+        let runs: [(tier: RunTier, plannedDate: Date)] = [(.weekly, days(1))]
+
+        let covered = ShoppingListBuilder.build(
+            entries: [], staples: staples, runs: runs,
+            covered: { name, _, _ in name == "garbanzo beans" }, now: now)
+        XCTAssertTrue(covered.groups.flatMap(\.lines).isEmpty)
+        XCTAssertTrue(covered.atRisk.isEmpty)
+
+        let nextCycle = ShoppingListBuilder.build(
+            entries: [], staples: staples, runs: runs, now: now)
+        XCTAssertEqual(nextCycle.groups.flatMap(\.lines).map(\.text),
+                       ["garbanzo beans"])
+    }
+
     // Reminders export: permission-gated, graceful, counted.
     @MainActor
     private final class MockRemindersStore: RemindersStore {
