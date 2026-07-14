@@ -84,6 +84,15 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         NSSupportsLiveActivities: true
+        # B-6: planned dinners can appear on the device calendar, on their
+        # own dedicated "Moody" calendar — nothing else is touched. Missing
+        # this key crashes any EKEventStore access request outright.
+        NSCalendarsFullAccessUsageDescription: >-
+          Planned dinners can appear on your device calendar, on their own
+          "Moody" calendar. Moody only touches events it created there.
+        NSCalendarsUsageDescription: >-
+          Planned dinners can appear on your device calendar, on their own
+          "Moody" calendar. Moody only touches events it created there.
         # SHOP-3: the shopping list can mirror to a Reminders list — watch,
         # family sharing, and Siri all reach it there. Only its own list.
         NSRemindersFullAccessUsageDescription: >-

@@ -195,6 +195,22 @@ struct MealDraft: Equatable {
     var requiresCalmDay = false
 }
 
+/// A recipe MoodyBrain parsed from pasted text, before she's reviewed it —
+/// nothing saves until she taps Add. GF band starts notCheckedYet, same as
+/// any hand-typed recipe (M3-2 parse-only slice; the D-44 assessment is a
+/// separate pass).
+struct RecipePastePreview: Equatable {
+    struct Item: Identifiable, Equatable {
+        var id = UUID()
+        var name: String
+        var amount: Double?
+        var unit: String?
+    }
+    var title: String
+    var items: [Item]
+    var steps: [String]
+}
+
 // Codable via the slot's stable id ("her-1"…): PaletteSlot itself is design
 // system (not persisted); decode re-binds to the live palette so badge tints
 // follow palette swaps (law 6). Unknown ids degrade to green, never crash.

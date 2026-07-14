@@ -14,6 +14,7 @@ struct MealLibraryView: View {
     @State private var search = ""
     @State private var showNewMeal = false
     @State private var newRecipeSheet = false
+    @State private var showPasteRecipe = false
 
     var body: some View {
         Group {
@@ -36,12 +37,27 @@ struct MealLibraryView: View {
                 .frame(maxWidth: 200)
             }
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    if segment == .meals { showNewMeal = true }
-                    else { newRecipeSheet = true }
-                } label: {
-                    Label(segment == .meals ? "New meal" : "New recipe",
-                          systemImage: "plus")
+                if segment == .meals {
+                    Menu {
+                        Button {
+                            showNewMeal = true
+                        } label: {
+                            Label("New meal", systemImage: "plus")
+                        }
+                        Button {
+                            showPasteRecipe = true
+                        } label: {
+                            Label("Paste a recipe", systemImage: "doc.on.clipboard")
+                        }
+                    } label: {
+                        Label("Add", systemImage: "plus")
+                    }
+                } else {
+                    Button {
+                        newRecipeSheet = true
+                    } label: {
+                        Label("New recipe", systemImage: "plus")
+                    }
                 }
             }
         }
@@ -50,6 +66,9 @@ struct MealLibraryView: View {
         }
         .sheet(isPresented: $newRecipeSheet) {
             RecipeFormView(mealID: nil, recipeID: nil)   // standalone
+        }
+        .sheet(isPresented: $showPasteRecipe) {
+            RecipePasteView()
         }
     }
 

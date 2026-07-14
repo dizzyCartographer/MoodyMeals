@@ -152,7 +152,8 @@ final class ShoppingListBuilderTests: XCTestCase {
 
         let weekly = try XCTUnwrap(list.groups.first { $0.tier == .weekly },
                                    "staples land on the SOONEST run, not bulk")
-        XCTAssertEqual(weekly.lines.map(\.text), ["garbanzo beans", "oil"])
+        XCTAssertEqual(weekly.lines.map(\.text),
+                       ["garbanzo beans — 2 cans", "oil — 1 bottle"])
         XCTAssertTrue(weekly.lines.allSatisfy { $0.source == .staple },
                       "D-34 provenance rides the line")
         XCTAssertNil(list.groups.first { $0.tier == .bulk })
@@ -208,7 +209,7 @@ final class ShoppingListBuilderTests: XCTestCase {
         let nextCycle = ShoppingListBuilder.build(
             entries: [], staples: staples, runs: runs, now: now)
         XCTAssertEqual(nextCycle.groups.flatMap(\.lines).map(\.text),
-                       ["garbanzo beans"])
+                       ["garbanzo beans — 2 cans"])
     }
 
     // Reminders export: permission-gated, graceful, counted.

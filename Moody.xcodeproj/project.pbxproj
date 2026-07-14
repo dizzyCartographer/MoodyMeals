@@ -27,6 +27,7 @@
 		31AAE75D5EC4440DE67EFFFA /* Shopping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD54F3923E73B079932AED2 /* Shopping.swift */; };
 		3531BF334866E7519FD74306 /* Baloo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */; };
 		35D70FA54AB10A81A77973E9 /* StoreLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9780D9928515857A07003B4B /* StoreLocationTests.swift */; };
+		3633CBBD4A21763370BCE268 /* MoodyBrainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F5B94373F5825505BCB1F97 /* MoodyBrainTests.swift */; };
 		3AB8ED92A24FE878A35722E3 /* GuaranteeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6373EDBE71B41C809AA5EDC6 /* GuaranteeCheck.swift */; };
 		4057E995DEE7A7B59EDEDF86 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57FC396EF114A79A3EF7500F /* Components.swift */; };
 		47381B67D7B2181C1E63C1FA /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D2CC8F87F1418118F290C2 /* Persistence.swift */; };
@@ -39,6 +40,7 @@
 		5F8650E01CAD7C25FCA284A8 /* WeekPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF41D1A8B45D8A6A3202846 /* WeekPlan.swift */; };
 		6217E4AB988272D64A1C08DB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4789DA996D85611488552513 /* Theme.swift */; };
 		67A491ED8EB1CB17F97EDB6F /* Baloo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */; };
+		689A2C71B73AD4820A95618D /* MoodyBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23386F6685CE2364CB13DCC9 /* MoodyBrain.swift */; };
 		7150FB616BE2FEDC1E1429C0 /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */; };
 		7303B173ACBE0C121ED2F9AF /* MoodyWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */; };
 		78F34BA2125DC2E2121B2149 /* MoodyEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */; };
@@ -79,6 +81,7 @@
 		DF7CB540E98C4B3F808FB413 /* StoreLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F074A8898770572559262A /* StoreLocation.swift */; };
 		DFEF99F897BC6A54E7919BD3 /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */; };
 		E0F6D525A822B04EEE9D09F3 /* RunRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A965F2E2F2523B268E891509 /* RunRouting.swift */; };
+		E4F6CED666D74B32E011F9A7 /* RecipePasteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC732B5D5B666BD68BA738C /* RecipePasteView.swift */; };
 		E93E2C3C8B0F32ADE29D1B84 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F50D47ACCCB2A984E33BE2 /* AppState.swift */; };
 		EA9378A462864C00DB49BAAC /* FoodRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BA9FA90E0B077995023DD8 /* FoodRule.swift */; };
 		EC02CA641278657249FB001C /* CalendarSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A2F8246A001D17C2F934D1 /* CalendarSyncTests.swift */; };
@@ -161,6 +164,7 @@
 		1757671D9E5D6E4CEED77B29 /* TonightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTests.swift; sourceTree = "<group>"; };
 		1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoodyEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20BD322121F2A369501AAF53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		23386F6685CE2364CB13DCC9 /* MoodyBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodyBrain.swift; sourceTree = "<group>"; };
 		24FAF8A63E4501DF35C308F7 /* RecipeEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeEditorView.swift; sourceTree = "<group>"; };
 		2CF9E1877843BAAC8F262E81 /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		2FB949E436A065885308EA2F /* WeekPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlanTests.swift; sourceTree = "<group>"; };
@@ -192,6 +196,7 @@
 		772CB32273BEE48FCB298C9F /* FoodModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodModelTests.swift; sourceTree = "<group>"; };
 		798AFAD8211BC405F729A099 /* RemindersSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersSync.swift; sourceTree = "<group>"; };
 		7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleModelTests.swift; sourceTree = "<group>"; };
+		7F5B94373F5825505BCB1F97 /* MoodyBrainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodyBrainTests.swift; sourceTree = "<group>"; };
 		89CA4ECA95E721D890E544EA /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		8A8AF1F846C0E13C1040E6D2 /* RunRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunRoutingTests.swift; sourceTree = "<group>"; };
 		8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-Bold.ttf"; sourceTree = "<group>"; };
@@ -203,6 +208,7 @@
 		A2E68CEB05397E2F06B0E2F4 /* CalendarSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSyncService.swift; sourceTree = "<group>"; };
 		A6F074A8898770572559262A /* StoreLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreLocation.swift; sourceTree = "<group>"; };
 		A965F2E2F2523B268E891509 /* RunRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunRouting.swift; sourceTree = "<group>"; };
+		ABC732B5D5B666BD68BA738C /* RecipePasteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipePasteView.swift; sourceTree = "<group>"; };
 		B3562FB76F8DEE2EB61EF356 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
 		B6EDE89B37C08B378A3133BF /* Meal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meal.swift; sourceTree = "<group>"; };
 		B6F50D47ACCCB2A984E33BE2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -273,6 +279,7 @@
 				37A16017B8C7D3F6B6B10FA5 /* MealFormView.swift */,
 				9B1B3E7490D56124C224586C /* MealLibraryView.swift */,
 				24FAF8A63E4501DF35C308F7 /* RecipeEditorView.swift */,
+				ABC732B5D5B666BD68BA738C /* RecipePasteView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -285,6 +292,7 @@
 				772CB32273BEE48FCB298C9F /* FoodModelTests.swift */,
 				35E7E38E5B8552D38358C7E9 /* FoodRuleBandTests.swift */,
 				6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */,
+				7F5B94373F5825505BCB1F97 /* MoodyBrainTests.swift */,
 				7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */,
 				3F4DB477DAC71F51B3FAEA90 /* PlanningModelTests.swift */,
 				E5FD27A4D6E10ABF41F0BA6C /* RemindersSyncTests.swift */,
@@ -300,6 +308,14 @@
 				2FB949E436A065885308EA2F /* WeekPlanTests.swift */,
 			);
 			path = MoodyMealsTests;
+			sourceTree = "<group>";
+		};
+		210897D2D2832913CE52CC86 /* Brain */ = {
+			isa = PBXGroup;
+			children = (
+				23386F6685CE2364CB13DCC9 /* MoodyBrain.swift */,
+			);
+			path = Brain;
 			sourceTree = "<group>";
 		};
 		2C8C1B3B10759AD3547F0FD2 /* Fonts */ = {
@@ -361,6 +377,7 @@
 				C9E5E42ABE06A296AB30E54E /* Persistence.swift */,
 				E5A1A60E4527E5234B155866 /* SeedData.swift */,
 				A6F074A8898770572559262A /* StoreLocation.swift */,
+				210897D2D2832913CE52CC86 /* Brain */,
 				F889F452A6E77506B8D2A039 /* Calendar */,
 				A767856FB195729AA9C68FC0 /* Models */,
 				9BE1B39DB6AE4D6112F66E6C /* Planning */,
@@ -668,6 +685,7 @@
 				31728AB5EF8831EC28A50934 /* Persistence.swift in Sources */,
 				AAE592CFE2919C23F224D56B /* PlanView.swift in Sources */,
 				7D3316EEF5F4A41801B85276 /* RecipeEditorView.swift in Sources */,
+				E4F6CED666D74B32E011F9A7 /* RecipePasteView.swift in Sources */,
 				59C62FD1607E110C0737C002 /* SettingsView.swift in Sources */,
 				1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */,
 				FBE9441EDB5ADB0DECB96A61 /* StaplesView.swift in Sources */,
@@ -685,6 +703,7 @@
 				2D659AE22CCA14B7A9BFF104 /* FoodModelTests.swift in Sources */,
 				FE98A0D8B248E36D084E8246 /* FoodRuleBandTests.swift in Sources */,
 				794826CFB21A883A48F51594 /* GuaranteeCheckTests.swift in Sources */,
+				3633CBBD4A21763370BCE268 /* MoodyBrainTests.swift in Sources */,
 				52344761A9FEAD87AFD2251B /* PeopleModelTests.swift in Sources */,
 				7D6793F6F3BA0F6D253667CF /* PlanningModelTests.swift in Sources */,
 				0AAC54B9C87D921F775FE058 /* RemindersSyncTests.swift in Sources */,
@@ -725,6 +744,7 @@
 				3AB8ED92A24FE878A35722E3 /* GuaranteeCheck.swift in Sources */,
 				A9F35774EFDCDC22153E6D8C /* Meal.swift in Sources */,
 				968364351FBB779C1CD6EE69 /* MealBand.swift in Sources */,
+				689A2C71B73AD4820A95618D /* MoodyBrain.swift in Sources */,
 				8610279534AA52A1C65EC4AB /* People.swift in Sources */,
 				F8386CE2E9A07F4612F4BF00 /* Persistence.swift in Sources */,
 				ED2DBB60147214F92D44E81E /* Planning.swift in Sources */,

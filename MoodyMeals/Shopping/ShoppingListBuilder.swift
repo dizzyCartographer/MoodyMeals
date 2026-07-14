@@ -124,9 +124,14 @@ enum ShoppingListBuilder {
         let today = WeekPlan.dayAnchor(for: now)
         for (key, staple) in stapleByKey.sorted(by: { $0.key < $1.key })
         where byName[key] == nil {
+            // The shelf floor rides as the line's quantity — same "name —
+            // amount" shape as a meal-routed line (RT-6), so a staple-only
+            // item like "sandwich bread" doesn't read as quantity-less.
+            let text = staple.minOnHand.isEmpty
+                ? staple.name : "\(staple.name) — \(staple.minOnHand)"
             let line = BuiltShoppingList.Line(
                 ingredientName: staple.name,
-                text: staple.name,
+                text: text,
                 perishability: staple.perishability,
                 source: .staple)
             let eligible = RunRouting.eligibleTiers(for: staple.perishability)

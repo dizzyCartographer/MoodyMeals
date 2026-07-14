@@ -93,7 +93,9 @@ final class AppState: ObservableObject {
             apply(snapshot)   // local-only state: streak / tank / thread / sass
         }
         projectAll()
-        scheduleSave()        // widgets get the fresh projection promptly
+        // syncExternal: true — once per launch, so a completion made on the
+        // watch or by family overnight reconciles (CAL-3 drift spirit).
+        scheduleSave(syncExternal: true)
     }
 
     // MARK: Cast (projected from engine FamilyMembers — D-35: names come from
@@ -420,7 +422,7 @@ final class AppState: ObservableObject {
             isAllTimeFavorite: draft.isAllTimer))
         try? context.save()
         projectAll()
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     func updateMeal(_ id: UUID, from draft: MealDraft) {
@@ -439,7 +441,7 @@ final class AppState: ObservableObject {
         meal.updatedAt = .now   // F15 interim: touch on edit
         try? context.save()
         projectAll()
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     // MARK: - Recipe editing (B-2: composition doors — live edits, no staging)
@@ -570,7 +572,7 @@ final class AppState: ObservableObject {
         guard let context else { return }
         try? context.save()
         projectAll()
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     @discardableResult
@@ -635,6 +637,57 @@ final class AppState: ObservableObject {
         saveAndReproject()
     }
 
+    // MARK: - Recipe paste import (M3-1 MoodyBrain + scoped M3-2: parse
+    // only — the D-44 GF-band assessment is a separate PROMPT-REVIEW-gated
+    // pass; a pasted recipe lands notCheckedYet, same as any hand-typed one
+    // (HC-7: never silently safe).
+
+    enum RecipePasteError: Error, Equatable {
+        case notConfigured   // no ANTHROPIC_API_KEY in the environment
+        case failed          // offline, API error, or an unreadable response
+    }
+
+    func parsePastedRecipe(_ text: String) async -> Result<RecipePastePreview, RecipePasteError> {
+        do {
+            let parsed = try await MoodyBrain.parseRecipe(from: text)
+            let items = parsed.items.map {
+                RecipePastePreview.Item(name: $0.name, amount: $0.amount, unit: $0.unit)
+            }
+            return .success(RecipePastePreview(title: parsed.title, items: items, steps: parsed.steps))
+        } catch MoodyBrainError.notConfigured {
+            return .failure(.notConfigured)
+        } catch {
+            return .failure(.failed)
+        }
+    }
+
+    /// Creates the meal + recipe straight from a reviewed paste preview.
+    /// Kind is precise only when every line carries an amount (D-36: mixed
+    /// or amount-less lines stay loose, with per-item amounts riding where
+    /// the text gave them either way).
+    @discardableResult
+    func createMeal(fromPastedRecipe preview: RecipePastePreview) -> UUID? {
+        guard let context else { return nil }
+        let title = preview.title.trimmingCharacters(in: .whitespaces)
+        guard !title.isEmpty else { return nil }
+        let meal = MoodyEngine.Meal(title: title)
+        context.insert(meal)
+        let allHaveAmounts = !preview.items.isEmpty && preview.items.allSatisfy { $0.amount != nil }
+        let recipe = MoodyEngine.Recipe(title: title, kind: allHaveAmounts ? .precise : .loose,
+                                        steps: preview.steps)
+        context.insert(recipe)
+        meal.recipes.append(recipe)
+        for item in preview.items {
+            guard let ingredient = resolveIngredient(named: item.name,
+                                                      perishability: .pantry) else { continue }
+            let recipeItem = RecipeItem(ingredient: ingredient, amount: item.amount, unit: item.unit)
+            context.insert(recipeItem)
+            recipe.items.append(recipeItem)
+        }
+        saveAndReproject()
+        return meal.id
+    }
+
     /// Retire, never delete, from the library (D-39's spirit for meals too:
     /// hidden from pickers, history intact). Plan entries keep their D-37
     /// flag-and-refill rails; reactivating is the same one tap.
@@ -645,7 +698,7 @@ final class AppState: ObservableObject {
         meal.updatedAt = .now
         try? context.save()
         projectAll()
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     private func refreshEngineCaches() {
@@ -895,7 +948,7 @@ final class AppState: ObservableObject {
                                      attendees: engineMembers, in: context)
         }
         projectAll()
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     // MARK: - Shopping projection (their pure pipeline, presentation-mapped)
@@ -1035,11 +1088,12 @@ final class AppState: ObservableObject {
                 ? "\(violation.mealTitle) needs 1 item sooner than the next shop — it's on the list"
                 : "\(violation.mealTitle) needs \(count) items sooner than the next shop — they're on the list"
         } else if entries.isEmpty {
-            // "nothing to buy" must stay honest when the always-stocked
-            // check rides below it (staples are on the list dinner-less).
+            // No "no dinners planned yet" narration (Ria 2026-07-14): with
+            // nothing to guarantee, the line just states what's true now —
+            // the staples list (if any) speaks for itself underneath.
             guaranteeLine = bySection.isEmpty
-                ? "no dinners planned yet — nothing to buy ✓"
-                : "no dinners planned yet — below is the always-stocked check ✓"
+                ? "nothing to buy ✓"
+                : "always-stocked check ✓"
         } else if let covered = result.coveredThrough {
             guaranteeLine = "groceries covered thru \(Self.weekday(of: covered).long) ✓"
         } else {
@@ -1370,7 +1424,7 @@ final class AppState: ObservableObject {
 
     func toggleChecked(_ itemName: String) {
         checkedItems.formSymmetricDifference([itemName])
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     func addManualItem(_ name: String) {
@@ -1379,14 +1433,14 @@ final class AppState: ObservableObject {
               !manualItems.contains(where: { $0.name == trimmed }) else { return }
         manualItems.append(ManualShoppingItem(name: trimmed, runID: "extras"))
         projectAll()
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     func removeManualItem(named name: String) {
         manualItems.removeAll { $0.name == name }
         checkedItems.remove(name)
         projectAll()
-        scheduleSave()
+        scheduleSave(syncExternal: true)
     }
 
     func isManual(_ itemName: String) -> Bool {
@@ -1462,11 +1516,21 @@ final class AppState: ObservableObject {
         scheduleSave()
     }
 
+    /// Whether the coalesced save in flight should also push to EventKit.
+    /// Mood/streak/thread saves don't touch the plan or the shopping list —
+    /// syncing them anyway is what made Reminders/Calendar notify the family
+    /// every time Ria adjusted her capacity tank or posted in the thread.
+    private var pendingExternalSync = false
+
     /// Coalesces into one write ~0.5s after the last change. The snapshot is
     /// sourced from the projections, so widgets/Live Activity keep working
     /// exactly as before (P2 moves them onto richer projections).
-    private func scheduleSave() {
+    /// - `syncExternal`: true only for engine mutations that can change the
+    ///   plan/shopping list (saveAndReproject, meal CRUD, shopping actions) —
+    ///   never for the mood-tracking @Published properties.
+    private func scheduleSave(syncExternal: Bool = false) {
         guard !suppressSaves else { return }
+        if syncExternal { pendingExternalSync = true }
         saveTask?.cancel()
         saveTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: 500_000_000)
@@ -1479,6 +1543,8 @@ final class AppState: ObservableObject {
                                            checkedItems: checkedItems,
                                            manualItems: manualItems,
                                            managedReminderTitles: managedReminderTitles))
+            guard self.pendingExternalSync else { return }
+            self.pendingExternalSync = false
             syncCalendarIfEnabled()   // B-6: the device calendar follows the plan
             await syncReminders()     // SHOP-3: the Reminders list follows too
         }

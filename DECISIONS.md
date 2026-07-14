@@ -6,6 +6,33 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-14 (live session: shopping fixes, calendar sync bug, recipe paste FR-3a)
+
+Four decisions from tonight's five-item feedback list. All five items shipped or got root-caused — these are the judgment calls left over, ranked by what they unblock.
+
+**D-63. Recipe paste needs `ANTHROPIC_API_KEY` to actually run — where does it live?** Right now `MoodyBrain` reads it from the process environment; nothing is configured, so on your device today "Paste a recipe" hits the honest "isn't set up yet — add it by typing instead" fallback (never a crash, per NL-8) rather than actually parsing.
+→ Options: a) add it to the Xcode scheme's environment variables for your own dev/sim builds now — fastest, but doesn't survive a TestFlight/App Store build (recommended to unblock testing tonight) b) hold off wiring a device-distributable key until the M6-ish "how do secrets ship to the family's phones" question gets answered for real c) skip for now — recipe paste stays typing-only until FR-3b (GF assessment) is scoped and both land together
+→ Blocks: actually trying the paste feature on your phone.
+**Ria:** _answer here_
+
+**D-64. FR-3b — build the GF-band assessment half of M3-2 now, or leave pasted recipes at `notCheckedYet`?** What shipped tonight (FR-3a) only does text→structure parsing; it deliberately does NOT run the D-44 gluten-band assessment, so anything pasted rides the same "not checked yet" state as if you'd typed it by hand and never confirmed it. Since D-54 already carved M3-1/M3-2 out of the general AI hold, this is unblocked, not on hold — just unscheduled.
+→ Options: a) next up — build FR-3b now, same session cadence (recommended if you want paste to feel complete rather than "half a feature") b) leave it — `notCheckedYet` is honest and the manual band picker in the recipe editor already covers it, revisit later c) build a much smaller version first — just flag the flour-line rubric case, skip the full per-rule annotation sweep
+→ Blocks: nothing today (the honest default holds either way) — shapes what's next.
+**Ria:** _answer here_
+
+**D-65. Recipe paste uses `claude-opus-4-8` for every parse — worth the cost for a mechanical extraction task?** It's a plain "turn this text into {title, ingredients, steps}" call, not open-ended reasoning — Opus 4.8 is Anthropic's guidance-mandated default absent a reason to deviate, but it's also the most expensive tier, and this could run on `claude-haiku-4-5` for a fraction of the cost with likely-identical output on a task this mechanical.
+→ Options: a) keep Opus 4.8 — simplest, no behavior risk, cost is probably negligible at your usage volume (recommended unless you're watching API spend) b) switch to Haiku 4.5 for this one call — cheaper/faster, worth a quick side-by-side check on a few real pasted recipes first c) leave as Opus for now, revisit if/when FR-3b's assessment calls (which ARE reasoning-heavy) get added and total spend becomes worth watching together
+→ Blocks: nothing — purely a cost/quality tuning knob.
+**Ria:** _answer here_
+
+**D-66. Calendar/Reminders sync now only fires on real plan changes — did I draw that line where you'd want it?** The root cause of the "shopping notifications don't make sense" complaint was that syncing was wired to a shared debounced save used by EVERYTHING (mood tank, streak, thread messages) — so changing your capacity or chatting in the thread was silently pushing a Reminders/Calendar sync. I narrowed it to only the engine-mutation path (recipes, meals, plan assignments, shopping check-offs, staples) — mood/streak/thread state no longer triggers either sync.
+→ Options: a) that's the right line — plan-relevant only (recommended; matches what "Dinners on your calendar" and the Reminders toggle actually promise) b) something specific still shouldn't trigger a sync — say which action c) something's now missing a sync that should have one — say which
+→ Blocks: nothing — already shipped; flagging in case the line's in the wrong place.
+**Ria:** _answer here_
+
+Only these four — nothing else from tonight's five items needed a call (the guarantee-line copy, the staple-quantity display, and the calendar Info.plist fix were all mechanical, not judgment calls).
+
+---
 ## Digest — 2026-07-13 (shopping-directive run: SHOP-1..4 all landed)
 
 All four of your shopping items shipped this session (quantity merge fix, staples always-on, Reminders sync, the flat store-grouped list). Suite 141/141. Four decisions, ranked:
