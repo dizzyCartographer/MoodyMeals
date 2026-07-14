@@ -43,6 +43,7 @@
 		689A2C71B73AD4820A95618D /* MoodyBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23386F6685CE2364CB13DCC9 /* MoodyBrain.swift */; };
 		7150FB616BE2FEDC1E1429C0 /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */; };
 		7303B173ACBE0C121ED2F9AF /* MoodyWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */; };
+		733BE0EBC69287B0168F87A9 /* APIKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867DA95D5ED440AE4C291F9F /* APIKeyStore.swift */; };
 		78F34BA2125DC2E2121B2149 /* MoodyEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */; };
 		790D4D747160D80E0DC7D084 /* StoreSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EEF8BA3B618D5BA0A76F80C /* StoreSection.swift */; };
 		794826CFB21A883A48F51594 /* GuaranteeCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */; };
@@ -197,6 +198,7 @@
 		798AFAD8211BC405F729A099 /* RemindersSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersSync.swift; sourceTree = "<group>"; };
 		7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleModelTests.swift; sourceTree = "<group>"; };
 		7F5B94373F5825505BCB1F97 /* MoodyBrainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodyBrainTests.swift; sourceTree = "<group>"; };
+		867DA95D5ED440AE4C291F9F /* APIKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyStore.swift; sourceTree = "<group>"; };
 		89CA4ECA95E721D890E544EA /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		8A8AF1F846C0E13C1040E6D2 /* RunRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunRoutingTests.swift; sourceTree = "<group>"; };
 		8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-Bold.ttf"; sourceTree = "<group>"; };
@@ -313,6 +315,7 @@
 		210897D2D2832913CE52CC86 /* Brain */ = {
 			isa = PBXGroup;
 			children = (
+				867DA95D5ED440AE4C291F9F /* APIKeyStore.swift */,
 				23386F6685CE2364CB13DCC9 /* MoodyBrain.swift */,
 			);
 			path = Brain;
@@ -737,6 +740,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				733BE0EBC69287B0168F87A9 /* APIKeyStore.swift in Sources */,
 				7CADB1BD767FFF743DDE8DE2 /* CalendarStore.swift in Sources */,
 				FF474436C89C2E5DBF1A04D5 /* CalendarSyncService.swift in Sources */,
 				2186F751839D23CB124D2BAB /* Food.swift in Sources */,

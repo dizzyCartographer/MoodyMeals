@@ -34,9 +34,9 @@ enum MoodyBrain {
     private static let model = "claude-opus-4-8"
 
     static func parseRecipe(from text: String) async throws -> ParsedRecipe {
-        // Keys come from the environment only — never committed (CLAUDE.md).
-        guard let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"],
-              !apiKey.isEmpty else {
+        // Env var (dev/sim) or Keychain (any real device, incl. TestFlight —
+        // D-63) — never committed either way (CLAUDE.md).
+        guard let apiKey = APIKeyStore.anthropicAPIKey, !apiKey.isEmpty else {
             throw MoodyBrainError.notConfigured
         }
 

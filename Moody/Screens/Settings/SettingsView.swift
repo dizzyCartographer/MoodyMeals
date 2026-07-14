@@ -88,6 +88,8 @@ struct SettingsView: View {
                 Text(appState.calendarSyncStatus)
             }
 
+            APIKeySection()
+
             Section {
                 LabeledContent("Version",
                     value: "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))")
@@ -97,6 +99,49 @@ struct SettingsView: View {
         .sheet(item: $editingMember) { member in
             MemberEditorSheet(member: member)
         }
+    }
+}
+
+// MARK: - Claude API key (D-63) — recipe paste needs this to run on a real
+// device (TestFlight/App Store builds have no usable env var). Entered
+// once, Keychain-stored, never leaves the phone.
+
+private struct APIKeySection: View {
+    @EnvironmentObject var appState: AppState
+    @State private var keyText = ""
+    @State private var justSaved = false
+
+    var body: some View {
+        Section {
+            SecureField("sk-ant-…", text: $keyText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+            HStack {
+                Button("Save") {
+                    appState.saveAnthropicAPIKey(keyText)
+                    keyText = ""
+                    justSaved = true
+                }
+                .disabled(keyText.trimmingCharacters(in: .whitespaces).isEmpty)
+                if appState.hasAnthropicAPIKey {
+                    Spacer()
+                    Button("Remove", role: .destructive) {
+                        appState.clearAnthropicAPIKey()
+                        justSaved = false
+                    }
+                }
+            }
+        } header: {
+            Text("Recipe paste")
+        } footer: {
+            Text(footerText)
+        }
+    }
+
+    private var footerText: String {
+        if justSaved { return "saved — recipe paste is live" }
+        if appState.hasAnthropicAPIKey { return "a key is saved — recipe paste is live" }
+        return "add a Claude API key from console.anthropic.com to turn on Paste a recipe — it stays on this phone"
     }
 }
 

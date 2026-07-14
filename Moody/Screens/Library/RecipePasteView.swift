@@ -101,7 +101,7 @@ struct RecipePasteView: View {
         case .success(let result):
             preview = result
         case .failure(.notConfigured):
-            errorMessage = "recipe paste isn't set up yet — add this one by typing instead"
+            errorMessage = "no Claude API key on file — add one in Settings, or add this recipe by typing instead"
         case .failure(.failed):
             errorMessage = "couldn't read that — try again, or add it by typing instead"
         }

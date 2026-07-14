@@ -1218,6 +1218,22 @@ final class AppState: ObservableObject {
         return "planned dinners appear on the Moody calendar"
     }
 
+    // MARK: - Claude API key (D-63) — Keychain-backed so recipe paste works
+    // on a real installed build, not just from Xcode. Entered once here;
+    // never leaves the device, never committed.
+
+    var hasAnthropicAPIKey: Bool { APIKeyStore.hasKeychainKey }
+
+    func saveAnthropicAPIKey(_ key: String) {
+        APIKeyStore.save(key)
+        objectWillChange.send()
+    }
+
+    func clearAnthropicAPIKey() {
+        APIKeyStore.clear()
+        objectWillChange.send()
+    }
+
     private func projectSettings() {
         settingsMembers = engineMembers.map { member in
             SettingsMember(id: member.id, name: member.name, isAdult: member.isAdult,
