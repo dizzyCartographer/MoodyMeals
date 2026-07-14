@@ -6,6 +6,33 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-13 (shopping-directive run: SHOP-1..4 all landed)
+
+All four of your shopping items shipped this session (quantity merge fix, staples always-on, Reminders sync, the flat store-grouped list). Suite 141/141. Four decisions, ranked:
+
+**D-59. SHOP-4 visual review — the reworked Shopping screen.** docs/screenshots/shop4-flat-list.png shows it: guarantee line kept up top, flat list grouped Produce / Meat & fish / Dairy & eggs / Pantry / Frozen + "Anything else" (quick-add lives there), freshness chips ("by Wed"), "Done shopping" bottom bar once anything's checked, "Have it" swipe on engine items. Judgment calls inside: the section titles, the chip styling, the "always stocked" right-hand tag on staple rows.
+→ Options: a) good — ships in the next build (recommended) b) notes on any piece (one-line fixes) c) different section names/order (say them)
+→ Blocks: the next family-facing build wearing the new screen.
+**Ria:** _answer here_
+
+**D-60. Reminders mirror: its own list, or yours?** The sync owns a list named "Moody Groceries" — sharing it once from the Reminders app puts it on the family + watches; Siri reaches it by name ("add milk to Moody Groceries"). Alternative: a picker so it writes into an existing list you already share.
+→ Options: a) own list, as shipped (recommended — the mirror never touches anything else, which is also the promise the permission copy makes) b) add a list picker c) same but a different name (say it)
+→ Blocks: nothing — the toggle ships either way; the answer shapes whether family onboarding says "share this list" or "pick your list".
+**Ria:** _answer here_
+
+**D-61. Store sections: keep inference, or make them editable per ingredient?** Sections are inferred today — perishability picks the temperature zone, word lists (TuningDefaults) split fresh into meat/dairy/produce. Wrong guesses are cosmetic (item still listed, still counted) but visible: e.g. refrigerated tortillas will read "Dairy & eggs".
+→ Options: a) keep inference, grow the word lists as misfiles appear (recommended — zero data entry for you) b) add an editable section on each ingredient (schema addition + catalog picker) c) a, but with a long-press override on the list only
+→ Blocks: nothing queued; shapes the M4-1 tunables screen.
+**Ria:** _answer here_
+
+**D-62. "Have it" / staple cadence — is one cycle right?** "Have it" records a pantry-check: the item leaves the list and the guarantee counts it as home UNTIL THE NEXT SHOP, then it can ride again; a BOUGHT staple likewise drops off and returns next cycle (the always-on net you asked for). If that reads naggy in real use, the window is the knob.
+→ Options: a) one cycle, as shipped (recommended — the net stays honest) b) a per-staple quiet window (new tunable) c) "Have it" silences until you re-add it yourself
+→ Blocks: nothing; tunes daily feel once you've shopped with it twice.
+**Ria:** _answer here_
+
+Only these four — nothing else genuinely needs you (no padding per the rules).
+
+---
 ## Digest — 2026-07-13 (overnight run)
 
 ~~Xcode session expired overnight~~ **resolved 2026-07-13 ~2am — Ria refreshed it live; build 67 uploaded** (review fixes + the whole food-rules model). Nothing waits on tooling now — just D-57 below.

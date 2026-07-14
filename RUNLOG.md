@@ -1,5 +1,12 @@
 # RUNLOG.md — autonomous session log
 
+## Session summary — 2026-07-13 (shopping-directive run: Ria's four priorities, in order)
+- **Done:** SHOP-1 (quantity merge bug — projection rides `ShoppingListBuilder`, amounts re-sum across meals, coverage-aware; pinned), SHOP-2 (staples always-on — every list carries the shelf, PT-7 merge, SL-4 override, `.staple` provenance live), SHOP-3 (Reminders mirror — two-way sync to "Moody Groceries": push-once, completions both ways, Siri/watch adds import, only ours ever removed; usage strings via project.yml, verified in the built plist), SHOP-4 (flat store-grouped list — run math internal, guarantee line kept, freshness chips, "Done shopping" bottom bar, "Have it" swipe, jargon sweep).
+- **Needs visual review:** SHOP-4 (docs/screenshots/shop4-flat-list.png) — digest D-59.
+- **Test suite:** **141/141** (was 126 — +2 SHOP-1, +3 SHOP-2, +6 SHOP-3, +5 SHOP-4  ⚠️ one SL-6 test deepened in place). App target builds; runtime-verified on the sim.
+- **Blocked / for Ria:** nothing hard-blocked. Digest posted: D-59 (visual review), D-60 (Reminders list model), D-61 (store-section inference vs editable), D-62 ("Have it"/staple cadence).
+- **Next up:** whatever D-59 notes produce; then back to the backlog top (M2-5 run skip/delay is likely mooted by SHOP-4 — flagged there); device pass for the Reminders adapter rides the next TestFlight build.
+
 ## Session summary — 2026-07-13 (overnight autonomous run, per Ria "review a couple times + keep working the backlog")
 - **Done:** REVIEW-1 (common-sense pass: Choose-tonight added; the phantom-entry writer class deleted — legacy `reconcileWeekEdits` + write-hooks; dark mode = sim quirk, code clean; stale pre-merge app removed), FR-1 (D-44 bands + D-45 FoodRules, engine + UI + backfill — the design-session model is on screen), FR-2 draft (the rewritten §1 sits in the digest as **D-57**, full text, one read to approve).
 - **Builds:** 62–65 live from the evening; **67 uploaded ~2am** after Ria refreshed the expired Xcode session live (66's changes ride inside it). Suite 124/124 throughout.
