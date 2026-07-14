@@ -1,25 +1,28 @@
 import SwiftUI
 
-// SHOPPING (reminders-ish per Ria 2026-07-13) — one flat checklist: every
-// run is a section, every item checks off IN PLACE with a round toggle,
-// quick-add lives in each section, and "finish" sits in the section header
-// once anything's checked. The engine completion (done run + purchase
-// records + guarantee recompute) rides that finish, same as before.
+// SHOPPING (flat + store-grouped per Ria 2026-07-13, SHOP-4) — ONE list
+// answering "what do we need?", grouped the way a store is walked
+// (produce / meat / dairy / pantry / frozen, then "anything else" for her
+// own additions). The three-trip run math still drives routing and the
+// guarantee INTERNALLY — it just doesn't schedule her errands on screen.
+// Kept from the reminders-ish pass: check-off in place, strikethrough,
+// quick-add, unchecked items surviving "done". New: freshness chips,
+// a bottom "Done shopping" bar once anything's checked, and a "Have it"
+// swipe that records a pantry-check so the guarantee agrees.
 
 struct ShoppingView: View {
     @EnvironmentObject var appState: AppState
 
-    private var atRiskAnywhere: Bool {
-        appState.runs.contains { $0.atRisk != nil }
-    }
+    private var allItems: [ShoppingItem] { appState.sections.flatMap(\.items) }
+    private var checkedCount: Int { allItems.filter { appState.isChecked($0.name) }.count }
 
     var body: some View {
         List {
             Section {
                 Label(appState.guaranteeLine,
-                      systemImage: atRiskAnywhere
+                      systemImage: appState.guaranteeAtRisk
                         ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
-                    .foregroundStyle(atRiskAnywhere
+                    .foregroundStyle(appState.guaranteeAtRisk
                         ? Palette.yellow.label : Palette.green.label)
                     .font(.callout.weight(.medium))
                 NavigationLink {
@@ -41,56 +44,40 @@ struct ShoppingView: View {
                 Text(appState.remindersSyncStatus)
             }
 
-            if appState.runs.isEmpty {
+            ForEach(appState.sections) { section in
                 Section {
-                    QuickAddRow(runID: "topup")
+                    ForEach(section.items) { item in
+                        CheckItemRow(item: item)
+                    }
+                    if section.id == "extras" {
+                        QuickAddRow()
+                    }
+                } header: {
+                    Text(section.title)
                 } footer: {
-                    Text("planned dinners create runs — anything you add here rides the next top-up")
+                    if section.id == "extras" && section.items.isEmpty {
+                        Text("planned dinners fill the list — anything added here stays until it's home")
+                    }
                 }
-            }
-
-            ForEach(appState.runs) { run in
-                ShoppingRunSection(run: run)
             }
         }
         .navigationTitle("Shopping")
         // Watch/family/Siri edits land without waiting for a local change.
         .onAppear { appState.refreshRemindersFromOutside() }
-    }
-}
-
-private struct ShoppingRunSection: View {
-    @EnvironmentObject var appState: AppState
-    var run: ShoppingRun
-
-    private var checkedCount: Int {
-        run.items.filter { appState.isChecked(run.id, $0.name) }.count
-    }
-
-    var body: some View {
-        Section {
-            ForEach(run.items) { item in
-                CheckItemRow(runID: run.id, item: item)
-            }
-            QuickAddRow(runID: run.id)
-        } header: {
-            HStack {
-                Text(shoppingRunDisplayTitle(run.title))
-                Spacer()
-                if checkedCount > 0 {
-                    Button("Finish · \(checkedCount) of \(run.items.count)") {
-                        appState.completeRun(run.id)
-                    }
-                    .font(.caption.weight(.semibold))
-                    .textCase(nil)
+        .safeAreaInset(edge: .bottom) {
+            if checkedCount > 0 {
+                Button {
+                    appState.finishShopping()
+                } label: {
+                    Text("Done shopping · \(checkedCount) of \(allItems.count)")
+                        .font(.body.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
                 }
-            }
-        } footer: {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(run.protects)
-                if let atRisk = run.atRisk {
-                    Text(atRisk).foregroundStyle(Palette.yellow.label)
-                }
+                .buttonStyle(.borderedProminent)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background(.ultraThinMaterial)
             }
         }
     }
@@ -98,15 +85,14 @@ private struct ShoppingRunSection: View {
 
 private struct CheckItemRow: View {
     @EnvironmentObject var appState: AppState
-    let runID: String
     var item: ShoppingItem
 
-    private var checked: Bool { appState.isChecked(runID, item.name) }
+    private var checked: Bool { appState.isChecked(item.name) }
 
     var body: some View {
         HStack(spacing: 12) {
             Button {
-                appState.toggleChecked(runID, item.name)
+                appState.toggleChecked(item.name)
             } label: {
                 Image(systemName: checked ? "largecircle.fill.circle" : "circle")
                     .font(.title3)
@@ -118,17 +104,34 @@ private struct CheckItemRow: View {
                 .strikethrough(checked, color: .secondary)
                 .foregroundStyle(checked ? .secondary : .primary)
             Spacer()
-            Text(item.category)
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+            if let deadline = item.deadline {
+                Text(deadline)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(Palette.yellow.label)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(Palette.yellow.color.opacity(0.22)))
+            }
+            if !item.category.isEmpty {
+                Text(item.category)
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
         }
         .contentShape(Rectangle())
-        .onTapGesture { appState.toggleChecked(runID, item.name) }
+        .onTapGesture { appState.toggleChecked(item.name) }
         .swipeActions(edge: .trailing) {
-            if appState.isManual(runID, item.name) {
+            if appState.isManual(item.name) {
                 Button("Remove", role: .destructive) {
-                    appState.removeManualItem(named: item.name, runID: runID)
+                    appState.removeManualItem(named: item.name)
                 }
+            } else {
+                // The pantry check: it's home already — off the list, and
+                // the guarantee counts it as covered until the next shop.
+                Button("Have it") {
+                    appState.markHaveIt(item.name)
+                }
+                .tint(Palette.green.color)
             }
         }
     }
@@ -136,7 +139,6 @@ private struct CheckItemRow: View {
 
 private struct QuickAddRow: View {
     @EnvironmentObject var appState: AppState
-    let runID: String
 
     @State private var text = ""
     @FocusState private var focused: Bool
@@ -150,7 +152,7 @@ private struct QuickAddRow: View {
                 .autocorrectionDisabled()
                 .focused($focused)
                 .onSubmit {
-                    appState.addManualItem(text, toRun: runID)
+                    appState.addManualItem(text)
                     text = ""
                     focused = true   // Reminders-style: keep adding
                 }
@@ -158,8 +160,4 @@ private struct QuickAddRow: View {
         .contentShape(Rectangle())
         .onTapGesture { focused = true }
     }
-}
-
-func shoppingRunDisplayTitle(_ title: String) -> String {
-    title
 }

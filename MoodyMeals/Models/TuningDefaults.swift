@@ -31,6 +31,19 @@ enum TuningDefaults {
     /// guarantee covers. v1 implements exactly 1 (next per tier); the knob
     /// itself becomes runtime-tunable at M4-1.
     static let guaranteeLookaheadRuns = 1
+    /// NEW at SHOP-4 (not in §8 — noted in RUNLOG): whole-word lists that
+    /// split the fresh temperature zones into store sections (meat & fish /
+    /// dairy & eggs; everything else fresh reads as produce). Wrong guesses
+    /// are cosmetic — grouping only. User-editable at M4-1 with the rest.
+    static let meatSectionWords: Set<String> = [
+        "beef", "chicken", "pork", "turkey", "sausage", "bacon", "ham",
+        "lamb", "steak", "fish", "cod", "salmon", "tuna", "shrimp",
+        "tilapia", "meatballs", "meatball", "brisket", "ribs",
+    ]
+    static let dairySectionWords: Set<String> = [
+        "milk", "cheese", "yogurt", "butter", "cream", "egg", "eggs",
+        "mozzarella", "cheddar", "parmesan", "queso", "crema",
+    ]
     /// NEW at M2-3 (review finding, noted in RUNLOG): how many days fresh
     /// (`freshShort`) groceries stay good — bounds both routing (a run too
     /// far before the meal can't carry its fresh items) and purchase

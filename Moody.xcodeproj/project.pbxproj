@@ -42,6 +42,7 @@
 		7150FB616BE2FEDC1E1429C0 /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */; };
 		7303B173ACBE0C121ED2F9AF /* MoodyWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */; };
 		78F34BA2125DC2E2121B2149 /* MoodyEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */; };
+		790D4D747160D80E0DC7D084 /* StoreSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EEF8BA3B618D5BA0A76F80C /* StoreSection.swift */; };
 		794826CFB21A883A48F51594 /* GuaranteeCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */; };
 		7CADB1BD767FFF743DDE8DE2 /* CalendarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA1686F12F11EE8947C98373 /* CalendarStore.swift */; };
 		7D0E44B47989A6E814160513 /* ShoppingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E969FA33C177A6442F2E749A /* ShoppingModelTests.swift */; };
@@ -60,6 +61,7 @@
 		996D382C3C0E203D0F7D3372 /* Quicksand-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 645E1EF658A22099828C7F40 /* Quicksand-SemiBold.ttf */; };
 		9BCE9CB14E93532139DAD8E0 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4A33BB197E62150F230D71 /* Models.swift */; };
 		9D9F6A36B664C74BA9F13EBC /* ShoppingListBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A119A1FE8FDEE3BA3ECFBA5 /* ShoppingListBuilderTests.swift */; };
+		A36E4DE24D2A53AA2298B37A /* StoreSectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFE7ABC64ACF3D34872A25D /* StoreSectionTests.swift */; };
 		A9F35774EFDCDC22153E6D8C /* Meal.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6EDE89B37C08B378A3133BF /* Meal.swift */; };
 		AAE592CFE2919C23F224D56B /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E209741B886ABFBD266A525 /* PlanView.swift */; };
 		AAF93ECBEB22211EBFBEAD7E /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */; };
@@ -155,6 +157,7 @@
 		057D46143F898B85C50403E4 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
 		09A3C8D635A57A293CF7D233 /* CRUDPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRUDPersistenceTests.swift; sourceTree = "<group>"; };
 		0C088FCB7F3C23005388293D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		0EEF8BA3B618D5BA0A76F80C /* StoreSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSection.swift; sourceTree = "<group>"; };
 		1757671D9E5D6E4CEED77B29 /* TonightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightTests.swift; sourceTree = "<group>"; };
 		1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoodyEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20BD322121F2A369501AAF53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -167,6 +170,7 @@
 		37A16017B8C7D3F6B6B10FA5 /* MealFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealFormView.swift; sourceTree = "<group>"; };
 		37FB2E98E25BF494F1C32A88 /* SeedDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataTests.swift; sourceTree = "<group>"; };
 		384B178D380E74EA46662386 /* Snack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snack.swift; sourceTree = "<group>"; };
+		3AFE7ABC64ACF3D34872A25D /* StoreSectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSectionTests.swift; sourceTree = "<group>"; };
 		3B126986ECB404302390F59A /* StaplesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaplesView.swift; sourceTree = "<group>"; };
 		3CF41D1A8B45D8A6A3202846 /* WeekPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlan.swift; sourceTree = "<group>"; };
 		3E209741B886ABFBD266A525 /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
@@ -291,6 +295,7 @@
 				E969FA33C177A6442F2E749A /* ShoppingModelTests.swift */,
 				BAAE73984372337D692E7F50 /* SmokeTests.swift */,
 				9780D9928515857A07003B4B /* StoreLocationTests.swift */,
+				3AFE7ABC64ACF3D34872A25D /* StoreSectionTests.swift */,
 				1757671D9E5D6E4CEED77B29 /* TonightTests.swift */,
 				2FB949E436A065885308EA2F /* WeekPlanTests.swift */,
 			);
@@ -411,6 +416,7 @@
 				A965F2E2F2523B268E891509 /* RunRouting.swift */,
 				6ABD0D45B77432602A3CA3ED /* ShoppingExplosion.swift */,
 				402B1DBECF88ED0E36B48E90 /* ShoppingListBuilder.swift */,
+				0EEF8BA3B618D5BA0A76F80C /* StoreSection.swift */,
 			);
 			path = Shopping;
 			sourceTree = "<group>";
@@ -689,6 +695,7 @@
 				7D0E44B47989A6E814160513 /* ShoppingModelTests.swift in Sources */,
 				15A9EC13122C36933232D90A /* SmokeTests.swift in Sources */,
 				35D70FA54AB10A81A77973E9 /* StoreLocationTests.swift in Sources */,
+				A36E4DE24D2A53AA2298B37A /* StoreSectionTests.swift in Sources */,
 				804F6C83B2BADE1F9188A9A9 /* TonightTests.swift in Sources */,
 				9661BCA7ECA43FDB4C69628E /* WeekPlanTests.swift in Sources */,
 			);
@@ -729,6 +736,7 @@
 				DB8A064246DBFD3343923079 /* ShoppingListBuilder.swift in Sources */,
 				BD1D34D2DDFC533D2DA54FB6 /* Snack.swift in Sources */,
 				DF7CB540E98C4B3F808FB413 /* StoreLocation.swift in Sources */,
+				790D4D747160D80E0DC7D084 /* StoreSection.swift in Sources */,
 				BC26AB76B536322BD63DD85F /* Tonight.swift in Sources */,
 				F4EF27D68D972FB979B15BEC /* TuningDefaults.swift in Sources */,
 				5F8650E01CAD7C25FCA284A8 /* WeekPlan.swift in Sources */,

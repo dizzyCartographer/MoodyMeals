@@ -278,10 +278,21 @@ struct Streak: Codable {
 struct ShoppingItem: Identifiable, Codable {
     var id = UUID()   // stored var (not `let = …`) so persisted ids survive relaunch
     var name: String
-    var category: String
+    var category: String          // row detail ("always stocked"); "" = none
     var low: Bool = false
+    var deadline: String? = nil   // freshness chip ("by Wed") — SHOP-4
 }
 
+/// SHOP-4: the list the user sees — one flat checklist grouped the way a
+/// store is walked. Run math stays internal to the engine projection.
+struct ShoppingSection: Identifiable, Codable {
+    let id: String                // StoreSection rawValue, or "extras"
+    var title: String             // "Produce" … "Anything else"
+    var items: [ShoppingItem]
+}
+
+/// Legacy shape (pre-SHOP-4 three-run cards) — still part of the snapshot
+/// contract so older `snapshot.json` files keep decoding; written empty now.
 struct ShoppingRun: Identifiable, Codable {
     let id: String
     var title: String

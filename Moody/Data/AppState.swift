@@ -170,21 +170,21 @@ final class AppState: ObservableObject {
 
     // MARK: Shopping (projection: explosion → routing → guarantee)
 
-    @Published var runs: [ShoppingRun] = [] {
-        didSet {
-            guard !isProjecting else { return }
-            scheduleSave()
-        }
-    }
+    /// SHOP-4: one flat list grouped by store section. The run math still
+    /// drives routing + the guarantee INTERNALLY; the user just sees "what
+    /// we need", grouped for the store.
+    @Published private(set) var sections: [ShoppingSection] = []
+    /// The guarantee flagged something tight (colors the guarantee line).
+    private(set) var guaranteeAtRisk = false
 
-    /// B-4 in-store state: checked lines (keys "runID|display name") and
-    /// Ria's own additions. Persisted in the snapshot; the ENGINE only ever
-    /// sees completions (done runs + purchase records).
+    /// B-4 in-store state: checked lines (keyed by display name) and Ria's
+    /// own additions. Persisted in the snapshot; the ENGINE only ever sees
+    /// completions (done runs + purchase records).
     @Published private(set) var checkedItems: Set<String> = []
     @Published private(set) var manualItems: [ManualShoppingItem] = []
     /// display name → raw ingredient name, rebuilt each projection — purchase
     /// records must carry the raw name or the guarantee never matches them.
-    private var rawNameByRunItem: [String: String] = [:]
+    private var rawNameByItem: [String: String] = [:]
 
     // MARK: Thread (scripted v1 — swap MessageBank for a live generator later)
 
@@ -906,41 +906,20 @@ final class AppState: ObservableObject {
         return cal.date(byAdding: .day, value: delta, to: date) ?? date
     }
 
-    private static func category(for perishability: Perishability) -> String {
-        switch perishability {
-        case .freshShort: return "fresh"
-        case .refrigeratedLong: return "chilled"
-        case .freezer: return "frozen"
-        case .pantry: return "pantry"
-        }
-    }
-
-    /// Presentation run ids are stable ("topup"/"weekly"/"bulk") — check-off
-    /// keys, manual items, and routes all hang off them.
-    private static func runID(for tier: RunTier) -> String {
-        switch tier {
-        case .midweek: "topup"
-        case .weekly: "weekly"
-        case .bulk: "bulk"
-        }
-    }
-    static func engineTier(forRunID id: String) -> RunTier {
-        switch id {
-        case "topup": .midweek
-        case "weekly": .weekly
-        default: .bulk
-        }
-    }
-
     private func projectShopping() {
         guard let context, let weekEnd = weekDates.last,
               let horizon = Calendar.current.date(byAdding: .day, value: 1, to: weekEnd)
-        else { runs = []; guaranteeLine = "shopping is on pause — engine offline"; return }
+        else {
+            sections = []
+            guaranteeAtRisk = false
+            guaranteeLine = "the list can't load right now"
+            return
+        }
 
         let now = Date()
         let today = WeekPlan.dayAnchor(for: now)
         let entries = (try? ShoppingExplosion.entries(from: today, to: horizon, in: context)) ?? []
-        rawNameByRunItem = [:]
+        rawNameByItem = [:]
 
         // Three proposed runs: top-up today, weekly Wednesday, bulk Saturday
         // (run cadence is a placeholder until real run scheduling lands —
@@ -1001,32 +980,9 @@ final class AppState: ObservableObject {
             },
             now: now)
 
-        struct Bucket {
-            var items: [ShoppingItem] = []
-            var protects: [String] = []
-            var seen: Set<String> = []
-        }
-        var buckets: [RunTier: Bucket] = [:]
-        for group in built.groups {
-            var bucket = buckets[group.tier] ?? Bucket()
-            for line in group.lines {
-                guard bucket.seen.insert(line.ingredientName.lowercased()).inserted
-                else { continue }
-                bucket.items.append(ShoppingItem(
-                    name: line.text,
-                    category: line.source == .staple
-                        ? "always stocked" : Self.category(for: line.perishability)))
-                rawNameByRunItem["\(Self.runID(for: group.tier))|\(line.text)"] =
-                    line.ingredientName
-                for title in line.mealTitles where !bucket.protects.contains(title) {
-                    bucket.protects.append(title)
-                }
-            }
-            buckets[group.tier] = bucket
-        }
-
         // The guarantee, from their check: the proposed trio + every DONE run
-        // (purchases cover inside their windows).
+        // (purchases cover inside their windows). The run trio stays INTERNAL
+        // from here on — the user sees one flat list (SHOP-4).
         let result = GuaranteeCheck.check(
             entries: entries,
             runs: candidateRuns.map {
@@ -1035,84 +991,55 @@ final class AppState: ObservableObject {
             } + doneSnapshots,
             now: now)
 
-        // A violation's missing items ride the top-up card (GT-2's addMiniRun
-        // proposal, made concrete) and flag it — honestly, never red.
-        var atRisk: String? = nil
-        if let violation = result.violations.first {
-            var topUp = buckets[.midweek] ?? Bucket()
-            for missing in result.violations.flatMap(\.missingItems)
-            where topUp.seen.insert(missing.lowercased()).inserted {
-                topUp.items.append(ShoppingItem(name: missing, category: "top-up"))
+        // One flat list, grouped the way the store is walked. At-risk lines
+        // (nothing scheduled can carry them in time) stay ON the list — they
+        // still need buying; the guarantee line carries the warning.
+        var bySection: [StoreSection: [ShoppingItem]] = [:]
+        var seen: Set<String> = []
+        for line in built.groups.flatMap(\.lines) + built.atRisk {
+            guard seen.insert(line.ingredientName.lowercased()).inserted else { continue }
+            let section = StoreSection.infer(name: line.ingredientName,
+                                             perishability: line.perishability)
+            // Freshness deadline as a small chip — fresh items only.
+            var deadline: String? = nil
+            if line.perishability == .freshShort, let need = line.neededBy {
+                deadline = "by \(Self.weekday(of: need).short)"
             }
-            if !topUp.protects.contains(violation.mealTitle) {
-                topUp.protects.append(violation.mealTitle)
-            }
-            buckets[.midweek] = topUp
-            let count = violation.missingItems.count
-            atRisk = "\(violation.mealTitle) needs \(count) item\(count == 1 ? "" : "s") — on the top-up"
+            bySection[section, default: []].append(ShoppingItem(
+                name: line.text,
+                category: line.source == .staple ? "always stocked" : "",
+                deadline: deadline))
+            rawNameByItem[line.text] = line.ingredientName
         }
 
-        // A run holding only staples still earns its card — the footer says
-        // what it's for instead of listing meals.
-        func protectsText(_ bucket: Bucket, verb: String) -> String {
-            bucket.protects.isEmpty
-                ? "keeps the always-stocked shelf full"
-                : "\(verb) \(bucket.protects.joined(separator: " + "))"
+        var projected: [ShoppingSection] = StoreSection.walkOrder.compactMap {
+            guard let items = bySection[$0], !items.isEmpty else { return nil }
+            return ShoppingSection(id: $0.rawValue, title: $0.title, items: items)
         }
-        var projected: [ShoppingRun] = []
-        if let bucket = buckets[.midweek], !bucket.items.isEmpty {
-            projected.append(ShoppingRun(
-                id: "topup", title: "Tonight top-up", tier: .tonightTopUp,
-                items: bucket.items,
-                protects: protectsText(bucket, verb: "protects"),
-                atRisk: atRisk))
-        }
-        if let bucket = buckets[.weekly], !bucket.items.isEmpty {
-            let day = Self.weekday(of: candidateRuns[1].plannedDate).long
-            projected.append(ShoppingRun(
-                id: "weekly", title: "\(day) weekly", tier: .weekly,
-                items: bucket.items,
-                protects: protectsText(bucket, verb: "covers")))
-        }
-        if let bucket = buckets[.bulk], !bucket.items.isEmpty {
-            let day = Self.weekday(of: candidateRuns[2].plannedDate).long
-            projected.append(ShoppingRun(
-                id: "bulk", title: "\(day) bulk", tier: .bulk,
-                items: bucket.items,
-                protects: protectsText(bucket, verb: "covers")))
-        }
+        // Ria's own additions always have a home — and the quick-add lives
+        // here, so the section rides along even when empty. B-4.
+        projected.append(ShoppingSection(
+            id: "extras", title: "Anything else",
+            items: manualItems.map { manual in
+                rawNameByItem[manual.name] = manual.name
+                return ShoppingItem(name: manual.name, category: "")
+            }))
+        sections = projected
 
-        // Ria's own items ride their chosen run; a run that exists only
-        // because of her additions still gets a card. B-4.
-        for manual in manualItems {
-            let item = ShoppingItem(name: manual.name, category: "yours")
-            rawNameByRunItem["\(manual.runID)|\(manual.name)"] = manual.name
-            if let index = projected.firstIndex(where: { $0.id == manual.runID }) {
-                projected[index].items.append(item)
-            } else {
-                let (title, tier): (String, ShoppingRun.Tier) = switch manual.runID {
-                case "topup": ("Tonight top-up", .tonightTopUp)
-                case "weekly": ("\(Self.weekday(of: candidateRuns[1].plannedDate).long) weekly", .weekly)
-                default: ("\(Self.weekday(of: candidateRuns[2].plannedDate).long) bulk", .bulk)
-                }
-                projected.append(ShoppingRun(id: manual.runID, title: title,
-                                             tier: tier, items: [item],
-                                             protects: "your additions"))
-            }
-        }
-        let order = ["topup": 0, "weekly": 1, "bulk": 2]
-        projected.sort { order[$0.id, default: 3] < order[$1.id, default: 3] }
-        runs = projected
-
+        guaranteeAtRisk = !result.violations.isEmpty
         if let violation = result.violations.first {
             let count = violation.missingItems.count
-            // D-48: state the mechanic (the items ARE on the top-up card),
-            // never minimize the errand ("a quick run" was judging the run).
+            // D-48: state the mechanic (the items ARE on the list), never
+            // minimize the errand.
             guaranteeLine = count == 1
-                ? "\(violation.mealTitle) needs 1 item — it's on the top-up"
-                : "\(violation.mealTitle) needs \(count) items — they're on the top-up"
+                ? "\(violation.mealTitle) needs 1 item sooner than the next shop — it's on the list"
+                : "\(violation.mealTitle) needs \(count) items sooner than the next shop — they're on the list"
         } else if entries.isEmpty {
-            guaranteeLine = "no dinners planned yet — nothing to buy ✓"
+            // "nothing to buy" must stay honest when the always-stocked
+            // check rides below it (staples are on the list dinner-less).
+            guaranteeLine = bySection.isEmpty
+                ? "no dinners planned yet — nothing to buy ✓"
+                : "no dinners planned yet — below is the always-stocked check ✓"
         } else if let covered = result.coveredThrough {
             guaranteeLine = "groceries covered thru \(Self.weekday(of: covered).long) ✓"
         } else {
@@ -1380,10 +1307,10 @@ final class AppState: ObservableObject {
     /// The mirror's view of the list: every line with its checked state,
     /// titled exactly as displayed (and as check-off keys them).
     private var reminderLines: [RemindersSync.AppLine] {
-        runs.flatMap { run in
-            run.items.map {
+        sections.flatMap { section in
+            section.items.map {
                 RemindersSync.AppLine(title: $0.name,
-                                      isChecked: isChecked(run.id, $0.name))
+                                      isChecked: isChecked($0.name))
             }
         }
     }
@@ -1400,16 +1327,15 @@ final class AppState: ObservableObject {
         guard case .synced(let changes) = outcome else { return }
         managedReminderTitles = changes.managedTitles
         var mutated = false
-        // Completed out there → checked here (keyed to whichever run shows it).
-        for title in changes.checkedTitles {
-            for run in runs where run.items.contains(where: { $0.name == title }) {
-                if checkedItems.insert("\(run.id)|\(title)").inserted { mutated = true }
-            }
+        // Completed out there → checked here.
+        for title in changes.checkedTitles
+        where sections.contains(where: { $0.items.contains { $0.name == title } }) {
+            if checkedItems.insert(title).inserted { mutated = true }
         }
         // Added out there (Siri/watch/family) → the user's own items here.
         for title in changes.importedTitles
         where !manualItems.contains(where: { $0.name == title }) {
-            manualItems.append(ManualShoppingItem(name: title, runID: "topup"))
+            manualItems.append(ManualShoppingItem(name: title, runID: "extras"))
             mutated = true
         }
         if mutated {
@@ -1436,52 +1362,55 @@ final class AppState: ObservableObject {
         calendarSync.syncAll(in: context)
     }
 
-    // MARK: - Shopping interactions (B-4)
+    // MARK: - Shopping interactions (B-4, flat since SHOP-4)
 
-    func isChecked(_ runID: String, _ itemName: String) -> Bool {
-        checkedItems.contains("\(runID)|\(itemName)")
+    func isChecked(_ itemName: String) -> Bool {
+        checkedItems.contains(itemName)
     }
 
-    func toggleChecked(_ runID: String, _ itemName: String) {
-        checkedItems.formSymmetricDifference(["\(runID)|\(itemName)"])
+    func toggleChecked(_ itemName: String) {
+        checkedItems.formSymmetricDifference([itemName])
         scheduleSave()
     }
 
-    func addManualItem(_ name: String, toRun runID: String) {
+    func addManualItem(_ name: String) {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return }
-        manualItems.append(ManualShoppingItem(name: trimmed, runID: runID))
+        guard !trimmed.isEmpty,
+              !manualItems.contains(where: { $0.name == trimmed }) else { return }
+        manualItems.append(ManualShoppingItem(name: trimmed, runID: "extras"))
         projectAll()
         scheduleSave()
     }
 
-    func removeManualItem(named name: String, runID: String) {
-        manualItems.removeAll { $0.runID == runID && $0.name == name }
-        checkedItems.remove("\(runID)|\(name)")
+    func removeManualItem(named name: String) {
+        manualItems.removeAll { $0.name == name }
+        checkedItems.remove(name)
         projectAll()
         scheduleSave()
     }
 
-    func isManual(_ runID: String, _ itemName: String) -> Bool {
-        manualItems.contains { $0.runID == runID && $0.name == itemName }
+    func isManual(_ itemName: String) -> Bool {
+        manualItems.contains { $0.name == itemName }
     }
 
-    /// Finishing a run is the engine-true moment: a DONE ShoppingRun with a
+    /// "Done shopping" is the engine-true moment: a DONE ShoppingRun with a
     /// PurchaseRecord per checked line lands in the store, the guarantee
     /// recomputes over the new coverage window, and bought lines leave the
-    /// remaining lists. Unchecked lines simply stay for a later run.
-    func completeRun(_ runID: String) {
-        guard let context,
-              let run = runs.first(where: { $0.id == runID }) else { return }
-        let checkedNames = run.items.map(\.name).filter { isChecked(runID, $0) }
+    /// list. Unchecked lines simply stay for next time.
+    func finishShopping() {
+        guard let context else { return }
+        let checkedNames = sections.flatMap(\.items).map(\.name)
+            .filter { isChecked($0) }
         guard !checkedNames.isEmpty else { return }
 
         let now = Date()
+        // Tier is bookkeeping here — coverage windows are tier-agnostic and
+        // the visible list no longer wears run tiers (SHOP-4).
         let engineRun = MoodyEngine.ShoppingRun(
-            tier: Self.engineTier(forRunID: runID), plannedDate: now, status: .done)
+            tier: .midweek, plannedDate: now, status: .done)
         context.insert(engineRun)
         for display in checkedNames {
-            let raw = rawNameByRunItem["\(runID)|\(display)"] ?? display
+            let raw = rawNameByItem[display] ?? display
             context.insert(PurchaseRecord(
                 itemName: raw, purchasedAt: now,
                 ingredient: engineIngredients.first {
@@ -1490,8 +1419,36 @@ final class AppState: ObservableObject {
                 sourceRun: engineRun))
         }
         // Bought manual items leave the list; unchecked ones stay put.
-        manualItems.removeAll { $0.runID == runID && checkedNames.contains($0.name) }
-        checkedItems = checkedItems.filter { !$0.hasPrefix("\(runID)|") }
+        manualItems.removeAll { checkedNames.contains($0.name) }
+        checkedItems.removeAll()
+        saveAndReproject()
+    }
+
+    /// "Have it" (SHOP-4): the pantry check said it's already home — record
+    /// it like a purchase made today, so the list AND the guarantee agree.
+    /// Coverage runs until the next shop; after that the item can ride again.
+    func markHaveIt(_ itemName: String) {
+        guard let context else { return }
+        if isManual(itemName) { return removeManualItem(named: itemName) }
+        let raw = rawNameByItem[itemName] ?? itemName
+        let now = Date()
+        let today = WeekPlan.dayAnchor(for: now)
+        // One "pantry check" run per day collects these records.
+        let run = engineDoneRuns.first {
+            WeekPlan.dayAnchor(for: $0.plannedDate) == today && $0.status == .done
+        } ?? {
+            let created = MoodyEngine.ShoppingRun(
+                tier: .midweek, plannedDate: now, status: .done)
+            context.insert(created)
+            return created
+        }()
+        context.insert(PurchaseRecord(
+            itemName: raw, purchasedAt: now,
+            ingredient: engineIngredients.first {
+                $0.name.compare(raw, options: .caseInsensitive) == .orderedSame
+            },
+            sourceRun: run))
+        checkedItems.remove(itemName)
         saveAndReproject()
     }
 
@@ -1514,8 +1471,10 @@ final class AppState: ObservableObject {
         saveTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: 500_000_000)
             guard let self, !Task.isCancelled else { return }
+            // `runs: []` — the three-run cards retired at SHOP-4; the field
+            // stays so older snapshot decoders keep working.
             Persistence.save(MoodySnapshot(week: week, streak: streak, tank: tank,
-                                           runs: runs, thread: thread,
+                                           runs: [], thread: thread,
                                            sassLevel: sassLevel, savedAt: Date(),
                                            checkedItems: checkedItems,
                                            manualItems: manualItems,
@@ -1534,7 +1493,9 @@ final class AppState: ObservableObject {
         tank = snapshot.tank
         thread = snapshot.thread
         sassLevel = snapshot.sassLevel
-        checkedItems = snapshot.checkedItems
+        // Pre-SHOP-4 checks were keyed "runID|name" — those runs are gone;
+        // stale keys would never match and would silently inflate the count.
+        checkedItems = Set(snapshot.checkedItems.filter { !$0.contains("|") })
         manualItems = snapshot.manualItems
         managedReminderTitles = snapshot.managedReminderTitles
     }
