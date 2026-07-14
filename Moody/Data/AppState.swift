@@ -983,36 +983,41 @@ final class AppState: ObservableObject {
             }
         }
 
+        // The engine's builder owns the merge (SL-6/PT-7): one line per
+        // ingredient, amounts re-summed across every meal that needs it,
+        // strictest need-by — the projection just presents its groups.
+        // (Was a per-entry explode with first-wins dedup: two dinners sharing
+        // an ingredient silently dropped the second dinner's amount.)
+        let built = ShoppingListBuilder.build(
+            entries: entries,
+            runs: candidateRuns,
+            covered: { name, perishability, mealDate in
+                purchasedCovers(name, mealDay: WeekPlan.dayAnchor(for: mealDate),
+                                perishability: perishability)
+            },
+            now: now)
+
         struct Bucket {
             var items: [ShoppingItem] = []
             var protects: [String] = []
             var seen: Set<String> = []
         }
         var buckets: [RunTier: Bucket] = [:]
-        for entry in entries {
-            guard let title = entry.meal?.title else { continue }
-            for line in ShoppingExplosion.explode([entry]) {
-                if purchasedCovers(line.ingredientName.lowercased(),
-                                   mealDay: WeekPlan.dayAnchor(for: entry.date),
-                                   perishability: line.perishability) { continue }
-                guard case .routed(let index) = RunRouting.route(
-                    perishability: line.perishability,
-                    neededBy: entry.date,
-                    preferredTier: line.preferredRunTier,
-                    runs: candidateRuns.map { ($0.tier, $0.plannedDate) },
-                    now: now) else { continue }   // violations surface via the guarantee
-                let tier = candidateRuns[index].tier
-                var bucket = buckets[tier] ?? Bucket()
-                let display = RunRouting.exportText(for: line)
-                if bucket.seen.insert(line.ingredientName.lowercased()).inserted {
-                    bucket.items.append(ShoppingItem(
-                        name: display,
-                        category: Self.category(for: line.perishability)))
-                    rawNameByRunItem["\(Self.runID(for: tier))|\(display)"] = line.ingredientName
+        for group in built.groups {
+            var bucket = buckets[group.tier] ?? Bucket()
+            for line in group.lines {
+                guard bucket.seen.insert(line.ingredientName.lowercased()).inserted
+                else { continue }
+                bucket.items.append(ShoppingItem(
+                    name: line.text,
+                    category: Self.category(for: line.perishability)))
+                rawNameByRunItem["\(Self.runID(for: group.tier))|\(line.text)"] =
+                    line.ingredientName
+                for title in line.mealTitles where !bucket.protects.contains(title) {
+                    bucket.protects.append(title)
                 }
-                if !bucket.protects.contains(title) { bucket.protects.append(title) }
-                buckets[tier] = bucket
             }
+            buckets[group.tier] = bucket
         }
 
         // The guarantee, from their check: the proposed trio + every DONE run

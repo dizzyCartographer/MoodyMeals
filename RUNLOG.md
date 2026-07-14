@@ -24,6 +24,12 @@
 Newest at top. One block per task; one Session summary per run window.
 
 ---
+### [SHOP-1] — Quantity merge bug: the projection now rides ShoppingListBuilder (2026-07-13, Ria's shopping directive #1)
+- Outcome: **done.** `AppState.projectShopping()` exploded each dinner separately and deduped first-wins — two dinners sharing an ingredient silently dropped the second dinner's amounts (tacos' 1 lb + burgers' 2 lb of beef displayed as "1 lb"). The correct merge (`ShoppingListBuilder.build`: amounts re-summed across meals, strictest need-by — SL-6/PT-7) existed but had no production caller. The builder now returns structured `Line`s (raw ingredient name so PurchaseRecords keep matching the guarantee, merged export text, perishability, strictest need-by, the meals the line keeps cookable) plus a `covered` hook so purchase coverage removes a meal's contribution BEFORE the re-sum — and the projection consumes builder groups directly.
+- Tests added: SL-6 deepened to the line-level contract (summed text "3 lb", both meal titles, strictest need-by) + `test_SL6_coveredEntryLeavesTheMerge_amountsStayHonest` (a covered meal's amount leaves the sum; a fully covered line disappears). Suite **127/127**; app target builds.
+- Notes: `BuiltShoppingList.atRisk` is `[Line]` now (was `[String]`) — markdown/export output unchanged; reminders-export tests updated to the new shape.
+
+---
 ### [D-35 FIX] — Names out of static copy (2026-07-13 ~3:40am, Ria live)
 - Ria caught tonight's Settings food-rules footer naming two kids in a string literal — a straight D-35 violation ("no one is hardcoded; names appear in seed data only"). The line the fix draws, restated for future copy: names DERIVED from her data at runtime (the HC-5 confirm naming who's home — required by D-57) are correct; names as LITERALS in instructions/tooltips/footers are violations — the test is "would this copy be wrong if the household changed?"
 - Fixed: the Settings footer (household-generic now), and the Live Activity's placeholder subLine ("Chad on chop duty" — lock-screen-visible demo fiction) de-named. Full surface grep clean (comments + atticed seed data remain, both allowed). Suite 126/126. Ships as build 70.

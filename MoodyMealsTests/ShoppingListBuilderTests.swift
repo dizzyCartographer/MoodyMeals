@@ -72,11 +72,67 @@ final class ShoppingListBuilderTests: XCTestCase {
         XCTAssertTrue(markdown.contains("## Weekly grocery"))
         XCTAssertTrue(markdown.contains("- [ ]"), "checklist format")
         XCTAssertTrue(markdown.contains("## ⚠️ At risk"))
-        XCTAssertTrue(list.atRisk.contains { $0.contains("fresh cod") })
+        XCTAssertTrue(list.atRisk.contains { $0.text.contains("fresh cod") })
 
-        // The strictest need-by routed beef onto the day-1 weekly run.
+        // The strictest need-by routed beef onto the day-1 weekly run, and
+        // the line carries the projection contract: raw name (PurchaseRecords
+        // must match the guarantee) + every meal it keeps cookable.
         let weekly = try XCTUnwrap(list.groups.first { $0.tier == .weekly })
-        XCTAssertTrue(weekly.itemTexts.contains { $0.contains("ground beef") })
+        let beefLine = try XCTUnwrap(weekly.lines.first { $0.ingredientName == "ground beef" })
+        XCTAssertEqual(beefLine.text, "ground beef — 3 lb")
+        XCTAssertEqual(Set(beefLine.mealTitles), ["Tacos", "Burgers"])
+        XCTAssertEqual(beefLine.neededBy, entries[0].date,
+                       "strictest need-by across both meals")
+    }
+
+    /// SL-6 + GT-1 seam: a covered entry (already shopped for that meal)
+    /// leaves the merge entirely — the surviving line re-sums over the
+    /// REMAINING meals only, never first-wins, never double-counts.
+    @MainActor
+    func test_SL6_coveredEntryLeavesTheMerge_amountsStayHonest() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let ria = FamilyMember(name: "Ria", isAdult: true)
+        context.insert(ria)
+
+        let beef = Ingredient(name: "ground beef", perishability: .freshShort)
+        context.insert(beef)
+        let tacos = Meal(title: "Tacos")
+        context.insert(tacos)
+        tacos.directItems = [RecipeItem(ingredient: beef, amount: 1, unit: "lb")]
+        let burgers = Meal(title: "Burgers")
+        context.insert(burgers)
+        burgers.directItems = [RecipeItem(ingredient: beef, amount: 2, unit: "lb")]
+
+        let entries = [
+            try WeekPlan.assign(tacos, on: days(2), slot: .dinner, attendees: [ria], in: context),
+            try WeekPlan.assign(burgers, on: days(4), slot: .dinner, attendees: [ria], in: context),
+        ]
+        let runs: [(tier: RunTier, plannedDate: Date)] = [(.weekly, days(1))]
+
+        // Tacos' beef is covered (a done run already brought it home);
+        // Burgers' is not — the line must read 2 lb, not 3, not 1.
+        let tacosDay = entries[0].date
+        let list = ShoppingListBuilder.build(
+            entries: entries, runs: runs,
+            covered: { name, _, mealDate in
+                name == "ground beef" && mealDate == tacosDay
+            },
+            now: now)
+
+        let weekly = try XCTUnwrap(list.groups.first { $0.tier == .weekly })
+        let beefLine = try XCTUnwrap(weekly.lines.first { $0.ingredientName == "ground beef" })
+        XCTAssertEqual(beefLine.text, "ground beef — 2 lb",
+                       "the covered meal's amount stays out of the re-sum")
+        XCTAssertEqual(beefLine.mealTitles, ["Burgers"])
+
+        // Both covered → the line is gone entirely.
+        let allCovered = ShoppingListBuilder.build(
+            entries: entries, runs: runs,
+            covered: { name, _, _ in name == "ground beef" },
+            now: now)
+        XCTAssertFalse(allCovered.groups.flatMap(\.lines)
+            .contains { $0.ingredientName == "ground beef" })
     }
 
     // Reminders export: permission-gated, graceful, counted.
@@ -98,7 +154,10 @@ final class ShoppingListBuilderTests: XCTestCase {
     func test_remindersExport_authorized_addsEveryItemToRunLists() async {
         let list = BuiltShoppingList(
             groups: [.init(tier: .weekly, plannedDate: days(1),
-                           itemTexts: ["ground beef — 3 lb", "rice — 1 bag"])],
+                           lines: [.init(ingredientName: "ground beef",
+                                         text: "ground beef — 3 lb"),
+                                   .init(ingredientName: "rice",
+                                         text: "rice — 1 bag")])],
             atRisk: [])
         let store = MockRemindersStore(.notDetermined) // will grant on request
         let outcome = await RemindersExport.export(list, to: store)
@@ -113,7 +172,8 @@ final class ShoppingListBuilderTests: XCTestCase {
     func test_remindersExport_denied_isVisiblyUnavailable_neverSilent() async {
         let list = BuiltShoppingList(
             groups: [.init(tier: .weekly, plannedDate: days(1),
-                           itemTexts: ["ground beef — 3 lb"])],
+                           lines: [.init(ingredientName: "ground beef",
+                                         text: "ground beef — 3 lb")])],
             atRisk: [])
         let store = MockRemindersStore(.denied)
         let outcome = await RemindersExport.export(list, to: store)
