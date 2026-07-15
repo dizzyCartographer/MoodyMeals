@@ -18,6 +18,7 @@
 		1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3562FB76F8DEE2EB61EF356 /* ShoppingView.swift */; };
 		1E322DAF4F9051B614708D64 /* CookModeActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFA389EC376502813DE0E08 /* CookModeActivity.swift */; };
 		2186F751839D23CB124D2BAB /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D46143F898B85C50403E4 /* Food.swift */; };
+		23C2A66E62CFBC2AD8251019 /* RecipeOCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD052D3B49F24165A0083FF /* RecipeOCR.swift */; };
 		2481BF08AB92BBAC85549D49 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F04A6A7BD6FD808AF9DF7B6 /* RecipeDetailView.swift */; };
 		25A42D4F5799EC6E0E4D9D0D /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */; };
 		25AE66FB61BCB05CDCB47A79 /* MoodyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F99FEA93E9725CE972D3110B /* MoodyApp.swift */; };
@@ -71,6 +72,7 @@
 		AAE592CFE2919C23F224D56B /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E209741B886ABFBD266A525 /* PlanView.swift */; };
 		AAF93ECBEB22211EBFBEAD7E /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4BC108D634D91AEF9BFB9A6 /* Nunito-Black.ttf */; };
 		AE815E2AF8707CE93C47C554 /* RemindersSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798AFAD8211BC405F729A099 /* RemindersSync.swift */; };
+		B3DD3F1C239380B12D284579 /* GlutenCarrierCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA63DF965D60EBC18EC57514 /* GlutenCarrierCheckTests.swift */; };
 		B424E5A98E462B20AF54BD2F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4A33BB197E62150F230D71 /* Models.swift */; };
 		BC26AB76B536322BD63DD85F /* Tonight.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1ACF9801BB1E035CF260EC2 /* Tonight.swift */; };
 		BC2A611402BA7A4F25C67A90 /* Baloo2-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8C5E9D568CDC4EAFC53B62EE /* Baloo2-Bold.ttf */; };
@@ -94,6 +96,7 @@
 		F4EF27D68D972FB979B15BEC /* TuningDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = F958BD3D385F34BB8F5674BB /* TuningDefaults.swift */; };
 		F8386CE2E9A07F4612F4BF00 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E5E42ABE06A296AB30E54E /* Persistence.swift */; };
 		FBE9441EDB5ADB0DECB96A61 /* StaplesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B126986ECB404302390F59A /* StaplesView.swift */; };
+		FBF864FA828305E844B63327 /* GlutenCarrierCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EB8B55F61373F63DB5DE10 /* GlutenCarrierCheck.swift */; };
 		FC1468620E12F32776966959 /* AppTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F397399471949619A0069929 /* AppTabView.swift */; };
 		FE98A0D8B248E36D084E8246 /* FoodRuleBandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E7E38E5B8552D38358C7E9 /* FoodRuleBandTests.swift */; };
 		FF474436C89C2E5DBF1A04D5 /* CalendarSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E68CEB05397E2F06B0E2F4 /* CalendarSyncService.swift */; };
@@ -194,6 +197,7 @@
 		6689832E63D666A898CB71E1 /* CookModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookModeController.swift; sourceTree = "<group>"; };
 		6A119A1FE8FDEE3BA3ECFBA5 /* ShoppingListBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListBuilderTests.swift; sourceTree = "<group>"; };
 		6ABD0D45B77432602A3CA3ED /* ShoppingExplosion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingExplosion.swift; sourceTree = "<group>"; };
+		6AD052D3B49F24165A0083FF /* RecipeOCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeOCR.swift; sourceTree = "<group>"; };
 		6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuaranteeCheckTests.swift; sourceTree = "<group>"; };
 		716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-ExtraBold.ttf"; sourceTree = "<group>"; };
 		754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -220,11 +224,13 @@
 		B6F50D47ACCCB2A984E33BE2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodyWidgets.swift; sourceTree = "<group>"; };
 		BA1686F12F11EE8947C98373 /* CalendarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStore.swift; sourceTree = "<group>"; };
+		BA63DF965D60EBC18EC57514 /* GlutenCarrierCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlutenCarrierCheckTests.swift; sourceTree = "<group>"; };
 		BAAE73984372337D692E7F50 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		C273742E798E7D3AE4B47690 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C3B7F3733EA2A0B2F8CBAAC8 /* ShoppingExplosionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingExplosionTests.swift; sourceTree = "<group>"; };
 		C9E5E42ABE06A296AB30E54E /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		CC4A33BB197E62150F230D71 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D6EB8B55F61373F63DB5DE10 /* GlutenCarrierCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlutenCarrierCheck.swift; sourceTree = "<group>"; };
 		DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-SemiBold.ttf"; sourceTree = "<group>"; };
 		E2A2F8246A001D17C2F934D1 /* CalendarSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSyncTests.swift; sourceTree = "<group>"; };
 		E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MoodyWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -299,6 +305,7 @@
 				09A3C8D635A57A293CF7D233 /* CRUDPersistenceTests.swift */,
 				772CB32273BEE48FCB298C9F /* FoodModelTests.swift */,
 				35E7E38E5B8552D38358C7E9 /* FoodRuleBandTests.swift */,
+				BA63DF965D60EBC18EC57514 /* GlutenCarrierCheckTests.swift */,
 				6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */,
 				7F5B94373F5825505BCB1F97 /* MoodyBrainTests.swift */,
 				7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */,
@@ -322,7 +329,9 @@
 			isa = PBXGroup;
 			children = (
 				867DA95D5ED440AE4C291F9F /* APIKeyStore.swift */,
+				D6EB8B55F61373F63DB5DE10 /* GlutenCarrierCheck.swift */,
 				23386F6685CE2364CB13DCC9 /* MoodyBrain.swift */,
+				6AD052D3B49F24165A0083FF /* RecipeOCR.swift */,
 			);
 			path = Brain;
 			sourceTree = "<group>";
@@ -713,6 +722,7 @@
 				EC02CA641278657249FB001C /* CalendarSyncTests.swift in Sources */,
 				2D659AE22CCA14B7A9BFF104 /* FoodModelTests.swift in Sources */,
 				FE98A0D8B248E36D084E8246 /* FoodRuleBandTests.swift in Sources */,
+				B3DD3F1C239380B12D284579 /* GlutenCarrierCheckTests.swift in Sources */,
 				794826CFB21A883A48F51594 /* GuaranteeCheckTests.swift in Sources */,
 				3633CBBD4A21763370BCE268 /* MoodyBrainTests.swift in Sources */,
 				52344761A9FEAD87AFD2251B /* PeopleModelTests.swift in Sources */,
@@ -753,6 +763,7 @@
 				FF474436C89C2E5DBF1A04D5 /* CalendarSyncService.swift in Sources */,
 				2186F751839D23CB124D2BAB /* Food.swift in Sources */,
 				EA9378A462864C00DB49BAAC /* FoodRule.swift in Sources */,
+				FBF864FA828305E844B63327 /* GlutenCarrierCheck.swift in Sources */,
 				3AB8ED92A24FE878A35722E3 /* GuaranteeCheck.swift in Sources */,
 				A9F35774EFDCDC22153E6D8C /* Meal.swift in Sources */,
 				968364351FBB779C1CD6EE69 /* MealBand.swift in Sources */,
@@ -760,6 +771,7 @@
 				8610279534AA52A1C65EC4AB /* People.swift in Sources */,
 				F8386CE2E9A07F4612F4BF00 /* Persistence.swift in Sources */,
 				ED2DBB60147214F92D44E81E /* Planning.swift in Sources */,
+				23C2A66E62CFBC2AD8251019 /* RecipeOCR.swift in Sources */,
 				AE815E2AF8707CE93C47C554 /* RemindersSync.swift in Sources */,
 				E0F6D525A822B04EEE9D09F3 /* RunRouting.swift in Sources */,
 				5E9F487BD05FFE95D779C7FF /* SeedData.swift in Sources */,

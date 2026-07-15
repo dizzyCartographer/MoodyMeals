@@ -467,16 +467,22 @@ final class AppState: ObservableObject {
     }
 
     /// HC-7: reuse the catalog by (case-insensitive) name; a NEW ingredient
-    /// enters UNVERIFIED (nil tri-state = unsafe for GF members until checked).
+    /// enters UNVERIFIED (nil tri-state = unsafe for GF members until checked)
+    /// — unless `carrierHint` matches a known gluten carrier (deterministic
+    /// word-list, `GlutenCarrierCheck`), in which case it enters explicitly
+    /// `false` (not GF), the same state a manual "not GF" mark would leave —
+    /// never applied to an ingredient that already exists in the catalog.
     private func resolveIngredient(named raw: String,
-                                   perishability: Perishability) -> Ingredient? {
+                                   perishability: Perishability,
+                                   carrierHint: Bool = false) -> Ingredient? {
         guard let context else { return nil }
         let name = raw.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return nil }
         if let existing = engineIngredients.first(where: {
             $0.name.compare(name, options: .caseInsensitive) == .orderedSame
         }) { return existing }
-        let fresh = Ingredient(name: name, perishability: perishability)
+        let fresh = Ingredient(name: name, perishability: perishability,
+                               isGlutenFreeVerified: carrierHint ? false : nil)
         context.insert(fresh)
         return fresh
     }
@@ -640,7 +646,10 @@ final class AppState: ObservableObject {
     // MARK: - Recipe paste import (M3-1 MoodyBrain + scoped M3-2: parse
     // only — the D-44 GF-band assessment is a separate PROMPT-REVIEW-gated
     // pass; a pasted recipe lands notCheckedYet, same as any hand-typed one
-    // (HC-7: never silently safe).
+    // (HC-7: never silently safe). What IS included: deterministic gluten-
+    // carrier flagging (`GlutenCarrierCheck`, D-44's seeded/extendable word
+    // list) — a calm nudge, never an auto-applied substitution — and photo
+    // import (`RecipeOCR`, on-device Vision) feeding the exact same parser.
 
     enum RecipePasteError: Error, Equatable {
         case notConfigured   // no ANTHROPIC_API_KEY in the environment
@@ -651,11 +660,24 @@ final class AppState: ObservableObject {
         do {
             let parsed = try await MoodyBrain.parseRecipe(from: text)
             let items = parsed.items.map {
-                RecipePastePreview.Item(name: $0.name, amount: $0.amount, unit: $0.unit)
+                RecipePastePreview.Item(name: $0.name, amount: $0.amount, unit: $0.unit,
+                                        substituteSuggestion: GlutenCarrierCheck.match(for: $0.name)?.suggestion)
             }
             return .success(RecipePastePreview(title: parsed.title, items: items, steps: parsed.steps))
         } catch MoodyBrainError.notConfigured {
             return .failure(.notConfigured)
+        } catch {
+            return .failure(.failed)
+        }
+    }
+
+    /// Vision OCR on one or more recipe photos/screenshots, joined into one
+    /// text block — the result feeds the SAME `parsePastedRecipe` above, so
+    /// a photographed recipe and a typed one carry identical guarantees.
+    func recognizeRecipeText(fromImageData datas: [Data]) async -> Result<String, RecipePasteError> {
+        do {
+            let text = try await RecipeOCR.recognizedText(fromImageData: datas)
+            return .success(text)
         } catch {
             return .failure(.failed)
         }
@@ -678,8 +700,9 @@ final class AppState: ObservableObject {
         context.insert(recipe)
         meal.recipes.append(recipe)
         for item in preview.items {
-            guard let ingredient = resolveIngredient(named: item.name,
-                                                      perishability: .pantry) else { continue }
+            guard let ingredient = resolveIngredient(named: item.name, perishability: .pantry,
+                                                      carrierHint: GlutenCarrierCheck.isLikelyCarrier(item.name))
+            else { continue }
             let recipeItem = RecipeItem(ingredient: ingredient, amount: item.amount, unit: item.unit)
             context.insert(recipeItem)
             recipe.items.append(recipeItem)

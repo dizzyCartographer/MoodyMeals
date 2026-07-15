@@ -1,9 +1,15 @@
 import SwiftUI
+import PhotosUI
 
 // RECIPE PASTE (M3-2 parse-only slice) — paste a recipe from a website or
-// her own notes; MoodyBrain turns it into a title, ingredient lines, and
-// steps. Nothing saves until she reviews the preview and taps Add — the
-// GF band starts notCheckedYet either way, same as typing it in by hand.
+// her own notes, or add one or more photos/screenshots of it (on-device
+// Vision OCR reads the text first); MoodyBrain turns whichever text she
+// ends up with into a title, ingredient lines, and steps. Nothing saves
+// until she reviews the preview and taps Add — the GF band starts
+// notCheckedYet either way, same as typing it in by hand. Ingredient lines
+// that match a known gluten carrier (flour, soy sauce, breadcrumbs, …)
+// carry a calm substitute suggestion in the preview — never applied on
+// its own.
 
 struct RecipePasteView: View {
     @EnvironmentObject var appState: AppState
@@ -11,11 +17,14 @@ struct RecipePasteView: View {
 
     @State private var text = ""
     @State private var isParsing = false
+    @State private var isReadingPhotos = false
+    @State private var selectedPhotos: [PhotosPickerItem] = []
     @State private var preview: RecipePastePreview?
     @State private var errorMessage: String?
 
     private var canParse: Bool {
-        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isParsing
+        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !isParsing && !isReadingPhotos
     }
 
     var body: some View {
@@ -26,9 +35,16 @@ struct RecipePasteView: View {
                 } else {
                     Section {
                         TextEditor(text: $text)
-                            .frame(minHeight: 220)
+                            .frame(minHeight: 200)
+                        PhotosPicker(selection: $selectedPhotos, matching: .images) {
+                            Label("Add from photos", systemImage: "camera.viewfinder")
+                        }
+                        .onChange(of: selectedPhotos) { _, newValue in
+                            guard !newValue.isEmpty else { return }
+                            Task { await readPhotos(newValue) }
+                        }
                     } footer: {
-                        Text("paste a recipe — a title, ingredient lines, and steps if it has them")
+                        Text("paste a recipe, or add photos of one — a title, ingredient lines, and steps if it has them")
                     }
                 }
                 if let errorMessage {
@@ -54,8 +70,8 @@ struct RecipePasteView: View {
                 }
             }
             .overlay {
-                if isParsing {
-                    ProgressView("reading it…")
+                if isParsing || isReadingPhotos {
+                    ProgressView(isReadingPhotos ? "reading the photos…" : "reading it…")
                         .padding()
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 }
@@ -73,12 +89,19 @@ struct RecipePasteView: View {
                     .foregroundStyle(.secondary)
             }
             ForEach(preview.items) { item in
-                HStack {
-                    Text(item.name)
-                    Spacer()
-                    if let amount = item.amount {
-                        Text([Self.formatted(amount), item.unit].compactMap { $0 }.joined(separator: " "))
-                            .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Text(item.name)
+                        Spacer()
+                        if let amount = item.amount {
+                            Text([Self.formatted(amount), item.unit].compactMap { $0 }.joined(separator: " "))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    if let suggestion = item.substituteSuggestion {
+                        Text("may need a GF substitute — \(suggestion)")
+                            .font(.caption)
+                            .foregroundStyle(Palette.yellow.label)
                     }
                 }
             }
@@ -90,6 +113,25 @@ struct RecipePasteView: View {
             }
         } header: {
             Text("Looks like this — edit anything after adding")
+        }
+    }
+
+    private func readPhotos(_ items: [PhotosPickerItem]) async {
+        isReadingPhotos = true
+        errorMessage = nil
+        defer { isReadingPhotos = false; selectedPhotos = [] }
+        var datas: [Data] = []
+        for item in items {
+            if let data = try? await item.loadTransferable(type: Data.self) {
+                datas.append(data)
+            }
+        }
+        switch await appState.recognizeRecipeText(fromImageData: datas) {
+        case .success(let recognized):
+            text = text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ? recognized : text + "\n\n" + recognized
+        case .failure:
+            errorMessage = "couldn't find any text in those photos — try again, or type the recipe instead"
         }
     }
 

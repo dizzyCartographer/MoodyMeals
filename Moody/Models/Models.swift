@@ -202,16 +202,19 @@ struct MealDraft: Equatable {
     var requiresCalmDay = false
 }
 
-/// A recipe MoodyBrain parsed from pasted text, before she's reviewed it —
-/// nothing saves until she taps Add. GF band starts notCheckedYet, same as
-/// any hand-typed recipe (M3-2 parse-only slice; the D-44 assessment is a
-/// separate pass).
+/// A recipe MoodyBrain parsed from pasted text (typed or photographed),
+/// before she's reviewed it — nothing saves until she taps Add. GF band
+/// starts notCheckedYet, same as any hand-typed recipe (M3-2 parse-only
+/// slice; the full D-44 assessment is a separate pass) — `substituteSuggestion`
+/// is a deterministic word-list nudge (`GlutenCarrierCheck`), never applied
+/// on its own.
 struct RecipePastePreview: Equatable {
     struct Item: Identifiable, Equatable {
         var id = UUID()
         var name: String
         var amount: Double?
         var unit: String?
+        var substituteSuggestion: String?
     }
     var title: String
     var items: [Item]
