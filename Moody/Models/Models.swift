@@ -96,6 +96,13 @@ struct LibraryRecipe: Identifiable, Equatable {
     var standardModification: String = ""
 }
 
+/// Navigation-path value for pushing the read-only recipe screen — a
+/// distinct type from the plain `UUID` meals already push with, so both
+/// can live on the same `NavigationStack`.
+struct RecipeRoute: Hashable {
+    var id: UUID
+}
+
 /// D-44 band → surface language. Yellow is the ceiling (law 4); unsafe is
 /// words-with-weight, never red.
 enum BandStyle {

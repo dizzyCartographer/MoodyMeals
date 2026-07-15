@@ -137,12 +137,9 @@ struct MealLibraryView: View {
 
 private struct RecipeSummaryRow: View {
     var recipe: RecipeSummary
-    @State private var editing = false
 
     var body: some View {
-        Button {
-            editing = true
-        } label: {
+        NavigationLink(value: RecipeRoute(id: recipe.id)) {
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(recipe.title).foregroundStyle(.primary)
@@ -158,9 +155,6 @@ private struct RecipeSummaryRow: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
-        }
-        .sheet(isPresented: $editing) {
-            RecipeFormView(mealID: nil, recipeID: recipe.id)
         }
     }
 }

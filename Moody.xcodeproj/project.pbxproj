@@ -18,6 +18,7 @@
 		1D75084081E1255AD97C0236 /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3562FB76F8DEE2EB61EF356 /* ShoppingView.swift */; };
 		1E322DAF4F9051B614708D64 /* CookModeActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFA389EC376502813DE0E08 /* CookModeActivity.swift */; };
 		2186F751839D23CB124D2BAB /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D46143F898B85C50403E4 /* Food.swift */; };
+		2481BF08AB92BBAC85549D49 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F04A6A7BD6FD808AF9DF7B6 /* RecipeDetailView.swift */; };
 		25A42D4F5799EC6E0E4D9D0D /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */; };
 		25AE66FB61BCB05CDCB47A79 /* MoodyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F99FEA93E9725CE972D3110B /* MoodyApp.swift */; };
 		2661E25CE50FD177F70CDB02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3295D9466525ACF22798D98F /* Assets.xcassets */; };
@@ -41,6 +42,7 @@
 		6217E4AB988272D64A1C08DB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4789DA996D85611488552513 /* Theme.swift */; };
 		67A491ED8EB1CB17F97EDB6F /* Baloo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */; };
 		689A2C71B73AD4820A95618D /* MoodyBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23386F6685CE2364CB13DCC9 /* MoodyBrain.swift */; };
+		6F5DEF380C800B93B59447F8 /* CookModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7693F35B8FAD0C9852601275 /* CookModeView.swift */; };
 		7150FB616BE2FEDC1E1429C0 /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA59F8CC5343CE68C486199D /* Baloo2-SemiBold.ttf */; };
 		7303B173ACBE0C121ED2F9AF /* MoodyWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD87C6B5841280D2519D90 /* MoodyWidgets.swift */; };
 		733BE0EBC69287B0168F87A9 /* APIKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867DA95D5ED440AE4C291F9F /* APIKeyStore.swift */; };
@@ -179,6 +181,7 @@
 		3B126986ECB404302390F59A /* StaplesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaplesView.swift; sourceTree = "<group>"; };
 		3CF41D1A8B45D8A6A3202846 /* WeekPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekPlan.swift; sourceTree = "<group>"; };
 		3E209741B886ABFBD266A525 /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
+		3F04A6A7BD6FD808AF9DF7B6 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
 		3F4DB477DAC71F51B3FAEA90 /* PlanningModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanningModelTests.swift; sourceTree = "<group>"; };
 		40215671261B6E98E223BB6F /* Nunito-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Bold.ttf"; sourceTree = "<group>"; };
 		402B1DBECF88ED0E36B48E90 /* ShoppingListBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListBuilder.swift; sourceTree = "<group>"; };
@@ -194,6 +197,7 @@
 		6D6AAA08DB999447DD132EB5 /* GuaranteeCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuaranteeCheckTests.swift; sourceTree = "<group>"; };
 		716B14995E30E7BAFA3DE414 /* Baloo2-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Baloo2-ExtraBold.ttf"; sourceTree = "<group>"; };
 		754DC4AECAF74F0B9F56F0FF /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-ExtraBold.ttf"; sourceTree = "<group>"; };
+		7693F35B8FAD0C9852601275 /* CookModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookModeView.swift; sourceTree = "<group>"; };
 		772CB32273BEE48FCB298C9F /* FoodModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodModelTests.swift; sourceTree = "<group>"; };
 		798AFAD8211BC405F729A099 /* RemindersSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersSync.swift; sourceTree = "<group>"; };
 		7AEFF31155D7EA0CAAD218DF /* PeopleModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleModelTests.swift; sourceTree = "<group>"; };
@@ -277,9 +281,11 @@
 		081B1E3CB4237DAD1010C115 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				7693F35B8FAD0C9852601275 /* CookModeView.swift */,
 				EC7F3CCC6CBA3CAFDC8BEFC7 /* MealDetailView.swift */,
 				37A16017B8C7D3F6B6B10FA5 /* MealFormView.swift */,
 				9B1B3E7490D56124C224586C /* MealLibraryView.swift */,
+				3F04A6A7BD6FD808AF9DF7B6 /* RecipeDetailView.swift */,
 				24FAF8A63E4501DF35C308F7 /* RecipeEditorView.swift */,
 				ABC732B5D5B666BD68BA738C /* RecipePasteView.swift */,
 			);
@@ -680,6 +686,7 @@
 				0A6454DFC5CB62457CB1926A /* Components.swift in Sources */,
 				D0011C05409ABF6F8004CADD /* CookModeActivity.swift in Sources */,
 				289B0873449E9A4F4AF1B36D /* CookModeController.swift in Sources */,
+				6F5DEF380C800B93B59447F8 /* CookModeView.swift in Sources */,
 				94CD0D79BB50F9F323829CBB /* MealDetailView.swift in Sources */,
 				070A1A648AD17FB88A46441F /* MealFormView.swift in Sources */,
 				1A4A799E17C96A4241BC33EC /* MealLibraryView.swift in Sources */,
@@ -687,6 +694,7 @@
 				25AE66FB61BCB05CDCB47A79 /* MoodyApp.swift in Sources */,
 				31728AB5EF8831EC28A50934 /* Persistence.swift in Sources */,
 				AAE592CFE2919C23F224D56B /* PlanView.swift in Sources */,
+				2481BF08AB92BBAC85549D49 /* RecipeDetailView.swift in Sources */,
 				7D3316EEF5F4A41801B85276 /* RecipeEditorView.swift in Sources */,
 				E4F6CED666D74B32E011F9A7 /* RecipePasteView.swift in Sources */,
 				59C62FD1607E110C0737C002 /* SettingsView.swift in Sources */,

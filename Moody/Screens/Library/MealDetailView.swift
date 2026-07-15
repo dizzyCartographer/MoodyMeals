@@ -57,12 +57,17 @@ struct MealDetailView: View {
                         }
                     } header: {
                         HStack {
-                            Text("\(recipe.title) · \(recipe.kindLabel)")
-                            Text(BandStyle.label(recipe.bandRaw))
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle((BandStyle.isGreen(recipe.bandRaw)
-                                    ? Palette.green : Palette.yellow).label)
-                                .textCase(nil)
+                            NavigationLink(value: RecipeRoute(id: recipe.id)) {
+                                HStack {
+                                    Text("\(recipe.title) · \(recipe.kindLabel)")
+                                    Text(BandStyle.label(recipe.bandRaw))
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle((BandStyle.isGreen(recipe.bandRaw)
+                                            ? Palette.green : Palette.yellow).label)
+                                        .textCase(nil)
+                                }
+                            }
+                            .textCase(nil)
                             Spacer()
                             Button("Edit") { editingRecipe = .init(id: recipe.id) }
                                 .font(.caption.weight(.semibold))

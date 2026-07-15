@@ -9,7 +9,7 @@ struct AppTabView: View {
 
     enum Tab: String { case today, plan, meals, shopping, settings }
     @State private var tab: Tab = .today
-    @State private var mealsPath: [UUID] = []
+    @State private var mealsPath = NavigationPath()
 
     var body: some View {
         TabView(selection: $tab) {
@@ -22,6 +22,7 @@ struct AppTabView: View {
             NavigationStack(path: $mealsPath) {
                 MealLibraryView()
                     .navigationDestination(for: UUID.self) { MealDetailView(id: $0) }
+                    .navigationDestination(for: RecipeRoute.self) { RecipeDetailView(recipeID: $0.id) }
             }
             .tabItem { Label("Meals", systemImage: "book") }
             .tag(Tab.meals)
@@ -71,7 +72,7 @@ struct AppTabView: View {
             if let meal = appState.library.max(by: {
                 $0.recipes.count + $0.directItems.count
                     < $1.recipes.count + $1.directItems.count
-            }) { mealsPath = [meal.id] }
+            }) { mealsPath = NavigationPath([meal.id]) }
         case "run": tab = .shopping   // the root IS the checklist now
         default: break
         }
