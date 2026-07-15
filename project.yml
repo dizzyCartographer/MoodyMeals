@@ -115,6 +115,17 @@ targets:
           - Nunito-ExtraBold.ttf
           - Nunito-Black.ttf
           - Quicksand-SemiBold.ttf
+  MoodyUITests:
+    # Real tap-through coverage for flows that only fail at the UI-wiring
+    # layer (a disabled button, a dead tap target) — the kind of bug
+    # engine-level unit tests can't see and screenshots can't catch either.
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: MoodyUITests
+    dependencies:
+      - target: Moody
   MoodyWidgets:
     type: app-extension
     platform: iOS
@@ -162,3 +173,13 @@ schemes:
     test:
       targets:
         - MoodyEngineTests
+  Moody:
+    build:
+      targets:
+        Moody: all
+        MoodyUITests: [test]
+    run:
+      config: Debug
+    test:
+      targets:
+        - MoodyUITests

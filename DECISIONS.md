@@ -6,6 +6,16 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-14 (correction round: Extra Items CRUD + the off-screen add-row bug)
+
+One genuine decision — everything else this round (full CRUD on both screens, the off-screen add-row fix an XCUITest actually caught, the test's own self-cleanup) was a direct fix to a reported bug, nothing to weigh.
+
+**D-69. Editing an extra item's NAME reassigns it to a different (or new) catalog ingredient rather than renaming the shared one in place — right call?** Extra items reference the same shared `Ingredient` catalog every recipe draws from. If editing "wine" to say "red wine" actually renamed the shared `Ingredient` object, that rename would silently ripple into every OTHER recipe/meal that happens to also use an ingredient named "wine" — not what editing one meal's one line should do. So instead, a name change on edit looks up-or-creates an ingredient for the NEW name (same as typing a brand-new item) and just re-points this one line at it, leaving the old shared ingredient (and anything else using it) untouched. The tradeoff: if "wine" was already GF-verified and you rename this one line to "red wine," the new ingredient starts unverified (`nil`, "check label") rather than inheriting the old one's verified status — technically correct (it's genuinely a different catalog entry now) but could read as a regression if you expected the GF status to just follow the rename.
+→ Options: a) keep it — reassign-to-new-or-existing, as shipped (recommended; the alternative risks silent cross-recipe edits, which is the worse failure mode) b) same reassignment, but carry over the OLD ingredient's GF-verified status to the new one when it's a pure rename (closer match to "I just fixed a typo," more surprising if you actually meant a different ingredient) c) block name edits from this sheet entirely — amount/unit only; a real rename means delete-and-re-add
+→ Blocks: nothing today (already shipped) — flagging because it's a data-identity call sitting next to HC-6/HC-7's verified-ingredient guarantees, same category as D-67.
+**Ria:** _answer here_
+
+---
 ## Digest — 2026-07-14 (screenshot round: meal-page/recipe-editor clarity + a stale-data fix)
 
 One genuine decision from this round — the other four items (Recipes header, collapsed recipe rows, Extra-items layout, Gluten band → Gluten-free status wording) were direct, unambiguous fixes to what you flagged, nothing to weigh. Listing 1, not padding to 3.

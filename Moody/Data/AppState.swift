@@ -337,7 +337,9 @@ final class AppState: ObservableObject {
             name: item.ingredient.name,
             amountText: amount,
             gfLabel: gf == true ? "GF ✓" : gf == false ? "not GF" : "check label",
-            gfSafe: gf == true)
+            gfSafe: gf == true,
+            rawAmount: item.amount,
+            rawUnit: item.unit ?? "")
     }
 
     private func projectLibrary() {
@@ -689,6 +691,28 @@ final class AppState: ObservableObject {
     func removeItem(_ id: UUID) {
         guard let context, let item = engineItem(id) else { return }
         context.delete(item)
+        saveAndReproject()
+    }
+
+    /// Edits an existing line's name/amount/unit in place. A NAME change
+    /// doesn't rename the shared catalog `Ingredient` (that could silently
+    /// relabel it everywhere else it's used) — it reassigns the line to
+    /// whichever ingredient that new name resolves to, same lookup-or-create
+    /// as a fresh add (HC-7: a newly-created one still enters unverified).
+    /// Amount/unit live on the line itself, so those just update directly.
+    func updateItem(_ id: UUID, name: String, amount: Double?, unit: String?) {
+        guard let item = engineItem(id) else { return }
+        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+        if !trimmedName.isEmpty,
+           trimmedName.compare(item.ingredient.name, options: .caseInsensitive) != .orderedSame,
+           let ingredient = resolveIngredient(named: trimmedName,
+                                              perishability: item.ingredient.perishability) {
+            item.ingredient = ingredient
+        }
+        item.amount = amount
+        let cleanUnit = unit?.trimmingCharacters(in: .whitespaces)
+        item.unit = cleanUnit?.isEmpty == false ? cleanUnit : nil
+        item.updatedAt = .now
         saveAndReproject()
     }
 

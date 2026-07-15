@@ -226,14 +226,18 @@ struct AddItemFields: View {
         VStack(alignment: .leading, spacing: 8) {
             TextField(placeholder, text: $name)
                 .autocorrectionDisabled()
+                .accessibilityIdentifier("addItemName")
             HStack {
                 TextField("amount", text: $amountText)
                     .keyboardType(.decimalPad)
+                    .accessibilityIdentifier("addItemAmount")
                 TextField("unit", text: $unit)
                     .autocorrectionDisabled()
+                    .accessibilityIdentifier("addItemUnit")
                 Button("Add") { add() }
                     .buttonStyle(.borderedProminent)
                     .disabled(trimmedName.isEmpty)
+                    .accessibilityIdentifier("addItemAddButton")
             }
             Text("amount and unit are both optional")
                 .font(.caption2)

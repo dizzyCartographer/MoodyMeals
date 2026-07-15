@@ -91,6 +91,7 @@
 		EA9378A462864C00DB49BAAC /* FoodRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BA9FA90E0B077995023DD8 /* FoodRule.swift */; };
 		EC02CA641278657249FB001C /* CalendarSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A2F8246A001D17C2F934D1 /* CalendarSyncTests.swift */; };
 		ED2DBB60147214F92D44E81E /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF9E1877843BAAC8F262E81 /* Planning.swift */; };
+		EF607F5C6736710F13886B88 /* ExtraItemsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EC70A1E1BF68018896F4DD /* ExtraItemsUITests.swift */; };
 		EF8C6B506D158E0580F9C910 /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40215671261B6E98E223BB6F /* Nunito-Bold.ttf */; };
 		F1C191D8D51358FB21FD84D7 /* CRUDPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A3C8D635A57A293CF7D233 /* CRUDPersistenceTests.swift */; };
 		F4EF27D68D972FB979B15BEC /* TuningDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = F958BD3D385F34BB8F5674BB /* TuningDefaults.swift */; };
@@ -123,6 +124,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 41909D6ED32C567A24DD6478;
 			remoteInfo = MoodyWidgets;
+		};
+		FF3958D50478E8EF69582C77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 227A4CFAEF461CBFC6BAA647 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DFF38109F3DD653E41814345;
+			remoteInfo = Moody;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -213,6 +221,7 @@
 		9780D9928515857A07003B4B /* StoreLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreLocationTests.swift; sourceTree = "<group>"; };
 		9AD54F3923E73B079932AED2 /* Shopping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shopping.swift; sourceTree = "<group>"; };
 		9B1B3E7490D56124C224586C /* MealLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealLibraryView.swift; sourceTree = "<group>"; };
+		A0FAFC9F905C1A02C660B395 /* MoodyUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MoodyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1ACF9801BB1E035CF260EC2 /* Tonight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tonight.swift; sourceTree = "<group>"; };
 		A2D2CC8F87F1418118F290C2 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		A2E68CEB05397E2F06B0E2F4 /* CalendarSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSyncService.swift; sourceTree = "<group>"; };
@@ -240,6 +249,7 @@
 		E969FA33C177A6442F2E749A /* ShoppingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingModelTests.swift; sourceTree = "<group>"; };
 		EC7F3CCC6CBA3CAFDC8BEFC7 /* MealDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetailView.swift; sourceTree = "<group>"; };
 		F397399471949619A0069929 /* AppTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabView.swift; sourceTree = "<group>"; };
+		F5EC70A1E1BF68018896F4DD /* ExtraItemsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraItemsUITests.swift; sourceTree = "<group>"; };
 		F61CAE00CA5179E9AF844492 /* People.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = People.swift; sourceTree = "<group>"; };
 		F958BD3D385F34BB8F5674BB /* TuningDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuningDefaults.swift; sourceTree = "<group>"; };
 		F99FEA93E9725CE972D3110B /* MoodyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodyApp.swift; sourceTree = "<group>"; };
@@ -365,6 +375,7 @@
 				40609321B585B6BBDD3752E9 /* Moody.app */,
 				1D8AC287D1D4F36233BB67C5 /* MoodyEngine.framework */,
 				365735D566DB6ED1781965DB /* MoodyEngineTests.xctest */,
+				A0FAFC9F905C1A02C660B395 /* MoodyUITests.xctest */,
 				E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */,
 			);
 			name = Products;
@@ -428,6 +439,14 @@
 			path = Moody;
 			sourceTree = "<group>";
 		};
+		9F1F7F4650280786A482A9BF /* MoodyUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F5EC70A1E1BF68018896F4DD /* ExtraItemsUITests.swift */,
+			);
+			path = MoodyUITests;
+			sourceTree = "<group>";
+		};
 		A767856FB195729AA9C68FC0 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -470,6 +489,7 @@
 				9EB6FE82F33444EE1A6900E9 /* Moody */,
 				8F3AD74F9C260828953A2D4F /* MoodyMeals */,
 				15374905E8A02BF240360AE1 /* MoodyMealsTests */,
+				9F1F7F4650280786A482A9BF /* MoodyUITests */,
 				EAA07A5B642F0FD744E38628 /* MoodyWidgets */,
 				59EB067207C601A8BB1D201C /* Products */,
 			);
@@ -564,6 +584,24 @@
 			productReference = E45AA2A6C9CCAF80F0D7D0CD /* MoodyWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		7804719D538D1AEC7BDD1EEA /* MoodyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AD2150D3D827DA755F7F4564 /* Build configuration list for PBXNativeTarget "MoodyUITests" */;
+			buildPhases = (
+				B47459A534F4680AD7BF8F89 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				80DDB68A6E723C47503A62E5 /* PBXTargetDependency */,
+			);
+			name = MoodyUITests;
+			packageProductDependencies = (
+			);
+			productName = MoodyUITests;
+			productReference = A0FAFC9F905C1A02C660B395 /* MoodyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		7891014ACAB8FE3D5D9DDA76 /* MoodyEngine */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6486116B2BD36E65FE0232E7 /* Build configuration list for PBXNativeTarget "MoodyEngine" */;
@@ -621,6 +659,11 @@
 						DevelopmentTeam = RC99K6SXQX;
 						ProvisioningStyle = Automatic;
 					};
+					7804719D538D1AEC7BDD1EEA = {
+						DevelopmentTeam = RC99K6SXQX;
+						ProvisioningStyle = Automatic;
+						TestTargetID = DFF38109F3DD653E41814345;
+					};
 					7891014ACAB8FE3D5D9DDA76 = {
 						DevelopmentTeam = RC99K6SXQX;
 						ProvisioningStyle = Automatic;
@@ -648,6 +691,7 @@
 				DFF38109F3DD653E41814345 /* Moody */,
 				7891014ACAB8FE3D5D9DDA76 /* MoodyEngine */,
 				28DC23B664584AEDF3A4F8C9 /* MoodyEngineTests */,
+				7804719D538D1AEC7BDD1EEA /* MoodyUITests */,
 				41909D6ED32C567A24DD6478 /* MoodyWidgets */,
 			);
 		};
@@ -741,6 +785,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B47459A534F4680AD7BF8F89 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EF607F5C6736710F13886B88 /* ExtraItemsUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D9F0A8B9EAE45A032939A116 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -800,6 +852,11 @@
 			target = 7891014ACAB8FE3D5D9DDA76 /* MoodyEngine */;
 			targetProxy = 40E784FD7E5372AFE1CCEBB3 /* PBXContainerItemProxy */;
 		};
+		80DDB68A6E723C47503A62E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DFF38109F3DD653E41814345 /* Moody */;
+			targetProxy = FF3958D50478E8EF69582C77 /* PBXContainerItemProxy */;
+		};
 		AB6D1A0B49F8941DD5CBB2C6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7891014ACAB8FE3D5D9DDA76 /* MoodyEngine */;
@@ -808,6 +865,23 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		008F6479E71D2A73AC592A50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mariayarley.MoodyUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Moody;
+			};
+			name = Debug;
+		};
 		27815A4693F504BB8E5A4684 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -864,6 +938,23 @@
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
+		};
+		770FEC47E18E2646B09E4938 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mariayarley.MoodyUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Moody;
+			};
+			name = Release;
 		};
 		7C2EAF9F616068944A55B27F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1122,6 +1213,15 @@
 			buildConfigurations = (
 				D6A8E47BB137371F01B77E8A /* Debug */,
 				EB19CC50878FF8E246C531FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AD2150D3D827DA755F7F4564 /* Build configuration list for PBXNativeTarget "MoodyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				008F6479E71D2A73AC592A50 /* Debug */,
+				770FEC47E18E2646B09E4938 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

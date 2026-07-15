@@ -135,6 +135,10 @@ struct LibraryRecipeItem: Identifiable, Equatable {
     var amountText: String        // "2 cups" — empty when amount-less (D-36 valid)
     var gfLabel: String           // "GF ✓" / "not GF" / "check label"
     var gfSafe: Bool
+    /// Raw amount/unit, separate from `amountText`'s combined display
+    /// string — an edit form needs these apart to prefill its own fields.
+    var rawAmount: Double?
+    var rawUnit: String = ""
 }
 
 // MARK: - Plan calendar (NB: any date from today forward — the real planner)

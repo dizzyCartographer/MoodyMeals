@@ -13,6 +13,7 @@ struct MealDetailView: View {
     @State private var showNewRecipe = false
     @State private var showAttach = false
     @State private var editingRecipe: RecipeRoute?
+    @State private var editingItem: LibraryRecipeItem?
 
     private var meal: LibraryMeal? { appState.library.first { $0.id == id } }
 
@@ -108,20 +109,33 @@ struct MealDetailView: View {
                 }
 
                 Section {
+                    // Add controls come FIRST, ahead of any existing items —
+                    // on a meal with several recipes plus a few extra items
+                    // already on file, a bottom-anchored add row can land
+                    // off-screen with nothing above it hinting it's there at
+                    // all. Reachable the moment this section scrolls into
+                    // view, no matter how long the list above it grows.
+                    AddItemFields(target: .direct(meal.id), placeholder: "add an item — e.g. a wine pairing")
                     if meal.directItems.isEmpty {
                         Text("none yet")
                             .foregroundStyle(.secondary)
                             .font(.callout)
                     }
                     ForEach(meal.directItems) { item in
-                        IngredientLine(item: item)
-                            .swipeActions(edge: .trailing) {
-                                Button("Remove", role: .destructive) {
-                                    appState.removeItem(item.id)
-                                }
+                        Button {
+                            editingItem = item
+                        } label: {
+                            IngredientLine(item: item)
+                        }
+                        .buttonStyle(.plain)
+                        .swipeActions(edge: .trailing) {
+                            Button("Remove", role: .destructive) {
+                                appState.removeItem(item.id)
                             }
+                            Button("Edit") { editingItem = item }
+                                .tint(Palette.pink.color)
+                        }
                     }
-                    AddItemFields(target: .direct(meal.id), placeholder: "add an item — e.g. a wine pairing")
                 } header: {
                     Text("Extra items")
                 } footer: {
@@ -160,6 +174,9 @@ struct MealDetailView: View {
             }
             .sheet(item: $editingRecipe) { route in
                 RecipeFormView(mealID: id, recipeID: route.id)
+            }
+            .sheet(item: $editingItem) { item in
+                EditItemSheet(item: item)
             }
             .confirmationDialog("Retire this meal?", isPresented: $confirmRetire,
                                 titleVisibility: .visible) {
@@ -237,6 +254,84 @@ struct IngredientLine: View {
                 .foregroundStyle((item.gfSafe ? Palette.green : Palette.yellow).label)
                 .padding(.horizontal, 7).padding(.vertical, 2)
                 .background((item.gfSafe ? Palette.green : Palette.yellow).tint, in: Capsule())
+        }
+    }
+}
+
+/// Edit (or delete) one existing line — name/amount/unit. Opened by tapping
+/// a row on the meal page's "Extra items" section; a name change reassigns
+/// the line to whatever ingredient that name resolves to rather than
+/// renaming the shared catalog entry in place (see `AppState.updateItem`).
+struct EditItemSheet: View {
+    @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) private var dismiss
+    let item: LibraryRecipeItem
+
+    @State private var name: String
+    @State private var amountText: String
+    @State private var unit: String
+    @State private var confirmDelete = false
+
+    init(item: LibraryRecipeItem) {
+        self.item = item
+        _name = State(initialValue: item.name)
+        _amountText = State(initialValue: item.rawAmount.map {
+            $0.truncatingRemainder(dividingBy: 1) == 0 ? String(Int($0)) : String($0)
+        } ?? "")
+        _unit = State(initialValue: item.rawUnit)
+    }
+
+    private var trimmedName: String { name.trimmingCharacters(in: .whitespaces) }
+    private var canSave: Bool { !trimmedName.isEmpty }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("name", text: $name)
+                        .autocorrectionDisabled()
+                        .accessibilityIdentifier("editItemName")
+                    HStack {
+                        TextField("amount", text: $amountText)
+                            .keyboardType(.decimalPad)
+                            .accessibilityIdentifier("editItemAmount")
+                        TextField("unit", text: $unit)
+                            .autocorrectionDisabled()
+                            .accessibilityIdentifier("editItemUnit")
+                    }
+                }
+                Section {
+                    Button("Remove", role: .destructive) { confirmDelete = true }
+                        .accessibilityIdentifier("editItemRemoveButton")
+                }
+            }
+            .navigationTitle("Edit item")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .accessibilityIdentifier("editItemCancelButton")
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        appState.updateItem(item.id, name: name,
+                                            amount: Double(amountText.replacingOccurrences(of: ",", with: ".")),
+                                            unit: unit)
+                        dismiss()
+                    }
+                    .disabled(!canSave)
+                    .accessibilityIdentifier("editItemSaveButton")
+                }
+            }
+            .confirmationDialog("Remove this item?", isPresented: $confirmDelete,
+                                titleVisibility: .visible) {
+                Button("Remove", role: .destructive) {
+                    appState.removeItem(item.id)
+                    dismiss()
+                }
+                .accessibilityIdentifier("editItemConfirmRemoveButton")
+                Button("Cancel", role: .cancel) {}
+            }
         }
     }
 }
