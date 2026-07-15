@@ -12,6 +12,7 @@ struct MealDetailView: View {
     @State private var confirmRetire = false
     @State private var showNewRecipe = false
     @State private var showAttach = false
+    @State private var editingRecipe: RecipeRoute?
 
     private var meal: LibraryMeal? { appState.library.first { $0.id == id } }
 
@@ -71,12 +72,31 @@ struct MealDetailView: View {
                                     .padding(.horizontal, 7).padding(.vertical, 2)
                                     .background((BandStyle.isGreen(recipe.bandRaw)
                                         ? Palette.green : Palette.yellow).tint, in: Capsule())
+                                // A second, separately-hit-tested tap target
+                                // inside the row's NavigationLink — the row
+                                // itself opens the read screen, this pencil
+                                // jumps straight to editable ingredients
+                                // without the extra Edit-button hop.
+                                Button {
+                                    editingRecipe = RecipeRoute(id: recipe.id)
+                                } label: {
+                                    Image(systemName: "pencil.circle")
+                                        .font(.title3)
+                                        .foregroundStyle(Palette.pink.color)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                         .swipeActions(edge: .trailing) {
                             Button("Remove from meal", role: .destructive) {
                                 appState.detachRecipe(recipe.id, fromMeal: id)
                             }
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button("Edit ingredients") {
+                                editingRecipe = RecipeRoute(id: recipe.id)
+                            }
+                            .tint(Palette.pink.color)
                         }
                     }
                     Menu {
@@ -137,6 +157,9 @@ struct MealDetailView: View {
             .sheet(isPresented: $showAttach) {
                 AttachRecipeSheet(mealID: id,
                                   attachedIDs: Set(meal.recipes.map(\.id)))
+            }
+            .sheet(item: $editingRecipe) { route in
+                RecipeFormView(mealID: id, recipeID: route.id)
             }
             .confirmationDialog("Retire this meal?", isPresented: $confirmRetire,
                                 titleVisibility: .visible) {

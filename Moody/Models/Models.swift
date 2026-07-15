@@ -101,7 +101,7 @@ struct LibraryRecipe: Identifiable, Equatable {
 /// Navigation-path value for pushing the read-only recipe screen — a
 /// distinct type from the plain `UUID` meals already push with, so both
 /// can live on the same `NavigationStack`.
-struct RecipeRoute: Hashable {
+struct RecipeRoute: Hashable, Identifiable {
     var id: UUID
 }
 
