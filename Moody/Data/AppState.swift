@@ -567,6 +567,21 @@ final class AppState: ObservableObject {
         saveAndReproject()
     }
 
+    /// Backfill for recipes imported before the carry-through fix landed:
+    /// `resolveIngredient` now writes the import's carrier check into a
+    /// brand-new ingredient, but anything captured earlier still sits at
+    /// `nil` ("check label") even though the import already looked at it.
+    /// This re-runs the same deterministic check on every still-unverified
+    /// line in one recipe — never touches a line someone (or a prior
+    /// import) already verified true or false (HC-6).
+    func recheckGlutenCarriers(inRecipe recipeID: UUID) {
+        guard let recipe = engineRecipe(recipeID) else { return }
+        for item in recipe.items where item.ingredient.isGlutenFreeVerified == nil {
+            item.ingredient.isGlutenFreeVerified = !GlutenCarrierCheck.isLikelyCarrier(item.ingredient.name)
+        }
+        saveAndReproject()
+    }
+
     @discardableResult
     func createStandaloneRecipe(title: String, precise: Bool) -> UUID? {
         guard let context else { return nil }
@@ -584,6 +599,17 @@ final class AppState: ObservableObject {
               let meal = engineMeals.first(where: { $0.id == mealID }),
               !meal.recipes.contains(where: { $0.id == recipeID }) else { return }
         meal.recipes.append(recipe)
+        meal.updatedAt = .now
+        saveAndReproject()
+    }
+
+    /// Detaches a recipe from ONE meal without deleting it (D-39 spirit) —
+    /// the recipe survives, still usable standalone or in any other meal
+    /// it's part of. Distinct from `deleteRecipe`, which removes the recipe
+    /// everywhere and was previously (wrongly) reused for this.
+    func detachRecipe(_ recipeID: UUID, fromMeal mealID: UUID) {
+        guard let meal = engineMeals.first(where: { $0.id == mealID }) else { return }
+        meal.recipes.removeAll { $0.id == recipeID }
         meal.updatedAt = .now
         saveAndReproject()
     }

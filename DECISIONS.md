@@ -6,6 +6,16 @@ Format per item:
 **Ria:** _answer here_
 
 ---
+## Digest — 2026-07-14 (screenshot round: meal-page/recipe-editor clarity + a stale-data fix)
+
+One genuine decision from this round — the other four items (Recipes header, collapsed recipe rows, Extra-items layout, Gluten band → Gluten-free status wording) were direct, unambiguous fixes to what you flagged, nothing to weigh. Listing 1, not padding to 3.
+
+**D-68. The "check label" backfill (`recheckGlutenCarriers`) is a manual, per-recipe button — is that the right scope, or should it reach further?** The bug: ingredients captured before build 97's carry-through fix sit at `nil` forever unless something re-runs the carrier check on them; nothing does that automatically. What shipped: a "Recheck ingredients" button inside each recipe's own editor, shown only when that recipe has at least one "check label" line — you tap it, that ONE recipe's unverified lines get checked, nothing else changes. Deliberately manual and one-at-a-time (this touches the same `isGlutenFreeVerified` field HC-1's auto-fill guarantee reads, so I didn't want to silently rewrite it in bulk without you seeing it happen) — but that also means any recipe you don't happen to open keeps reading "check label" indefinitely, even though the fix would clear it instantly.
+→ Options: a) keep it manual, per-recipe, as shipped — safest, but you have to visit each older recipe once (recommended if you'd rather see it happen recipe-by-recipe than trust a bulk pass) b) add a one-tap "recheck every recipe" action somewhere central (Settings, or the Recipes list) — same logic, wider blast radius in one tap, still nothing silent (you'd still have to tap it) c) run it once automatically in the background the next time the app launches post-update — zero taps, but the one case in this app that's touched `isGlutenFreeVerified` without you asking first
+→ Blocks: nothing today — the button already clears the immediate complaint recipe-by-recipe; this only shapes how far the fix reaches without your help.
+**Ria:** _answer here_
+
+---
 ## Digest — 2026-07-14 (live session: shopping fixes, calendar sync bug, recipe paste FR-3a)
 
 Four decisions from tonight's five-item feedback list. All five items shipped or got root-caused — these are the judgment calls left over, ranked by what they unblock.

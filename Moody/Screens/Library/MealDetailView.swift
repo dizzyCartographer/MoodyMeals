@@ -8,13 +8,10 @@ struct MealDetailView: View {
     @EnvironmentObject var appState: AppState
     let id: UUID
 
-    private struct RecipeSheetTarget: Identifiable { let id: UUID }
-
     @State private var showEdit = false
     @State private var confirmRetire = false
     @State private var showNewRecipe = false
     @State private var showAttach = false
-    @State private var editingRecipe: RecipeSheetTarget?
 
     private var meal: LibraryMeal? { appState.library.first { $0.id == id } }
 
@@ -45,52 +42,54 @@ struct MealDetailView: View {
                     }
                 }
 
-                ForEach(meal.recipes) { recipe in
-                    Section {
-                        if recipe.items.isEmpty {
-                            Text("no ingredient lines yet")
-                                .foregroundStyle(.secondary)
-                                .font(.callout)
-                        }
-                        ForEach(recipe.items) { item in
-                            IngredientLine(item: item)
-                                .swipeActions(edge: .trailing) {
-                                    Button("Remove", role: .destructive) {
-                                        appState.removeItem(item.id)
-                                    }
+                // Collapsed on purpose: a recipe's full ingredients/steps
+                // live on its own read screen (RecipeDetailView) — the meal
+                // page shows what recipes make up this meal, not their
+                // entire contents. A meal can hold more than one (a main
+                // plus a side), which is exactly why this is a list of
+                // doors, not an inline dump.
+                Section("Recipes") {
+                    if meal.recipes.isEmpty {
+                        Text("no recipes yet")
+                            .foregroundStyle(.secondary)
+                            .font(.callout)
+                    }
+                    ForEach(meal.recipes) { recipe in
+                        NavigationLink(value: RecipeRoute(id: recipe.id)) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(recipe.title)
+                                    Text("\(recipe.items.count) ingredient\(recipe.items.count == 1 ? "" : "s") · \(recipe.kindLabel)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
                                 }
-                        }
-                        AddItemFields(target: .recipe(recipe.id))
-                    } header: {
-                        HStack {
-                            NavigationLink(value: RecipeRoute(id: recipe.id)) {
-                                HStack {
-                                    Text("\(recipe.title) · \(recipe.kindLabel)")
-                                    Text(BandStyle.label(recipe.bandRaw))
-                                        .font(.caption2.weight(.semibold))
-                                        .foregroundStyle((BandStyle.isGreen(recipe.bandRaw)
-                                            ? Palette.green : Palette.yellow).label)
-                                        .textCase(nil)
-                                }
+                                Spacer()
+                                Text(BandStyle.label(recipe.bandRaw))
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle((BandStyle.isGreen(recipe.bandRaw)
+                                        ? Palette.green : Palette.yellow).label)
+                                    .padding(.horizontal, 7).padding(.vertical, 2)
+                                    .background((BandStyle.isGreen(recipe.bandRaw)
+                                        ? Palette.green : Palette.yellow).tint, in: Capsule())
                             }
-                            .textCase(nil)
-                            Spacer()
-                            Button("Edit") { editingRecipe = .init(id: recipe.id) }
-                                .font(.caption.weight(.semibold))
-                                .textCase(nil)
                         }
-                    } footer: {
-                        if !recipe.steps.isEmpty {
-                            Text(recipe.steps.enumerated()
-                                .map { "\($0.offset + 1). \($0.element)" }
-                                .joined(separator: "\n"))
+                        .swipeActions(edge: .trailing) {
+                            Button("Remove from meal", role: .destructive) {
+                                appState.detachRecipe(recipe.id, fromMeal: id)
+                            }
                         }
+                    }
+                    Menu {
+                        Button("New recipe") { showNewRecipe = true }
+                        Button("Attach an existing recipe") { showAttach = true }
+                    } label: {
+                        Label("Add a recipe", systemImage: "plus")
                     }
                 }
 
-                Section("Extra items (no recipe)") {
+                Section {
                     if meal.directItems.isEmpty {
-                        Text("none")
+                        Text("none yet")
                             .foregroundStyle(.secondary)
                             .font(.callout)
                     }
@@ -102,16 +101,14 @@ struct MealDetailView: View {
                                 }
                             }
                     }
-                    AddItemFields(target: .direct(meal.id))
+                    AddItemFields(target: .direct(meal.id), placeholder: "add an item — e.g. a wine pairing")
+                } header: {
+                    Text("Extra items")
+                } footer: {
+                    Text("anything that isn't a recipe of its own — a wine pairing, a side you're grabbing pre-made, a garnish")
                 }
 
                 Section {
-                    Menu {
-                        Button("New recipe") { showNewRecipe = true }
-                        Button("Attach an existing recipe") { showAttach = true }
-                    } label: {
-                        Label("Add a recipe", systemImage: "plus")
-                    }
                     Button(meal.isRetired ? "Bring back into rotation" : "Retire this meal") {
                         if meal.isRetired {
                             appState.setMealRetired(id, false)
@@ -140,9 +137,6 @@ struct MealDetailView: View {
             .sheet(isPresented: $showAttach) {
                 AttachRecipeSheet(mealID: id,
                                   attachedIDs: Set(meal.recipes.map(\.id)))
-            }
-            .sheet(item: $editingRecipe) { target in
-                RecipeFormView(mealID: id, recipeID: target.id)
             }
             .confirmationDialog("Retire this meal?", isPresented: $confirmRetire,
                                 titleVisibility: .visible) {

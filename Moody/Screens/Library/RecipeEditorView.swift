@@ -23,14 +23,21 @@ struct RecipeFormView: View {
     private func bandFooter(_ recipe: LibraryRecipe) -> String {
         var parts: [String] = []
         switch recipe.bandSourceRaw {
-        case "manualOverride": parts.append("banded by you — holds over any re-check")
-        case "assessment": parts.append("assessed at capture")
-        default: parts.append("read from ingredient labels")
+        case "manualOverride": parts.append("you set this — it stays until you change it")
+        case "assessment": parts.append("checked automatically when this was imported")
+        default: parts.append("based on the ingredients below")
         }
-        parts.append(recipe.standardModification.isEmpty
-            ? "a documented substitution makes this recipe safe — the indicator clears completely"
-            : "substitution on file: \(recipe.standardModification)")
+        if !recipe.standardModification.isEmpty {
+            parts.append("with that swap on file, this recipe is GF")
+        }
         return parts.joined(separator: " · ")
+    }
+
+    /// True when any ingredient still reads "check label" and might
+    /// actually be a plain whole food the deterministic check would clear —
+    /// this only ever happens on recipes captured before that check ran.
+    private var hasUncheckedItems: Bool {
+        recipe?.items.contains { $0.gfLabel == "check label" } ?? false
     }
 
     private var recipe: LibraryRecipe? {
@@ -57,7 +64,7 @@ struct RecipeFormView: View {
                     // move. Display truth today; gates arrive with D-57.
                     Section {
                         HStack {
-                            Text("Gluten band")
+                            Text("Gluten-free status")
                             Spacer()
                             Text(BandStyle.label(recipe.bandRaw))
                                 .font(.callout.weight(.semibold))
@@ -67,7 +74,7 @@ struct RecipeFormView: View {
                                 .background((BandStyle.isGreen(recipe.bandRaw)
                                     ? Palette.green : Palette.yellow).tint, in: Capsule())
                         }
-                        Menu("Set the band yourself") {
+                        Menu("Change status") {
                             Button("GF safe") { appState.setRecipeBand(recipe.id, bandRaw: "safe") }
                             Button("Awaiting substitution") {
                                 appState.setRecipeBand(recipe.id, bandRaw: "awaitingSubstitution")
@@ -77,15 +84,25 @@ struct RecipeFormView: View {
                                 appState.setRecipeBand(recipe.id, bandRaw: "notCheckedYet")
                             }
                         }
-                        HStack {
-                            TextField("standard modification — e.g. King Arthur gf pie crust mix",
-                                      text: $modificationText, axis: .vertical)
-                                .lineLimit(1...2)
-                            Button("Save") {
-                                appState.setStandardModification(recipe.id,
-                                                                 text: modificationText)
+                        if hasUncheckedItems {
+                            Button("Recheck ingredients") {
+                                appState.recheckGlutenCarriers(inRecipe: recipe.id)
                             }
-                            .disabled(modificationText == recipe.standardModification)
+                        }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("GF substitute (optional)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            HStack {
+                                TextField("e.g. King Arthur gf pie crust mix",
+                                          text: $modificationText, axis: .vertical)
+                                    .lineLimit(1...2)
+                                Button("Save") {
+                                    appState.setStandardModification(recipe.id,
+                                                                     text: modificationText)
+                                }
+                                .disabled(modificationText == recipe.standardModification)
+                            }
                         }
                     } footer: {
                         Text(bandFooter(recipe))
@@ -160,11 +177,18 @@ struct RecipeFormView: View {
                     sourceText = recipe.source
                 }
             }
-            .confirmationDialog("Remove this recipe?", isPresented: $confirmDelete,
-                                titleVisibility: .visible) {
-                Button("Remove — the meal itself stays", role: .destructive) {
-                    if let recipeID { appState.deleteRecipe(recipeID) }
-                    dismiss()
+            .confirmationDialog(mealID == nil ? "Delete this recipe?" : "Remove this recipe from the meal?",
+                                isPresented: $confirmDelete, titleVisibility: .visible) {
+                if let mealID {
+                    Button("Remove — the recipe itself stays, still usable elsewhere", role: .destructive) {
+                        if let recipeID { appState.detachRecipe(recipeID, fromMeal: mealID) }
+                        dismiss()
+                    }
+                } else {
+                    Button("Delete", role: .destructive) {
+                        if let recipeID { appState.deleteRecipe(recipeID) }
+                        dismiss()
+                    }
                 }
                 Button("Cancel", role: .cancel) {}
             }
@@ -173,10 +197,13 @@ struct RecipeFormView: View {
 }
 
 /// Name (with catalog suggestions), optional amount + unit, and — only when
-/// the name is new — a storage picker plus the honest HC-7 note.
+/// the name is new — a storage picker plus the honest HC-7 note. `placeholder`
+/// lets each call site say what kind of thing goes here (an ingredient, or —
+/// on a meal's "Extra items" — anything from a wine pairing to a side).
 struct AddItemFields: View {
     @EnvironmentObject var appState: AppState
     var target: AppState.ItemTarget
+    var placeholder: String = "add an ingredient"
 
     @State private var name = ""
     @State private var amountText = ""
@@ -197,18 +224,20 @@ struct AddItemFields: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            TextField(placeholder, text: $name)
+                .autocorrectionDisabled()
             HStack {
-                TextField("add ingredient", text: $name)
-                    .autocorrectionDisabled()
-                TextField("amt", text: $amountText)
+                TextField("amount", text: $amountText)
                     .keyboardType(.decimalPad)
-                    .frame(width: 52)
                 TextField("unit", text: $unit)
                     .autocorrectionDisabled()
-                    .frame(width: 64)
                 Button("Add") { add() }
+                    .buttonStyle(.borderedProminent)
                     .disabled(trimmedName.isEmpty)
             }
+            Text("amount and unit are both optional")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
             if !suggestions.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
