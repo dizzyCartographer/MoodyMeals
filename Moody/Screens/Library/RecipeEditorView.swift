@@ -17,6 +17,7 @@ struct RecipeFormView: View {
     @State private var precise = false
     @State private var stepsText = ""
     @State private var modificationText = ""
+    @State private var sourceText = ""
     @State private var confirmDelete = false
 
     private func bandFooter(_ recipe: LibraryRecipe) -> String {
@@ -112,6 +113,11 @@ struct RecipeFormView: View {
                             .lineLimit(3...8)
                     }
 
+                    Section("Source (optional)") {
+                        TextField("a URL or cookbook title", text: $sourceText)
+                            .autocorrectionDisabled()
+                    }
+
                     Section {
                         Button(mealID == nil ? "Delete this recipe"
                                : "Remove this recipe from the meal",
@@ -131,7 +137,8 @@ struct RecipeFormView: View {
                     Button(recipeID == nil ? "Create" : "Save") {
                         if let recipeID {
                             appState.updateRecipe(recipeID, title: title,
-                                                  precise: precise, stepsText: stepsText)
+                                                  precise: precise, stepsText: stepsText,
+                                                  sourceText: sourceText)
                             dismiss()
                         } else if let mealID {
                             recipeID = appState.addRecipe(toMeal: mealID,
@@ -150,6 +157,7 @@ struct RecipeFormView: View {
                     precise = recipe.kindLabel == "precise"
                     stepsText = recipe.steps.joined(separator: "\n")
                     modificationText = recipe.standardModification
+                    sourceText = recipe.source
                 }
             }
             .confirmationDialog("Remove this recipe?", isPresented: $confirmDelete,

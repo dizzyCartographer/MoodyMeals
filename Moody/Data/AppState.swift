@@ -372,7 +372,8 @@ final class AppState: ObservableObject {
                             steps: recipe.steps,
                             bandRaw: MealBand.band(for: recipe).rawValue,
                             bandSourceRaw: recipe.gfBandSource.rawValue,
-                            standardModification: recipe.standardModification ?? "")
+                            standardModification: recipe.standardModification ?? "",
+                            source: recipe.source ?? "")
                     },
                 directItems: meal.directItems
                     .sorted { $0.createdAt < $1.createdAt }
@@ -522,7 +523,16 @@ final class AppState: ObservableObject {
             steps: recipe.steps,
             bandRaw: MealBand.band(for: recipe).rawValue,
             bandSourceRaw: recipe.gfBandSource.rawValue,
-            standardModification: recipe.standardModification ?? "")
+            standardModification: recipe.standardModification ?? "",
+            source: recipe.source ?? "")
+    }
+
+    /// Sets or clears the recipe's source (a URL or a cookbook title/page).
+    func setRecipeSource(_ recipeID: UUID, text: String) {
+        guard let recipe = engineRecipe(recipeID) else { return }
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        recipe.source = trimmed.isEmpty ? nil : trimmed
+        saveAndReproject()
     }
 
     // MARK: FR-1 band mutations (D-44: her calls are permanent)
@@ -595,7 +605,8 @@ final class AppState: ObservableObject {
         return recipe.id
     }
 
-    func updateRecipe(_ id: UUID, title: String, precise: Bool, stepsText: String) {
+    func updateRecipe(_ id: UUID, title: String, precise: Bool, stepsText: String,
+                      sourceText: String = "") {
         guard let recipe = engineRecipe(id) else { return }
         let t = title.trimmingCharacters(in: .whitespaces)
         if !t.isEmpty { recipe.title = t }
@@ -604,6 +615,8 @@ final class AppState: ObservableObject {
             .split(separator: "\n")
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
+        let trimmedSource = sourceText.trimmingCharacters(in: .whitespaces)
+        recipe.source = trimmedSource.isEmpty ? nil : trimmedSource
         recipe.updatedAt = .now
         saveAndReproject()
     }
@@ -683,22 +696,25 @@ final class AppState: ObservableObject {
         }
     }
 
-    /// Creates the meal + recipe straight from a reviewed paste preview.
-    /// Kind is precise only when every line carries an amount (D-36: mixed
-    /// or amount-less lines stay loose, with per-item amounts riding where
-    /// the text gave them either way).
+    /// Creates a standalone recipe straight from a reviewed paste/photo
+    /// preview — matches every other recipe-creation path in the app (a
+    /// meal is a collection of recipes, per Ria 2026-07-13; recipes are
+    /// first-class on their own). Kind is precise only when every line
+    /// carries an amount (D-36: mixed or amount-less lines stay loose,
+    /// with per-item amounts riding where the text gave them either way).
+    /// Returns the RECIPE id — pair with `createMeal(wrappingRecipe:)` to
+    /// make it schedulable.
     @discardableResult
-    func createMeal(fromPastedRecipe preview: RecipePastePreview) -> UUID? {
+    func createStandaloneRecipe(fromPastedRecipe preview: RecipePastePreview) -> UUID? {
         guard let context else { return nil }
         let title = preview.title.trimmingCharacters(in: .whitespaces)
         guard !title.isEmpty else { return nil }
-        let meal = MoodyEngine.Meal(title: title)
-        context.insert(meal)
         let allHaveAmounts = !preview.items.isEmpty && preview.items.allSatisfy { $0.amount != nil }
+        let trimmedSource = preview.source.trimmingCharacters(in: .whitespaces)
         let recipe = MoodyEngine.Recipe(title: title, kind: allHaveAmounts ? .precise : .loose,
-                                        steps: preview.steps)
+                                        steps: preview.steps,
+                                        source: trimmedSource.isEmpty ? nil : trimmedSource)
         context.insert(recipe)
-        meal.recipes.append(recipe)
         for item in preview.items {
             guard let ingredient = resolveIngredient(named: item.name, perishability: .pantry,
                                                       carrierHint: GlutenCarrierCheck.isLikelyCarrier(item.name))
@@ -707,6 +723,21 @@ final class AppState: ObservableObject {
             context.insert(recipeItem)
             recipe.items.append(recipeItem)
         }
+        saveAndReproject()
+        return recipe.id
+    }
+
+    /// Wraps an existing recipe (standalone, or already in another meal —
+    /// a recipe can ride in more than one, same as `attachRecipe`) in a
+    /// brand-new schedulable meal. This is the door from "just a recipe"
+    /// to "something on the plan" — the same door recipe import and the
+    /// standalone Recipes list were both missing.
+    @discardableResult
+    func createMeal(wrappingRecipe recipeID: UUID) -> UUID? {
+        guard let context, let recipe = engineRecipe(recipeID) else { return nil }
+        let meal = MoodyEngine.Meal(title: recipe.title)
+        context.insert(meal)
+        meal.recipes.append(recipe)
         saveAndReproject()
         return meal.id
     }

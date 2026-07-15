@@ -1,13 +1,30 @@
 import SwiftUI
 
 // TODAY (D-56 native) — tonight's dinner, the two levers (decide / swap),
-// capacity, and the guarantee line. Nothing else.
+// and capacity. Nothing else: the shopping guarantee line lived here too
+// once, but it's the exact same line the Shopping tab already shows, and
+// on Today — with no inventory system behind it — it read as status for
+// something that doesn't exist. Removed (Ria 2026-07-14: "clean up the
+// main page so it only shows things that actually work and make sense").
 
 struct TodayView: View {
     @EnvironmentObject var appState: AppState
     @State private var showPicker = false
 
     private var tonight: DayPlan { appState.tonight }
+
+    /// Capacity is real, not decorative — it caps decide-for-me/swap's
+    /// effort pool (AppState.decideForMe/swapOptions) and, on a drop to
+    /// Fumes, recommits tonight down to that cap if it's currently above
+    /// it. The footer says what THIS choice does, not a fixed line about
+    /// one of the three.
+    private var capacityFooter: String {
+        switch appState.tank {
+        case .fumes: "tonight (and swap) stay at the lowest-effort picks"
+        case .steady: "tonight (and swap) can go up to simple effort"
+        case .full: "no effort limit — anything's in play"
+        }
+    }
 
     var body: some View {
         List {
@@ -65,15 +82,7 @@ struct TodayView: View {
             } header: {
                 Text("Capacity")
             } footer: {
-                Text("fumes keeps tonight at the lowest effort")
-            }
-
-            Section {
-                Label(appState.guaranteeLine,
-                      systemImage: appState.guaranteeLine.contains("✓")
-                        ? "checkmark.circle" : "cart")
-                    .foregroundStyle(.secondary)
-                    .font(.callout)
+                Text(capacityFooter)
             }
         }
         .navigationTitle("Today")

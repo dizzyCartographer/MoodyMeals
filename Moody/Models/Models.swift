@@ -94,6 +94,8 @@ struct LibraryRecipe: Identifiable, Equatable {
     var bandRaw: String = "notCheckedYet"
     var bandSourceRaw: String = "derived"
     var standardModification: String = ""
+    /// Where it came from — a URL or a cookbook title/page. "" = none on file.
+    var source: String = ""
 }
 
 /// Navigation-path value for pushing the read-only recipe screen — a
@@ -219,6 +221,9 @@ struct RecipePastePreview: Equatable {
     var title: String
     var items: [Item]
     var steps: [String]
+    /// Where it came from — she types this in on the paste screen itself;
+    /// MoodyBrain never infers it. "" = none given.
+    var source: String = ""
 }
 
 // Codable via the slot's stable id ("her-1"…): PaletteSlot itself is design

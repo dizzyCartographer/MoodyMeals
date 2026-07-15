@@ -10,8 +10,18 @@ struct RecipeDetailView: View {
 
     @State private var showCookMode = false
     @State private var showEdit = false
+    @State private var showMealCreated = false
 
     private var recipe: LibraryRecipe? { appState.libraryRecipe(recipeID) }
+
+    /// A recipe with no meal yet can't be scheduled — this is the door out
+    /// of that state. Once it's in at least one meal, the button steps
+    /// aside; making another meal from an already-used recipe is still
+    /// possible (recipes can ride in more than one), just not the
+    /// first-thing-you-see action anymore.
+    private var isStandalone: Bool {
+        appState.recipesAll.first(where: { $0.id == recipeID })?.usedIn.isEmpty ?? true
+    }
 
     var body: some View {
         Group {
@@ -63,6 +73,30 @@ struct RecipeDetailView: View {
                             Text(recipe.standardModification)
                         }
                     }
+
+                    if !recipe.source.isEmpty {
+                        Section("Source") {
+                            if let url = URL(string: recipe.source), url.scheme != nil {
+                                Link(recipe.source, destination: url)
+                                    .lineLimit(2)
+                            } else {
+                                Text(recipe.source)
+                            }
+                        }
+                    }
+
+                    if isStandalone {
+                        Section {
+                            Button {
+                                appState.createMeal(wrappingRecipe: recipe.id)
+                                showMealCreated = true
+                            } label: {
+                                Label("Create a schedulable meal from it", systemImage: "calendar.badge.plus")
+                            }
+                        } footer: {
+                            Text("this recipe isn't in any meal yet — a meal is what goes on the plan")
+                        }
+                    }
                 }
                 .navigationTitle(recipe.title)
                 .navigationBarTitleDisplayMode(.inline)
@@ -95,6 +129,11 @@ struct RecipeDetailView: View {
                 .sheet(isPresented: $showEdit) {
                     RecipeFormView(mealID: nil, recipeID: recipe.id)
                 }
+                .alert("Meal created", isPresented: $showMealCreated) {
+                    Button("OK") {}
+                } message: {
+                    Text("find \"\(recipe.title)\" under Meals to schedule it on the plan")
+                }
             } else {
                 ContentUnavailableView("this recipe isn't on file anymore",
                                        systemImage: "questionmark.folder")
@@ -117,6 +156,10 @@ struct RecipeDetailView: View {
         if !recipe.steps.isEmpty {
             lines.append("Steps:")
             lines += recipe.steps.enumerated().map { "\($0.offset + 1). \($0.element)" }
+        }
+        if !recipe.source.isEmpty {
+            lines.append("")
+            lines.append("Source: \(recipe.source)")
         }
         return lines.joined(separator: "\n")
     }

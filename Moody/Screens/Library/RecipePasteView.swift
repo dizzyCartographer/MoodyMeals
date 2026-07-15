@@ -10,16 +10,23 @@ import PhotosUI
 // that match a known gluten carrier (flour, soy sauce, breadcrumbs, …)
 // carry a calm substitute suggestion in the preview — never applied on
 // its own.
+//
+// Adding creates a RECIPE, matching every other recipe-creation door in
+// the app (a meal is a collection of recipes, per Ria 2026-07-13) — it
+// does NOT silently also create a meal. The very next screen offers that
+// as an explicit choice: "Create a schedulable meal from it."
 
 struct RecipePasteView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) private var dismiss
 
     @State private var text = ""
+    @State private var sourceText = ""
     @State private var isParsing = false
     @State private var isReadingPhotos = false
     @State private var selectedPhotos: [PhotosPickerItem] = []
     @State private var preview: RecipePastePreview?
+    @State private var addedRecipe: (id: UUID, title: String)?
     @State private var errorMessage: String?
 
     private var canParse: Bool {
@@ -30,7 +37,9 @@ struct RecipePasteView: View {
     var body: some View {
         NavigationStack {
             Form {
-                if let preview {
+                if let addedRecipe {
+                    addedSection(addedRecipe)
+                } else if let preview {
                     previewSection(preview)
                 } else {
                     Section {
@@ -58,11 +67,13 @@ struct RecipePasteView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(addedRecipe == nil ? "Cancel" : "Close") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    if preview != nil {
-                        Button("Add") { addAndDismiss() }
+                    if addedRecipe != nil {
+                        EmptyView()
+                    } else if preview != nil {
+                        Button("Add") { addRecipe() }
                     } else {
                         Button("Parse") { Task { await parse() } }
                             .disabled(!canParse)
@@ -111,8 +122,25 @@ struct RecipePasteView: View {
                         .font(.callout)
                 }
             }
+            TextField("Source — a URL or cookbook title (optional)", text: $sourceText)
+                .autocorrectionDisabled()
         } header: {
             Text("Looks like this — edit anything after adding")
+        }
+    }
+
+    private func addedSection(_ added: (id: UUID, title: String)) -> some View {
+        Section {
+            Label("\(added.title) added to your recipes", systemImage: "checkmark.circle.fill")
+                .foregroundStyle(Palette.green.label)
+            Button {
+                appState.createMeal(wrappingRecipe: added.id)
+                dismiss()
+            } label: {
+                Label("Create a schedulable meal from it", systemImage: "calendar.badge.plus")
+            }
+        } footer: {
+            Text("a recipe on its own can't go on the plan — this wraps it in a meal that can")
         }
     }
 
@@ -149,10 +177,11 @@ struct RecipePasteView: View {
         }
     }
 
-    private func addAndDismiss() {
-        guard let preview else { return }
-        appState.createMeal(fromPastedRecipe: preview)
-        dismiss()
+    private func addRecipe() {
+        guard var preview else { return }
+        preview.source = sourceText
+        guard let id = appState.createStandaloneRecipe(fromPastedRecipe: preview) else { return }
+        addedRecipe = (id: id, title: preview.title)
     }
 
     private static func formatted(_ value: Double) -> String {

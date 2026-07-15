@@ -66,7 +66,11 @@ final class Recipe {
     var title: String
     var kind: RecipeKind              // .loose or .precise
     var steps: [String]               // may be empty for loose
-    var sourceURL: URL?
+    var sourceURL: URL?                // unused — kept for existing-store compatibility
+    /// Where it came from — a URL or a cookbook title/page, freeform (not
+    /// every source parses as a URL). Additive field: nil on every
+    /// pre-existing recipe, safe under SwiftData's automatic migration.
+    var source: String?
     @Relationship(deleteRule: .cascade) var items: [RecipeItem]
     // FR-1 (D-44): stored band + provenance. Optionals ⇒ lightweight
     // migration on existing stores; nil reads as notCheckedYet/derived.
@@ -90,7 +94,8 @@ final class Recipe {
         title: String,
         kind: RecipeKind,
         steps: [String] = [],
-        sourceURL: URL? = nil
+        sourceURL: URL? = nil,
+        source: String? = nil
     ) {
         self.id = UUID()
         self.createdAt = .now
@@ -99,6 +104,7 @@ final class Recipe {
         self.kind = kind
         self.steps = steps
         self.sourceURL = sourceURL
+        self.source = source
         self.items = []
     }
 }
