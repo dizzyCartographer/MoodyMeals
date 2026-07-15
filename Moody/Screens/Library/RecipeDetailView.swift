@@ -14,14 +14,20 @@ struct RecipeDetailView: View {
 
     private var recipe: LibraryRecipe? { appState.libraryRecipe(recipeID) }
 
+    /// A recipe is a COMPONENT of a meal, not a stand-in for one — a meal
+    /// can hold several (a main plus a side), and the same recipe can ride
+    /// in more than one meal. `usedIn` is the visible proof of that: which
+    /// meal(s), if any, this recipe currently belongs to.
+    private var usedIn: [String] {
+        appState.recipesAll.first(where: { $0.id == recipeID })?.usedIn ?? []
+    }
+
     /// A recipe with no meal yet can't be scheduled — this is the door out
     /// of that state. Once it's in at least one meal, the button steps
     /// aside; making another meal from an already-used recipe is still
     /// possible (recipes can ride in more than one), just not the
     /// first-thing-you-see action anymore.
-    private var isStandalone: Bool {
-        appState.recipesAll.first(where: { $0.id == recipeID })?.usedIn.isEmpty ?? true
-    }
+    private var isStandalone: Bool { usedIn.isEmpty }
 
     var body: some View {
         Group {
@@ -95,6 +101,16 @@ struct RecipeDetailView: View {
                             }
                         } footer: {
                             Text("this recipe isn't in any meal yet — a meal is what goes on the plan")
+                        }
+                    } else {
+                        Section {
+                            ForEach(usedIn, id: \.self) { mealName in
+                                Text(mealName)
+                            }
+                        } header: {
+                            Text("Used in")
+                        } footer: {
+                            Text("a recipe can ride in more than one meal — a side dish, say, alongside the main")
                         }
                     }
                 }

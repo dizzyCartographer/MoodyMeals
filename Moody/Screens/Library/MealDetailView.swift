@@ -54,7 +54,13 @@ struct MealDetailView: View {
                         }
                         ForEach(recipe.items) { item in
                             IngredientLine(item: item)
+                                .swipeActions(edge: .trailing) {
+                                    Button("Remove", role: .destructive) {
+                                        appState.removeItem(item.id)
+                                    }
+                                }
                         }
+                        AddItemFields(target: .recipe(recipe.id))
                     } header: {
                         HStack {
                             NavigationLink(value: RecipeRoute(id: recipe.id)) {

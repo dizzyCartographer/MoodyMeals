@@ -467,23 +467,33 @@ final class AppState: ObservableObject {
         }
     }
 
-    /// HC-7: reuse the catalog by (case-insensitive) name; a NEW ingredient
-    /// enters UNVERIFIED (nil tri-state = unsafe for GF members until checked)
-    /// — unless `carrierHint` matches a known gluten carrier (deterministic
-    /// word-list, `GlutenCarrierCheck`), in which case it enters explicitly
-    /// `false` (not GF), the same state a manual "not GF" mark would leave —
-    /// never applied to an ingredient that already exists in the catalog.
+    /// HC-7: reuse the catalog by (case-insensitive) name; a manually-typed
+    /// NEW ingredient (`importVerification: nil`, `AddItemFields`'s path)
+    /// enters fully UNVERIFIED — unchanged behavior. The import pipeline
+    /// (paste/OCR) instead runs every line through `GlutenCarrierCheck`
+    /// first and passes its verdict here: a carrier match → `false` (not
+    /// GF, same state a manual "not GF" mark leaves); no match → `true`,
+    /// per D-44 canon ("whole foods safe with no marking" — Ria's own
+    /// approved policy, not a new call). Either way this only ever fills
+    /// in a genuinely UNKNOWN ingredient (new, or existing with `nil`) —
+    /// an ingredient someone already verified true or false, by hand or by
+    /// a prior import, is never silently touched (HC-6: her calls persist).
     private func resolveIngredient(named raw: String,
                                    perishability: Perishability,
-                                   carrierHint: Bool = false) -> Ingredient? {
+                                   importVerification: Bool? = nil) -> Ingredient? {
         guard let context else { return nil }
         let name = raw.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return nil }
         if let existing = engineIngredients.first(where: {
             $0.name.compare(name, options: .caseInsensitive) == .orderedSame
-        }) { return existing }
+        }) {
+            if let importVerification, existing.isGlutenFreeVerified == nil {
+                existing.isGlutenFreeVerified = importVerification
+            }
+            return existing
+        }
         let fresh = Ingredient(name: name, perishability: perishability,
-                               isGlutenFreeVerified: carrierHint ? false : nil)
+                               isGlutenFreeVerified: importVerification)
         context.insert(fresh)
         return fresh
     }
@@ -716,8 +726,13 @@ final class AppState: ObservableObject {
                                         source: trimmedSource.isEmpty ? nil : trimmedSource)
         context.insert(recipe)
         for item in preview.items {
+            // Every import line gets a real (if simple) assessment — carrier
+            // match -> false; no match -> true, D-44's whole-food default —
+            // so the meal page reflects what the import actually found
+            // instead of everything reading as untouched notCheckedYet.
+            let verified = !GlutenCarrierCheck.isLikelyCarrier(item.name)
             guard let ingredient = resolveIngredient(named: item.name, perishability: .pantry,
-                                                      carrierHint: GlutenCarrierCheck.isLikelyCarrier(item.name))
+                                                      importVerification: verified)
             else { continue }
             let recipeItem = RecipeItem(ingredient: ingredient, amount: item.amount, unit: item.unit)
             context.insert(recipeItem)
